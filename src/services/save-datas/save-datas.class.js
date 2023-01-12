@@ -8,9 +8,9 @@ exports.SaveDatas = class SaveDatas {
     this.options = options || {};
     this.app = app;
 
-    const endpoint = "http://127.0.0.1:8080/xapi";
-    const username = "a1f579f1d31500af981ceb1c942629c8eaa6c5105b7db28171231ddaf7442a11";
-    const password = "342cd8b7ea56119fabe4e03efc503e42922522b555277bcefd182dd34b2cc9d8";
+    const endpoint = app.get("lrsql").endpoint;
+    const username = app.get("lrsql").username;
+    const password = app.get("lrsql").password;
 
     this.lrs;
 
