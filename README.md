@@ -24,6 +24,28 @@ Getting up and running is as easy as 1, 2, 3.
     npm start
     ```
 
+4. Start a postgres docker instance
+    
+    ```
+    docker run --name minerva-bridge -e POSTGRES_PASSWORD=password -p 49159:5432 -d postgres
+    ```
+  Note that you can change the port after the -p option, before the colon (makes sure to leave 5432).
+
+5. Start a lrsql docker instance
+
+    ```
+    docker run \
+    -it \
+    -p 8080:8080 \
+    -e LRSQL_API_KEY_DEFAULT=my_key \
+    -e LRSQL_API_SECRET_DEFAULT=my_secret \
+    -e LRSQL_ADMIN_USER_DEFAULT=my_username \
+    -e LRSQL_ADMIN_PASS_DEFAULT=my_password \
+    -e LRSQL_DB_NAME=db/lrsql.sqlite.db \
+    -v lrsql-db:/lrsql/db \
+    yetanalytics/lrsql:latest
+    ```
+
 ## Testing
 
 Simply run `npm test` and all your tests in the `test/` directory will be run.
