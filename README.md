@@ -8,8 +8,6 @@ This project uses [Feathers](http://feathersjs.com). An open source web framewor
 
 ## Getting Started
 
-Getting up and running is as easy as 1, 2, 3.
-
 1. Make sure you have [NodeJS](https://nodejs.org/) and [npm](https://www.npmjs.com/) installed.
 2. Install your dependencies
 
@@ -42,9 +40,6 @@ or with the port selected at 4).
 7. Edit ./config/default.json, line 31, lrsql.username to "my_key" and lrsql.password to "my_secret"
 
 8. To open and browse lrsql LRS go to http://localhost:8080/admin/index.html, login with Username: my_username and Password: my_password
-## Testing
-
-Simply run `npm test` and all your tests in the `test/` directory will be run.
 
 ## Scaffolding
 
