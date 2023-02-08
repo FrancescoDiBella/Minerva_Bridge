@@ -19,9 +19,11 @@ module.exports = function (app) {
     name: {
       type: DataTypes.STRING,
       allowNull: false
+    },
+    secret:{
+      type: DataTypes.STRING,
+      allowNull: false
     }
-
-
   }, {
     hooks: {
       beforeCount(options) {
