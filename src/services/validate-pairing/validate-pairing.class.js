@@ -19,15 +19,16 @@ exports.ValidatePairing = class ValidatePairing {
   }
 
   async create (data, params) {
-    const { idLms, idUsr, authCode} = data;
+    const { idLms, idUsr, idApp3D, authCode} = data;
     const getAuthModel = getAuth(this.app);
     const utentiModel = utenti(this.app);
 
     //Check if exists a user with idLms and idUsr
     const user = await utentiModel.findOne({
       where: {
-        idLms: idLms,
-        idUsr: idUsr
+        idLms,
+        idUsr,
+        idApp3D
       }
     });
 
@@ -37,22 +38,17 @@ exports.ValidatePairing = class ValidatePairing {
     //check if there is a authCode assigned at user and if is the authCode passed
     const _utente = await getAuthModel.findOne({
       where: {
-        idLms: idLms,
-        idUsr: idUsr
+        idApp3D,
+        authCode
       }
     });
 
     if(_utente){
-      if(_utente.authCode !== authCode){
-        //return the status of the operation, the authCode was never emitted or the authCode is not correct
-        return {statusMsg:"Errore, l'authCode è errato, ritenta"};
-      }
       //return the status of the operation, the authCode is correct
-      await getAuthModel.update({validated:true},{
+      await getAuthModel.update({idUsr, idLms, validated:true},{
         where:{
-          idLms: idLms,
-          idUsr: idUsr,
-          authCode: authCode
+          idApp3D,
+          authCode
         }
       })
 

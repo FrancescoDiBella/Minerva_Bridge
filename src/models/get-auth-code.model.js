@@ -6,11 +6,17 @@ const DataTypes = Sequelize.DataTypes;
 module.exports = function (app) {
   const sequelizeClient = app.get('sequelizeClient');
   const getAuthCode = sequelizeClient.define('authCodes', {
-    idUsr: {
+    idLms:{
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: true,
+      unique:true
     },
-    idLms: {
+    idUsr:{
+      type: DataTypes.STRING,
+      allowNull: true,
+      unique:true
+    },
+    idApp3D: {
       type: DataTypes.STRING,
       allowNull: false
     },
@@ -26,7 +32,7 @@ module.exports = function (app) {
   },
   {
     unique:{
-      fields:['idUsr', 'idLms']
+      fields:['idApp3D', 'authCode']
     }
   }
   ,{

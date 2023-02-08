@@ -11,7 +11,7 @@ exports.Access = class Access extends Service {
 
   async create(data, params){
     console.log(data)
-    const {idLms, idUsr, secret} = data;
+    const {idLms, idUsr, idApp3D, secret} = data;
 
     const lmsModel = lms(this.app);
     const utentiModel = _utenti(this.app);
@@ -28,14 +28,15 @@ exports.Access = class Access extends Service {
       return {errorMsg:"LMS non registrato."};
     }
 
-    const passwordIsCorrect = await bcrypt.compare(secret, user.password);
-    if(passwordIsCorrect){
+    const secretIsCorrect = secret ==  user.secret ? true:false;
+    if(secretIsCorrect){
       //password is correct
-      //Check if user awlready exists
+      //Check if user already exists
       const _user = await utentiModel.findOne({
         where: {
           idLms:idLms,
-          idUsr: idUsr
+          idUsr: idUsr,
+          idApp3D: idApp3D
         }
       });
 
@@ -45,7 +46,8 @@ exports.Access = class Access extends Service {
 
       await utentiModel.create({
         idUsr,
-        idLms
+        idLms,
+        idApp3D
       })
 
       console.log("OK")
@@ -53,7 +55,7 @@ exports.Access = class Access extends Service {
 
     }
 
-    return {errorMsg:"Password errata, riprovare"};
+    return {errorMsg:"Secret errato, riprovare"};
 
   }
 };

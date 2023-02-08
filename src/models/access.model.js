@@ -13,11 +13,15 @@ module.exports = function (app) {
     idLms: {
       type: DataTypes.STRING,
       allowNull: false
+    },
+    idApp3D: {
+      type: DataTypes.STRING,
+      allowNull: false
     }
   },
   {
     unique:{
-      fields:['idUsr', 'idLms']
+      fields:['idUsr', 'idLms', 'idApp3D']
     }
   }
   , {

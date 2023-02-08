@@ -10,44 +10,46 @@ exports.GetAuthCode = class GetAuthCode extends Service {
   }
 
   async create(data, params){
-    const { idUsr,idLms } = data;
+    const { idApp3D } = data;
     const getAuthModel = getAuth(this.app);
     const utentiModel = utenti(this.app);
 
     //Check if user exists;
     const user = await utentiModel.findOne({
       where: {
-        idLms: idLms,
-        idUsr: idUsr
+        idApp3D: idApp3D
       }
     });
 
     if(!user){
-      return {statusMsg:"Utente non registrato."};
+      return {statusMsg:"Non c'è nessun utente registrato realtivamente all'App3D."};
     }
-
-    const _utente = await getAuthModel.findOne({
-      where: {
-        idLms: idLms,
-        idUsr: idUsr
-      }
-    });
-
-    if(_utente){
-      return {authCode:_utente.authCode};
-    }
-
 
     const code = this.generateAuth();
 
     await getAuthModel.create({
-      idUsr,
-      idLms,
+      idApp3D,
       authCode:code.toString(),
       validated: false
     })
 
+    this.deleteAuthCode(code.toString(), idApp3D)
+
     return {authCode:code};
+  }
+
+  deleteAuthCode(authCode, idApp3D){
+    setTimeout(()=>{
+      const getAuthModel = getAuth(this.app);
+      getAuthModel.destroy({
+        where :{
+          idApp3D,
+          authCode,
+          validated: false
+        }
+      })
+      console.log("Eliminato")
+    }, 10000*6)
   }
 
   generateAuth(){
