@@ -1,7 +1,11 @@
 /* eslint-disable no-unused-vars */
+const lms = require('../../models/lms.model');
+const bcrypt = require('bcrypt');
+
 exports.Login = class Login {
-  constructor (options) {
+  constructor (options, app) {
     this.options = options || {};
+    this.app = app;
   }
 
   async find (params) {
@@ -15,11 +19,27 @@ exports.Login = class Login {
   }
 
   async create (data, params) {
-    if (Array.isArray(data)) {
-      return Promise.all(data.map(current => this.create(current, params)));
+    const {email, password} = data;
+    const lmsModel = lms(this.app);
+
+    const user = await lmsModel.findOne({
+      where: {
+        email
+      }
+    });
+
+    if(!user){
+      return {errorMsg:"L'email non risulta associata a nessun LMS"};
     }
 
-    return data;
+    const passwordIsCorrect = await bcrypt.compare(password, user.password)
+
+    if(passwordIsCorrect){
+      return {secret: user.secret}
+    }
+
+    return {errorMsg:"Password sbagliata, ritenta"};
+
   }
 
   async update (id, data, params) {
