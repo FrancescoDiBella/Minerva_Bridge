@@ -54,6 +54,7 @@ exports.SaveDatas = class SaveDatas {
       where: {
         idLms: idLms,
         idUsr: idUsr,
+        idApp3D: idApp3d,
         authCode: authCode,
         validated: true
       }
@@ -67,7 +68,13 @@ exports.SaveDatas = class SaveDatas {
     var statement = new TinCan.Statement(
       {
           actor: {
-              mbox: "mailto:info@tincanapi.com"
+              //mbox: "mailto:info@tincanapi.com",
+              //idUsr: idUsr
+              name: idUsr,
+              account: {
+                homePage: "http://.com",
+                name: idUsr
+              }
           },
           verb: {
               id: "http://adlnet.gov/expapi/verbs/experienced"

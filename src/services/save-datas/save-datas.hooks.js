@@ -14,7 +14,7 @@ module.exports = {
 
         // Extract the JWT from the `Authorization` header
         const [, token] = headers.authorization.split(' ');
-        console.log(token)
+
         // Verify the JWT using the secret key
         try {
           const secret = context.app.get('authentication').secret;
