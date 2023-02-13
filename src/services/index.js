@@ -6,6 +6,7 @@ const validatePairing = require('./validate-pairing/validate-pairing.service.js'
 const saveDatas = require('./save-datas/save-datas.service.js');
 const jwtService = require('./jwt-service/jwt-service.service.js');
 const login = require('./login/login.service.js');
+const hook = require('./hook/hook.service.js');
 // eslint-disable-next-line no-unused-vars
 module.exports = function (app) {
   app.configure(lms);
@@ -16,4 +17,5 @@ module.exports = function (app) {
   app.configure(saveDatas);
   app.configure(jwtService);
   app.configure(login);
+  app.configure(hook);
 };
