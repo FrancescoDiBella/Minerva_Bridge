@@ -1,10 +1,10 @@
-const internalOnly = require('../../only-internal');
+const internalOnly = require('../../internal-only');
 
 module.exports = {
   before: {
-    all: [internalOnly],
-    find: [],
-    get: [],
+    all: [],
+    find: [internalOnly],
+    get: [internalOnly],
     create: [],
     update: [],
     patch: [],
