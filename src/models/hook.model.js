@@ -13,6 +13,10 @@ module.exports = function (app) {
     idLms: {
       type: DataTypes.STRING,
       allowNull: false
+    },
+    type:{
+      type: DataTypes.STRING,
+      allowNull: false
     }
   }, {
     hooks: {
