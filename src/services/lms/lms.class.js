@@ -13,7 +13,8 @@ exports.Lms = class Lms extends Service {
     const lmsModel = lms(this.app);
 
     const secret =  crypto.randomBytes(6).toString('hex');
-
+    //criptare anche il secret
+    //creare il secret SOLO se si conferma email
     const _lms = await lmsModel.create({
       name,
       email,
