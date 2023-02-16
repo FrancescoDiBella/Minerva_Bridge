@@ -36,9 +36,8 @@
   "mailer":{
     "host":"smtp.gmail.com",
     "port":2525,
-    "auth":{
-      "user" : "francescino10401@gmail.com",
-      "password" : "78zsxF10)"
-    }
+    "email" : "inser email here",
+    "pass" : "insert pass"
+
   }
 }
