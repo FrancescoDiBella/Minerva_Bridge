@@ -19,21 +19,19 @@ exports.Lms = class Lms extends Service {
       name,
       email,
       password,
-      secret
+      secret,
+      verified: false
     })
 
     const id = _lms.id;
     const created_at = _lms.createdAt;
     const updated_at = _lms.updatedAt;
-    /*
+
     await this.app.service('mails').create({
-        from: this.app.get("email"),
+        from: this.app.get("mailer").email,
         to: email,
-        subject: "Conferma email",
-        text:"ciao",
-        html: "<h1> Conferma la tua mail: </h1> <br> <button>Conferma</button>"
       })
-    */
+
     return {
       idLms: id,
       name,

@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
-const nodemailer = require('nodemailer')
+const nodemailer = require('nodemailer');
+const jwt = require('jsonwebtoken');
 
 exports.Mails = class Mails{
   constructor (options, app) {
@@ -10,11 +11,13 @@ exports.Mails = class Mails{
         port: 465,
         secure: true,
         auth:{
-          user: this.app.get("mailer.email"),
-          pass: this.app.get("mailer.pass"),
+          user: this.app.get("mailer").email,
+          pass: this.app.get("mailer").pass,
         }
       }
     );
+
+    console.log(this.transporter)
   }
 
   async find (params) {
@@ -28,8 +31,23 @@ exports.Mails = class Mails{
   }
 
   async create (data, params) {
+    const email_to = data.to;
+    const email_from = data.from;
+    /*
 
-    return this.transporter.sendMail(data, function(error, info){
+    */
+    const token = await this.createToken(email_to);
+    const url = `http://localhost:3030/verify-email?token=${token}`;
+
+    const message = {
+      from: email_from,
+      to: email_to,
+      subject: "Conferma email LMS",
+      text:"",
+      html: `<h1> Conferma la tua mail: </h1> <br> <a href="${url}">Conferma la tua mail</a>`
+    }
+
+    return this.transporter.sendMail(message, function(error, info){
       if(error){
         console.log(error);
       }else{
@@ -49,4 +67,10 @@ exports.Mails = class Mails{
   async remove (id, params) {
     return { id };
   }
+  async createToken(email){
+    const token = jwt.sign({ email }, this.app.get('authentication').secret, { expiresIn: '1h' });
+    return token;
+  }
+
+
 };

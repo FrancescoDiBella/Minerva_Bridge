@@ -23,6 +23,11 @@ module.exports = function (app) {
     secret:{
       type: DataTypes.STRING,
       allowNull: false
+    },
+    verified:{
+      type: DataTypes.BOOLEAN,
+      default: false,
+      allowNull: false
     }
   }, {
     hooks: {
