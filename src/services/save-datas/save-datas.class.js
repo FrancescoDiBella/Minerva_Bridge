@@ -124,6 +124,11 @@ exports.SaveDatas = class SaveDatas {
     return {statusMsg:"Statement saved"};
   }
 
+  async toSCORM(obj){
+    //routine di standardizzazione in oggeto SCORM compatibile
+    //decidere i campi a cosa equivalgano
+  }
+
   async update (id, data, params) {
     return data;
   }
