@@ -14,7 +14,7 @@ exports.VerifyEmail = class VerifyEmail {
     console.log(email)
     if (email) {
       await lmsService.update({verified: true }, { where: { email }})
-      return "Email Verificata"
+      return "<h1>Email Verificata</h1>"
     }else{
       return "Errore"
     }
