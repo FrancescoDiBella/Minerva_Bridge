@@ -3,6 +3,7 @@ const _utenti = require('../../models/access.model');
 const getAuth = require('../../models/get-auth-code.model');
 const hook = require('../../models/hook.model')
 var TinCan = require('tincanjs');
+const jsonld = require('jsonld');
 
 exports.SaveDatas = class SaveDatas {
   constructor (options, app) {
