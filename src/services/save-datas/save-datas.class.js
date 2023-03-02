@@ -43,7 +43,7 @@ exports.SaveDatas = class SaveDatas {
   }
 
   async create (data, params) {
-    const {datas, payload} = data;
+    const {save_data, payload} = data;
 
     const {idUsr} = payload;
     const {idLms} = payload
@@ -73,9 +73,12 @@ exports.SaveDatas = class SaveDatas {
     if(!_utente){
       return {statusMsg:"Errore, token errato o authCode non verificato"};
     }
-
+    console.log(save_data["ssn:hasValue"]["ssn:hasValue"]['ssn:hasLocation'])
     if(_hook.type == 'XAPI'){
-      //richiamare routine di salvataggio dei dati
+      //richiamare routine di salvataggio dei datiù
+      var cont = new TinCan.Context({
+
+      })
       var statement = new TinCan.Statement(
         {
             actor: {
@@ -88,10 +91,18 @@ exports.SaveDatas = class SaveDatas {
                 }
             },
             verb: {
-                id: "http://adlnet.gov/expapi/verbs/experienced"
+                id: save_data['xapi:verb']['@id'],
+                display: save_data['xapi:verb']['display']
             },
             target: {
-                id: "http://rusticisoftware.github.com/TinCanJS"
+                id: save_data['@context']['unity'] +save_data["ssn:hasValue"]["ssn:hasValue"]["ssn:observes"]["ssn:isPropertyOf"]
+            },
+            context:{
+              position: {
+                x: save_data["ssn:hasValue"]["ssn:hasValue"]['ssn:hasLocation']["wgs84:lat"],
+                y: save_data["ssn:hasValue"]["ssn:hasValue"]['ssn:hasLocation']["wgs84:long"],
+                z: 0.0
+              }
             }
         }
       );

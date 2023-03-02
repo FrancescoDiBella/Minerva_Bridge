@@ -6,7 +6,7 @@ module.exports = {
     all: [ // Manually check the JWT and throw an error if it is invalid
       async context => {
         const { headers } = context.params;
-        const datas = context.data.datas;
+        const save_data = context.data.save_data;
         // Check if the `Authorization` header is present
         if (!headers.authorization) {
           throw new Error('Missing `Authorization` header');
@@ -21,7 +21,7 @@ module.exports = {
           const payload = jwt.verify(token, secret);
 
           const clientData = {
-            datas,
+            save_data,
             payload
           }
           context.data = clientData;
