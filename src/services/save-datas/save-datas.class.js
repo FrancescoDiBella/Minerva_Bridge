@@ -77,7 +77,12 @@ exports.SaveDatas = class SaveDatas {
     await this.traverseObject(save_data)
 
     if(_hook.type == 'XAPI'){
-      //richiamare routine di salvataggio dei datiù
+      /*
+        fare check sul valore di save_data['hasValue']['value']['contextOption']["@type"], switch case per settare al meglio l'oggetto che definisce l'extension
+      */
+
+
+
         // Costruiamo l'oggetto context dall'oggetto JSON-LD
       const names_tmp = save_data['@id'].split(':');
       const target_name = names_tmp[names_tmp.length - 1]
