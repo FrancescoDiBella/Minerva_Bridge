@@ -76,9 +76,22 @@ exports.SaveDatas = class SaveDatas {
     console.log(save_data["ssn:hasValue"]["ssn:hasValue"]['ssn:hasLocation'])
     if(_hook.type == 'XAPI'){
       //richiamare routine di salvataggio dei datiù
-      var cont = new TinCan.Context({
-
-      })
+        // Costruiamo l'oggetto context dall'oggetto JSON-LD
+      var context = {
+        extensions: {
+          "http://example.org/xapi/extensions/unity": {
+            object: save_data["@id"],
+            property: save_data["ssn:hasValue"]["ssn:hasValue"]["ssn:verb"]["ssn:hasValue"],
+            scene: save_data["ssn:hasValue"]["ssn:hasValue"]["ssn:verb"]["ssn:isPropertyOf"]
+          },
+          "http://id.tincanapi.com/extension/geojson": {
+            location: {
+              type: "Point",
+              coordinates: [parseFloat(save_data["ssn:hasValue"]["ssn:hasValue"]["ssn:hasLocation"]["wgs84:long"]), parseFloat(save_data["ssn:hasValue"]["ssn:hasValue"]["ssn:hasLocation"]["wgs84:lat"])]
+            }
+          }
+        }
+      };
       var statement = new TinCan.Statement(
         {
             actor: {
@@ -86,7 +99,7 @@ exports.SaveDatas = class SaveDatas {
                 //idUsr: idUsr
                 name: idUsr,
                 account: {
-                  homePage: "http://.com",
+                  homePage: "http://"+idUsr+".com",
                   name: idUsr
                 }
             },
@@ -95,15 +108,9 @@ exports.SaveDatas = class SaveDatas {
                 display: save_data['xapi:verb']['display']
             },
             target: {
-                id: save_data['@context']['unity'] +save_data["ssn:hasValue"]["ssn:hasValue"]["ssn:observes"]["ssn:isPropertyOf"]
+                id: save_data['@context']['unity'] +save_data["ssn:hasValue"]["ssn:hasValue"]["ssn:verb"]["ssn:isPropertyOf"]
             },
-            context:{
-              position: {
-                x: save_data["ssn:hasValue"]["ssn:hasValue"]['ssn:hasLocation']["wgs84:lat"],
-                y: save_data["ssn:hasValue"]["ssn:hasValue"]['ssn:hasLocation']["wgs84:long"],
-                z: 0.0
-              }
-            }
+            context
         }
       );
 
