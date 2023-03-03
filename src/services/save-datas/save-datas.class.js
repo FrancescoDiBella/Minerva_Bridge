@@ -73,25 +73,33 @@ exports.SaveDatas = class SaveDatas {
     if(!_utente){
       return {statusMsg:"Errore, token errato o authCode non verificato"};
     }
-    console.log(save_data["ssn:hasValue"]["ssn:hasValue"]['ssn:hasLocation'])
+
+    await this.traverseObject(save_data)
+
     if(_hook.type == 'XAPI'){
       //richiamare routine di salvataggio dei datiù
         // Costruiamo l'oggetto context dall'oggetto JSON-LD
+      const names_tmp = save_data['@id'].split(':');
+      const target_name = names_tmp[names_tmp.length - 1]
+
       var context = {
         extensions: {
           "http://example.org/xapi/extensions/unity": {
-            object: save_data["@id"],
-            property: save_data["ssn:hasValue"]["ssn:hasValue"]["ssn:verb"]["ssn:hasValue"],
-            scene: save_data["ssn:hasValue"]["ssn:hasValue"]["ssn:verb"]["ssn:isPropertyOf"]
+            object: save_data['@id'],
+            property: save_data["hasValue"]["value"]["object"]["value"],
+            scene: target_name
           },
           "http://id.tincanapi.com/extension/geojson": {
             location: {
               type: "Point",
-              coordinates: [parseFloat(save_data["ssn:hasValue"]["ssn:hasValue"]["ssn:hasLocation"]["wgs84:long"]), parseFloat(save_data["ssn:hasValue"]["ssn:hasValue"]["ssn:hasLocation"]["wgs84:lat"])]
+              coordinates: [parseFloat(save_data['hasValue']['value']['contextOption']["value"]['coordinates'][0]), parseFloat(save_data['hasValue']['value']['contextOption']["value"]['coordinates'][1])]
             }
           }
         }
       };
+
+
+
       var statement = new TinCan.Statement(
         {
             actor: {
@@ -104,11 +112,11 @@ exports.SaveDatas = class SaveDatas {
                 }
             },
             verb: {
-                id: save_data['xapi:verb']['@id'],
-                display: save_data['xapi:verb']['display']
+                id: save_data['xapi:verb'].value.id,
+                display: save_data['xapi:verb'].value.display
             },
             target: {
-                id: save_data['@context']['unity'] +save_data["ssn:hasValue"]["ssn:hasValue"]["ssn:verb"]["ssn:isPropertyOf"]
+                id: 'http://example.org/unity#'+target_name
             },
             context
         }
@@ -146,6 +154,16 @@ exports.SaveDatas = class SaveDatas {
   async toSCORM(obj){
     //routine di standardizzazione in oggeto SCORM compatibile
     //decidere i campi a cosa equivalgano
+  }
+
+  async traverseObject(obj) {
+    for (const prop in obj) {
+      if (typeof obj[prop] === "object") {
+        await this.traverseObject(obj[prop]);
+      } else {
+        console.log(`${prop}: ${obj[prop]}`);
+      }
+    }
   }
 
   async update (id, data, params) {
