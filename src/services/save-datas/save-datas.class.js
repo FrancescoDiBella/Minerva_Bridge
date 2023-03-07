@@ -82,34 +82,26 @@ exports.SaveDatas = class SaveDatas {
       */
 
 
-
-        // Costruiamo l'oggetto context dall'oggetto JSON-LD
-      const names_tmp = save_data['@id'].split(':');
+      // Costruiamo l'oggetto context dall'oggetto JSON-LD
+      const names_tmp = save_data['id'].split(':');
       const target_name = names_tmp[names_tmp.length - 1]
 
       var context = {
         extensions: {
           "http://example.org/xapi/extensions/unity": {
-            object: save_data['@id'],
-            property: save_data["hasValue"]["value"]["object"]["value"],
-            scene: target_name
+            scene: names_tmp[5],
+            object: target_name
           },
-          "http://id.tincanapi.com/extension/geojson": {
-            location: {
-              type: "Point",
-              coordinates: [parseFloat(save_data['hasValue']['value']['contextOption']["value"]['coordinates'][0]), parseFloat(save_data['hasValue']['value']['contextOption']["value"]['coordinates'][1])]
-            }
+          "http://id.tincanapi.com/extension/3dObjectsProperties": {
+            properties: save_data['properties'].value
           }
         }
       };
-
-
 
       var statement = new TinCan.Statement(
         {
             actor: {
                 //mbox: "mailto:info@tincanapi.com",
-                //idUsr: idUsr
                 name: idUsr,
                 account: {
                   homePage: "http://"+idUsr+".com",
@@ -117,8 +109,8 @@ exports.SaveDatas = class SaveDatas {
                 }
             },
             verb: {
-                id: save_data['xapi:verb'].value.id,
-                display: save_data['xapi:verb'].value.display
+                id: "https://test.org/verbs/"+save_data['verb'].value.display.text['en-us'],
+                display: save_data['verb'].value.display.text
             },
             target: {
                 id: 'http://example.org/unity#'+target_name
