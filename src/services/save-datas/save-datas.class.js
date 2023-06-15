@@ -4,6 +4,7 @@ const getAuth = require('../../models/get-auth-code.model');
 const hook = require('../../models/hook.model')
 var TinCan = require('tincanjs');
 const jsonld = require('jsonld');
+const axios = require('axios')
 
 exports.SaveDatas = class SaveDatas {
   constructor (options, app) {
@@ -43,6 +44,7 @@ exports.SaveDatas = class SaveDatas {
   }
 
   async create (data, params) {
+    console.log(data)
     const {save_data, payload} = data;
 
     const {idUsr} = payload;
@@ -113,7 +115,7 @@ exports.SaveDatas = class SaveDatas {
                 display: save_data['verb'].value.display.text
             },
             target: {
-                id: 'http://example.org/unity#'+target_name
+                id: 'http://example.org/Minerva/'+target_name
             },
             context
         }
@@ -142,15 +144,96 @@ exports.SaveDatas = class SaveDatas {
       );
     }else if(_hook.type == 'SCORM'){
       //routine che prende l'URL del server al quale inviare la roba che ci arriva
+      var _token = null;
+      await axios.get("https://sfera.elogos.cloud/scorms/getToken")
+      .then(response => {
+        _token = response.data.token;
+      })
+      .catch(error => {
+        console.error('Errore:', error);
+      });
+
+      if(_token != null){
+        const config = {
+          'headers': {
+            'Authorization': 'Bearer '+_token,
+            'Content-Type': 'application/json'
+          }
+        };
+
+        console.log(JSON.stringify(save_data));
+
+        const scorm = {
+          "id_member" : "1",
+          "id_modulo" : "2",
+          "data" : [
+              {
+                  "element":"cmi.core.score.raw",
+                  "value": save_data.score
+              },
+              {
+                  "element":"adlcp:masteryscore",
+                  "value":save_data.score
+              },
+              {
+                  "element":"cmi.student_data.mastery_score",
+                  "value":save_data.score
+              },
+              {
+                  "element":"cmi.launch_data",
+                  "value":"launch_data"
+              },
+                {
+                  "element":"cmi.suspend_data",
+                  "value":"{\"position\":[1, 2, 1], \"isOn\":false}"
+              },
+              {
+                  "element":"cmi.core.lesson_location",
+                  "value":"lesson_location"
+              },
+              {
+                  "element":"cmi.core.lesson_status",
+                  "value":"progress"
+              },
+              {
+                  "element":"cmi.core.lesson_location",
+                  "value":"lesson_location"
+              },
+              {
+                  "element":"cmi.core.entry",
+                  "value":"entry"
+              },
+              {
+                  "element":"cmi.core.exit",
+                  "value":"exit"
+              },
+              {
+                  "element":"cmi.core.total_time",
+                  "value":"02:00:12"
+              },
+              {
+                  "element":"cmi.core.session_time",
+                  "value":"01:00:00"
+              }]
+          };
+
+        await axios.post('https://sfera.elogos.cloud/scorms/commit', scorm, config)
+        .then(response => {
+          return "SCORM DATA SAVED!"
+        })
+        .catch(error => {
+          console.error('Errore:', error);
+          return "SCORM DATA NOT SAVED!"
+        });
+      }
     }
 
 
-    return {statusMsg:"Statement saved"};
+    return {statusMsg:"Change saved"};
   }
 
   async toSCORM(obj){
     //routine di standardizzazione in oggeto SCORM compatibile
-    //decidere i campi a cosa equivalgano
   }
 
   async traverseObject(obj) {
