@@ -185,7 +185,7 @@ exports.SaveDatas = class SaveDatas {
               },
                 {
                   "element":"cmi.suspend_data",
-                  "value":"{\"position\":[1, 2, 1], \"isOn\":false}"
+                  "value":save_data.minerva_data
               },
               {
                   "element":"cmi.core.lesson_location",
@@ -225,6 +225,8 @@ exports.SaveDatas = class SaveDatas {
           console.error('Errore:', error);
           return "SCORM DATA NOT SAVED!"
         });
+      }else{
+        return {statusMsg:"Error"}
       }
     }
 
