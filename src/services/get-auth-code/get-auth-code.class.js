@@ -2,6 +2,7 @@ const { Service } = require('feathers-sequelize');
 const getAuth = require('../../models/get-auth-code.model');
 const utenti = require('../../models/access.model');
 const crypto = require('crypto');
+const { BadRequest } = require('@feathersjs/errors');
 
 exports.GetAuthCode = class GetAuthCode extends Service {
   constructor(options, app){
@@ -11,8 +12,8 @@ exports.GetAuthCode = class GetAuthCode extends Service {
 
   async create(data, params){
     const { idApp3D } = data;
-    if(idApp3D == null || idApp3D == undefined){
-      throw new Error("Nessun idApp3D fornito.")
+    if(idApp3D == null || idApp3D == undefined || idApp3D == "" || idApp3D == " "){
+      throw new BadRequest("Nessun idApp3D fornito.")
     }
     const getAuthModel = getAuth(this.app);
     const utentiModel = utenti(this.app);
@@ -25,7 +26,7 @@ exports.GetAuthCode = class GetAuthCode extends Service {
     });
 
     if(!user){
-      return {statusMsg:"Non c'è nessun utente associato all'App3D."};
+      throw new BadRequest("Non c'è nessun utente associato all'App3D o non esiste nessun App3D con tale id.");
     }
 
     const code = this.generateAuth();
