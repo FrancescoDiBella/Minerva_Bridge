@@ -56,6 +56,7 @@ exports.JwtService = class JwtService extends AuthenticationService {
       }
 
       if(_utente.validated === false){
+        //return the status of the operation, the authCode is not validated
         statusMsg = "L'authCode non è stato validato attraverso la piattaforma di e-learning!"
         return {statusMsg};
       }
