@@ -22,7 +22,7 @@ exports.GetAuthCode = class GetAuthCode extends Service {
     });
 
     if(!user){
-      return {statusMsg:"Non c'è nessun utente registrato realtivamente all'App3D."};
+      return {statusMsg:"Non c'è nessun utente associato all'App3D."};
     }
 
     const code = this.generateAuth();

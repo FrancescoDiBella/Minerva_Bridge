@@ -23,7 +23,7 @@ exports.ValidatePairing = class ValidatePairing {
     const getAuthModel = getAuth(this.app);
     const utentiModel = utenti(this.app);
 
-    //Check if exists a user with idLms and idUsr
+    //Check if exists a user with idLms and idUsr and idApp3D
     const user = await utentiModel.findOne({
       where: {
         idLms,
@@ -35,7 +35,7 @@ exports.ValidatePairing = class ValidatePairing {
     if(!user){
       return {statusMsg:"Utente non presente"};
     }
-    //check if there is a authCode assigned at user and if is the authCode passed
+    //check if there is a record for authCode assigned at that specific 3DApplication and if is the authCode passed
     const _utente = await getAuthModel.findOne({
       where: {
         idApp3D,
