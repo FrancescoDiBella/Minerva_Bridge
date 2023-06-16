@@ -1,6 +1,7 @@
 const { Service } = require('feathers-sequelize');
 const lms = require('../../models/lms.model');
-const crypto = require('crypto')
+const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
 
 exports.Lms = class Lms extends Service {
   constructor(options, app){
@@ -27,6 +28,12 @@ exports.Lms = class Lms extends Service {
     const created_at = _lms.createdAt;
     const updated_at = _lms.updatedAt;
 
+    const userData = {
+      email,
+      password
+    }
+    const key = this.app.get('authentication').secret;
+    const token = jwt.sign(userData, key);
     /*await this.app.service('mails').create({
         from: this.app.get("mailer").email,
         to: email,
@@ -36,6 +43,7 @@ exports.Lms = class Lms extends Service {
       idLms: id,
       name,
       email,
+      token,
       updatedAt:updated_at,
       createdAt:created_at
     };

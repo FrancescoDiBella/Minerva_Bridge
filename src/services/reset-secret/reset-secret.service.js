@@ -8,7 +8,7 @@ module.exports = function (app) {
   };
 
   // Initialize our service with any options it requires
-  app.use('/e-modules/resetSecret', new ResetSecret(options, app));
+  app.use('resetSecret', new ResetSecret(options, app));
 
   // Get our initialized service so that we can register hooks
   const service = app.service('resetSecret');

@@ -1,11 +1,15 @@
 /* eslint-disable no-unused-vars */
+const { NotAcceptable } = require('@feathersjs/errors')
+
 exports.ResetSecret = class ResetSecret {
   constructor (options) {
     this.options = options || {};
   }
 
   async find (params) {
-    return [];
+    if(params.msg == "email")
+      throw new NotAcceptable("L'email non è associata a nessun utente");
+    return params;
   }
 
   async get (id, params) {
@@ -15,11 +19,6 @@ exports.ResetSecret = class ResetSecret {
   }
 
   async create (data, params) {
-    if (Array.isArray(data)) {
-      return Promise.all(data.map(current => this.create(current, params)));
-    }
-
-    return data;
   }
 
   async update (id, data, params) {
