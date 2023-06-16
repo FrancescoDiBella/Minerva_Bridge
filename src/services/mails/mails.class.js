@@ -16,8 +16,6 @@ exports.Mails = class Mails{
         }
       }
     );
-
-    console.log(this.transporter)
   }
 
   async find (params) {
