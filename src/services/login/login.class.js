@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 const lms = require('../../models/lms.model');
 const bcrypt = require('bcrypt');
+const { BadRequest } = require('@feathersjs/errors');
 
 exports.Login = class Login {
   constructor (options, app) {
@@ -29,7 +30,7 @@ exports.Login = class Login {
     });
 
     if(!user){
-      return {errorMsg:"L'email non risulta associata a nessun LMS"};
+      throw new BadRequest("L'email non risulta associata a nessun LMS");
     }
 
     const passwordIsCorrect = await bcrypt.compare(password, user.password)
@@ -38,8 +39,7 @@ exports.Login = class Login {
       return {secret: user.secret}
     }
 
-    return {errorMsg:"Password sbagliata, ritenta"};
-
+    throw new BadRequest("Password sbagliata, ritenta");
   }
 
   async update (id, data, params) {
