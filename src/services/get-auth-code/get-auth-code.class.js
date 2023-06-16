@@ -11,6 +11,9 @@ exports.GetAuthCode = class GetAuthCode extends Service {
 
   async create(data, params){
     const { idApp3D } = data;
+    if(idApp3D == null || idApp3D == undefined){
+      throw new Error("Nessun idApp3D fornito.")
+    }
     const getAuthModel = getAuth(this.app);
     const utentiModel = utenti(this.app);
 
