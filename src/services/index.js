@@ -9,6 +9,9 @@ const hook = require('./hook/hook.service.js');
 const mails = require('./mails/mails.service.js');
 const verifyEmail = require('./verify-email/verify-email.service.js');
 const resetSecret = require('./reset-secret/reset-secret.service.js');
+const getSaveData = require('./get-save-data/get-save-data.service.js');
+const statements = require('./statements/statements.service.js');
+const storeSaveData = require('./store-save-data/store-save-data.service.js');
 // eslint-disable-next-line no-unused-vars
 module.exports = function (app) {
   app.configure(lms);
@@ -22,4 +25,7 @@ module.exports = function (app) {
   app.configure(mails);
   app.configure(verifyEmail);
   app.configure(resetSecret);
+  app.configure(getSaveData);
+  app.configure(statements);
+  app.configure(storeSaveData);
 };
