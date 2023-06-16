@@ -9,6 +9,7 @@ const login = require('./login/login.service.js');
 const hook = require('./hook/hook.service.js');
 const mails = require('./mails/mails.service.js');
 const verifyEmail = require('./verify-email/verify-email.service.js');
+const resetSecret = require('./reset-secret/reset-secret.service.js');
 // eslint-disable-next-line no-unused-vars
 module.exports = function (app) {
   app.configure(lms);
@@ -22,4 +23,5 @@ module.exports = function (app) {
   app.configure(hook);
   app.configure(mails);
   app.configure(verifyEmail);
+  app.configure(resetSecret);
 };

@@ -20,17 +20,17 @@ exports.Lms = class Lms extends Service {
       email,
       password,
       secret,
-      verified: false
+      verified: true
     })
 
     const id = _lms.id;
     const created_at = _lms.createdAt;
     const updated_at = _lms.updatedAt;
 
-    await this.app.service('mails').create({
+    /*await this.app.service('mails').create({
         from: this.app.get("mailer").email,
         to: email,
-      })
+      })*/
 
     return {
       idLms: id,
