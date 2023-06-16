@@ -5,6 +5,7 @@ const hook = require('../../models/hook.model')
 var TinCan = require('tincanjs');
 const jsonld = require('jsonld');
 const axios = require('axios')
+const { BadRequest } = require('@feathersjs/errors');
 
 exports.SaveDatas = class SaveDatas {
   constructor (options, app) {
@@ -73,18 +74,18 @@ exports.SaveDatas = class SaveDatas {
     })
 
     if(!_utente){
-      return {statusMsg:"Errore, token errato o authCode non verificato"};
+      throw new BadRequest("Errore, token errato o authCode non verificato");
     }
 
     await this.traverseObject(save_data)
 
     if(_hook.type == 'XAPI'){
       /*
-        fare check sul valore di save_data['hasValue']['value']['contextOption']["@type"], switch case per settare al meglio l'oggetto che definisce l'extension
+        fare check sul valore di save_data['hasValue']['value']['contextOption']["@type"], switch case per settare al meglio l'oggetto che definisce l'estensione
       */
 
 
-      // Costruiamo l'oggetto context dall'oggetto JSON-LD
+      //rivedere per intero la logica della routine
       const names_tmp = save_data['id'].split(':');
       const target_name = names_tmp[names_tmp.length - 1]
 
@@ -226,7 +227,7 @@ exports.SaveDatas = class SaveDatas {
           return "SCORM DATA NOT SAVED!"
         });
       }else{
-        return {statusMsg:"Error"}
+        throw new Error("Errore interno, riprova!");
       }
     }
 
