@@ -7,8 +7,9 @@ exports.ResetSecret = class ResetSecret {
   }
 
   async find (params) {
-    if(params.msg == "email")
+    if(params.statusMsg == "email"){
       throw new NotAcceptable("L'email non è associata a nessun utente");
+    }
     return params;
   }
 
