@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 const getAuth = require('../../models/get-auth-code.model');
 const utenti = require('../../models/access.model');
+const { BadRequest } = require('@feathersjs/errors');
 
 exports.ValidatePairing = class ValidatePairing {
   constructor (options, app) {
@@ -33,7 +34,7 @@ exports.ValidatePairing = class ValidatePairing {
     });
 
     if(!user){
-      return {statusMsg:"Utente non presente"};
+      throw new BadRequest("Utente non presente");
     }
     //check if there is a record for authCode assigned at that specific 3DApplication and if is the authCode passed
     const _utente = await getAuthModel.findOne({
@@ -56,7 +57,7 @@ exports.ValidatePairing = class ValidatePairing {
     }
 
     //return the status of the operation, authCodes were never been emitted for that specific user
-    return {statusMsg:"Errore, non è stato emesso nessun authCode per l'utente indicato"};
+    throw new BadRequest("Errore, non è stato emesso nessun authCode per l'utente indicato");
 
   }
 
