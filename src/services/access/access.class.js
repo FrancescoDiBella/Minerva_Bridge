@@ -30,7 +30,7 @@ exports.Access = class Access extends Service {
 
     const secretIsCorrect = secret ==  user.secret ? true:false;
     if(secretIsCorrect){
-      //password is correct
+      //secret is correct
       //Check if user already exists
       const _user = await utentiModel.findOne({
         where: {

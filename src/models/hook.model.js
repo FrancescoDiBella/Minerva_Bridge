@@ -15,7 +15,7 @@ module.exports = function (app) {
       allowNull: false
     },
     type:{
-      type: DataTypes.STRING,
+      type: DataTypes.ENUM("XAPI", "SCORM"),
       allowNull: false
     }
   }, {

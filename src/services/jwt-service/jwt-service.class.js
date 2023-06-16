@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const { AuthenticationService } = require('@feathersjs/authentication');
 const getAuth = require('../../models/get-auth-code.model');
 const utenti = require('../../models/access.model');
+const { BadRequest } = require('@feathersjs/errors');
 
 exports.JwtService = class JwtService extends AuthenticationService {
   constructor (options, app) {
@@ -37,8 +38,7 @@ exports.JwtService = class JwtService extends AuthenticationService {
     });
 
     if(!user){
-      statusMsg = "Utente non presente";
-      return {statusMsg};
+      throw new BadRequest("L'utente non è presente nel database.")
     }
     //check if there is a authCode assigned at user and if is the authCode passed
     const _utente = await getAuthModel.findOne({
@@ -51,15 +51,15 @@ exports.JwtService = class JwtService extends AuthenticationService {
     if(_utente){
       if(_utente.authCode !== authCode){
         //return the status of the operation, the authCode was never emitted or the authCode is not correct
-        statusMsg = "Errore, l'authCode è errato, ritenta";
-        return {statusMsg};
+        throw new BadRequest("Errore, l'authCode è errato, ritenta")
+
       }
 
       if(_utente.validated === false){
         //return the status of the operation, the authCode is not validated
-        statusMsg = "L'authCode non è stato validato attraverso la piattaforma di e-learning!"
-        return {statusMsg};
+        throw new BadRequest("L'authCode non è stato validato attraverso la piattaforma di e-learning!")
       }
+
       const userData = data;
 
       // Generate the JWT using the user data and a secret key
@@ -71,8 +71,8 @@ exports.JwtService = class JwtService extends AuthenticationService {
     }
 
     //return the status of the operation, authCodes were never been emitted for that specific user
-    statusMsg = "Errore, non è stato emesso nessun authCode per l'utente indicato";
-    return {statusMsg};
+    throw new BadRequest("Errore, non è stato emesso nessun authCode per l'utente indicato")
+
   }
 
   async update (id, data, params) {
