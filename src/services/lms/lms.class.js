@@ -2,6 +2,7 @@ const { Service } = require('feathers-sequelize');
 const lms = require('../../models/lms.model');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
+const { BadRequest } = require('@feathersjs/errors');
 
 exports.Lms = class Lms extends Service {
   constructor(options, app){
@@ -16,6 +17,8 @@ exports.Lms = class Lms extends Service {
     const secret =  crypto.randomBytes(6).toString('hex');
     //criptare anche il secret
     //creare il secret SOLO se si conferma email
+    try{
+
     const _lms = await lmsModel.create({
       name,
       email,
@@ -46,6 +49,9 @@ exports.Lms = class Lms extends Service {
       token,
       updatedAt:updated_at,
       createdAt:created_at
-    };
+    }}
+    catch(e){
+      throw new BadRequest("Errore nella creazione utente, ricontrollare i dati.")
+    }
   }
 };
