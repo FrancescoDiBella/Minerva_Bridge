@@ -27,6 +27,14 @@ exports.JwtService = class JwtService extends AuthenticationService {
     const { authCode, idApp3D} = data;
     const getAuthModel = getAuth(this.app);
 
+    if(authCode == undefined){
+      throw new BadRequest("Non è stato fornito l'authCode!")
+    }
+
+    if(idApp3D == undefined){
+      throw new BadRequest("Non è stato fornito l'idApp3D!")
+    }
+
     //check if there is a authCode assigned at user and if is the authCode passed
     const _utente = await getAuthModel.findOne({
       where: {
