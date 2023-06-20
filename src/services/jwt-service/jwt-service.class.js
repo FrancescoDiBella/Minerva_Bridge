@@ -24,37 +24,18 @@ exports.JwtService = class JwtService extends AuthenticationService {
 
   async create (data, params) {
     // Get the user data from the request body
-    const { idLms, idUsr, authCode, idApp3d} = data;
+    const { authCode, idApp3D} = data;
     const getAuthModel = getAuth(this.app);
-    const utentiModel = utenti(this.app);
 
-    let statusMsg = "";
-    //Check if exists a user with idLms and idUsr
-    const user = await utentiModel.findOne({
-      where: {
-        idLms: idLms,
-        idUsr: idUsr
-      }
-    });
-
-    if(!user){
-      throw new BadRequest("L'utente non è presente nel database.")
-    }
     //check if there is a authCode assigned at user and if is the authCode passed
     const _utente = await getAuthModel.findOne({
       where: {
-        idLms: idLms,
-        idUsr: idUsr
+        authCode,
+        idApp3D
       }
     });
 
     if(_utente){
-      if(_utente.authCode !== authCode){
-        //return the status of the operation, the authCode was never emitted or the authCode is not correct
-        throw new BadRequest("Errore, l'authCode è errato, ritenta")
-
-      }
-
       if(_utente.validated === false){
         //return the status of the operation, the authCode is not validated
         throw new BadRequest("L'authCode non è stato validato attraverso la piattaforma di e-learning!")
@@ -71,7 +52,7 @@ exports.JwtService = class JwtService extends AuthenticationService {
     }
 
     //return the status of the operation, authCodes were never been emitted for that specific user
-    throw new BadRequest("Errore, non è stato emesso nessun authCode per l'utente indicato")
+    throw new BadRequest("Errore, non è stato emesso nessun authCode per l'app 3D indicata o l'authCode è errato")
 
   }
 
