@@ -1,15 +1,15 @@
-const { authenticate } = require('@feathersjs/authentication').hooks;
+const internalOnly = require('../../internal-only');
 
 
 module.exports = {
   before: {
     all: [],
-    find: [],
-    get: [],
+    find: [internalOnly],
+    get: [internalOnly],
     create: [],
-    update: [],
-    patch: [],
-    remove: []
+    update: [internalOnly],
+    patch: [internalOnly],
+    remove: [internalOnly]
   },
 
   after: {
