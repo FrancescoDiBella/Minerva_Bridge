@@ -9,12 +9,10 @@ module.exports = function (app) {
     idLms:{
       type: DataTypes.STRING,
       allowNull: true,
-      unique:true
     },
     idUsr:{
       type: DataTypes.STRING,
       allowNull: true,
-      unique:true
     },
     idApp3D: {
       type: DataTypes.STRING,
