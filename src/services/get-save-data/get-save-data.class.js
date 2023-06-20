@@ -1,7 +1,8 @@
 /* eslint-disable no-unused-vars */
 exports.GetSaveData = class GetSaveData {
-  constructor (options) {
+  constructor (options, app) {
     this.options = options || {};
+    this.app = app;
   }
 
   async find (params) {
