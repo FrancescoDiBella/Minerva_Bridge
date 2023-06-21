@@ -34,7 +34,7 @@ exports.ValidatePairing = class ValidatePairing {
     });
 
     if(!user){
-      throw new BadRequest("Utente non presente");
+      throw new BadRequest("Id Utente non presente");
     }
     //check if there is a record for authCode assigned at that specific 3DApplication and if is the authCode passed
     const _user = await getAuthModel.findOne({
