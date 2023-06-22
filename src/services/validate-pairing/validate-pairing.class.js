@@ -64,11 +64,10 @@ exports.ValidatePairing = class ValidatePairing {
       })
 
       return {statusMsg:"authCode validato!"};
+    }else{
+      //return the status of the operation, authCodes were never been emitted for that specific user
+      throw new BadRequest("Errore, non è stato emesso nessun authCode per l'utente indicato");
     }
-
-    //return the status of the operation, authCodes were never been emitted for that specific user
-    throw new BadRequest("Errore, non è stato emesso nessun authCode per l'utente indicato");
-
   }
 
   async update (id, data, params) {
