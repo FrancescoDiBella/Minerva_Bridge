@@ -8,10 +8,10 @@ module.exports = function (app) {
   };
 
   // Initialize our service with any options it requires
-  app.use('/storeSaveData', new StoreSaveData(options, app));
+  app.use('/3d-modules/storeSaveData', new StoreSaveData(options, app));
 
   // Get our initialized service so that we can register hooks
-  const service = app.service('storeSaveData');
+  const service = app.service('/3d-modules/storeSaveData');
 
   service.hooks(hooks);
 };
