@@ -1,6 +1,7 @@
 const { Service } = require('feathers-sequelize');
 const lms = require('../../models/lms.model');
 const _utenti = require('../../models/access.model');
+const {BadRequest} = require('@feathersjs/errors');
 
 exports.Access = class Access extends Service {
   constructor(options, app){
@@ -24,8 +25,7 @@ exports.Access = class Access extends Service {
     });
 
     if(!user){
-      //throw new BadRequest("LMS non registrato.");
-      return {errorMsg:"LMS non registrato."};
+      throw new BadRequest("LMS non registrato.");
     }
 
     const secretIsCorrect = secret ==  user.secret ? true:false;
@@ -41,8 +41,7 @@ exports.Access = class Access extends Service {
       });
 
       if(_user){
-        //throw new BadRequest("Secret errato, riprovare");
-        return {errorMsg:"Utente già presente"};
+        throw new BadRequest("Utente già presente");
       }
 
       await utentiModel.create({
@@ -56,8 +55,6 @@ exports.Access = class Access extends Service {
 
     }
 
-    //throw new BadRequest("Secret errato, riprovare");
-    return {errorMsg:"Secret errato, riprovare"};
-
+    throw new BadRequest("Secret errato, riprovare");
   }
 };
