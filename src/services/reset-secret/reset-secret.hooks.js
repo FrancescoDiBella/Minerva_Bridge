@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const lms = require('../../models/lms.model');
 const crypto = require('crypto');
 const { NotAuthenticated } = require('@feathersjs/errors')
+const {BadRequest} = require('@feathersjs/errors');
 
 module.exports = {
   before: {
@@ -14,7 +15,7 @@ module.exports = {
 
       // Check if the `Authorization` header is present
       if (!headers.authorization) {
-        throw new Error('Manca l\'header `Authorization`');
+        throw new BadRequest('Manca l\'header `Authorization`');
       }
 
       // Extract the JWT from the `Authorization` header
