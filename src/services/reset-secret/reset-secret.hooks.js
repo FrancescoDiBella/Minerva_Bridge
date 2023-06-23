@@ -1,4 +1,3 @@
-const { authenticate } = require('@feathersjs/authentication').hooks;
 const jwt = require('jsonwebtoken');
 const lms = require('../../models/lms.model');
 const crypto = require('crypto');
@@ -15,7 +14,7 @@ module.exports = {
 
       // Check if the `Authorization` header is present
       if (!headers.authorization) {
-        throw new Error('Missing `Authorization` header');
+        throw new Error('Manca l\'header `Authorization`');
       }
 
       // Extract the JWT from the `Authorization` header
@@ -32,12 +31,13 @@ module.exports = {
         context.data = clientData;
       } catch (error) {
         // If the JWT is invalid, throw an error
-        throw new NotAuthenticated('Unauthorized, token not valid!')
+        throw new NotAuthenticated('Token non valido!')
       }
 
       const user = await lmsModel.findOne({
         where: {
-          email: context.data.payload.email
+          email: context.data.payload.email,
+          password: context.data.payload.password
         }
       });
 
@@ -50,7 +50,8 @@ module.exports = {
       await lmsModel.update({secret},{
         where:{
           verified:true,
-          email: context.data.payload.email
+          email: context.data.payload.email,
+          password: context.data.payload.password
         }
       })
       context.params = {statusMsg:"Secret resettato", secret}
