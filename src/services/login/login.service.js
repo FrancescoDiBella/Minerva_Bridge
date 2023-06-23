@@ -8,10 +8,10 @@ module.exports = function (app) {
   };
 
   // Initialize our service with any options it requires
-  app.use('/login', new Login(options, app));
+  app.use('/e-modules/getSecret', new Login(options, app));
 
   // Get our initialized service so that we can register hooks
-  const service = app.service('login');
+  const service = app.service('/e-modules/getSecret');
 
   service.hooks(hooks);
 };

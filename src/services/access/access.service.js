@@ -10,10 +10,10 @@ module.exports = function (app) {
   };
 
   // Initialize our service with any options it requires
-  app.use('/e-modules/access', new Access(options, app));
+  app.use('/e-modules/createUser', new Access(options, app));
 
   // Get our initialized service so that we can register hooks
-  const service = app.service('e-modules/access');
+  const service = app.service('e-modules/createUser');
 
   service.hooks(hooks);
 };
