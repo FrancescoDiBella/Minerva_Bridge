@@ -32,7 +32,7 @@ module.exports = {
 
         } catch (error) {
           // If the JWT is invalid, throw an error
-          throw new NotAuthenticated('Token non valido o scaduto.');
+          throw new NotAuthenticated('Token non valido!');
         }
       }
     ],
