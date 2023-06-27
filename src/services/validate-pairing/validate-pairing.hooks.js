@@ -14,7 +14,7 @@ module.exports = {
           const data = context.data;
           // Check if the `Authorization` header is present
           if (!headers.authorization) {
-            throw new BadRequest('Missing `Authorization` header');
+            throw new BadRequest("Manca l\'header `Authorization`");
           }
 
           // Extract the JWT from the `Authorization` header
@@ -31,7 +31,7 @@ module.exports = {
 
           } catch (error) {
             // If the JWT is invalid, throw an error
-            throw new NotAuthenticated('Token non valido o scaduto.');
+            throw new NotAuthenticated('Token non valido.');
           }
         }
       ],
