@@ -51,7 +51,7 @@ exports.Lms = class Lms extends Service {
       createdAt:created_at
     }}
     catch(e){
-      throw new BadRequest("Errore nella creazione utente, ricontrollare i dati.")
+      throw new BadRequest("Errore nella creazione utente LMS, ricontrollare i dati.")
     }
   }
 };
