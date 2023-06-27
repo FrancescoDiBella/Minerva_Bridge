@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-const { NotAcceptable } = require('@feathersjs/errors')
+const { BadRequest } = require('@feathersjs/errors')
 
 exports.ResetSecret = class ResetSecret {
   constructor (options) {
@@ -8,7 +8,7 @@ exports.ResetSecret = class ResetSecret {
 
   async find (params) {
     if(params.statusMsg == "email"){
-      throw new NotAcceptable("L'email non è associata a nessun utente");
+      throw new BadRequest("L'email non è associata a nessun utente");
     }
     return params;
   }
