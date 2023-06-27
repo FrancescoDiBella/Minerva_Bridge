@@ -13,7 +13,7 @@ exports.GetAuthCode = class GetAuthCode extends Service {
   async create(data, params){
     const { idApp3D } = data;
     if(idApp3D == null || idApp3D == undefined || idApp3D == "" || idApp3D == " "){
-      throw new BadRequest("Nessun idApp3D fornito.")
+      throw new BadRequest("Non è stato fornito l'idApp3D.")
     }
     const getAuthModel = getAuth(this.app);
     const utentiModel = utenti(this.app);

@@ -60,7 +60,7 @@ exports.JwtService = class JwtService extends AuthenticationService {
     }
 
     //return the status of the operation, authCodes were never been emitted for that specific user
-    throw new BadRequest("Errore, non è stato emesso nessun authCode per l'app 3D indicata o l'authCode è errato")
+    throw new BadRequest("Non è stato emesso nessun authCode per l'app 3D indicata o l'authCode è errato")
 
   }
 
