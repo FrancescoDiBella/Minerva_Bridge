@@ -13,6 +13,7 @@ const getSaveData = require('./get-save-data/get-save-data.service.js');
 const statements = require('./statements/statements.service.js');
 const storeSaveData = require('./store-save-data/store-save-data.service.js');
 const getToken = require('./get-token/get-token.service.js');
+const eModulesGetAuthCode = require('./e-modules-get-auth-code/e-modules-get-auth-code.service.js');
 // eslint-disable-next-line no-unused-vars
 module.exports = function (app) {
   app.configure(lms);
@@ -30,4 +31,5 @@ module.exports = function (app) {
   app.configure(statements);
   app.configure(storeSaveData);
   app.configure(getToken);
+  app.configure(eModulesGetAuthCode);
 };
