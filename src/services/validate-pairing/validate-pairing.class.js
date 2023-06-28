@@ -34,7 +34,7 @@ exports.ValidatePairing = class ValidatePairing {
     });
 
     if(!user){
-      throw new BadRequest("Non c’è nessun utente associato a tale idUsr");
+      throw new BadRequest("Non c'è nessun utente associato a tale idUsr");
     }
     //check if there is a record for authCode assigned at that specific 3DApplication and if is the authCode passed
     const _user = await getAuthModel.findOne({
@@ -66,7 +66,7 @@ exports.ValidatePairing = class ValidatePairing {
       return {statusMsg:"authCode validato!"};
     }else{
       //return the status of the operation, authCodes were never been emitted for that specific user
-      throw new BadRequest("Non è stato emesso nessun authCode per l'utente indicato");
+      throw new BadRequest("Non è stato emesso nessun authCode per l'app 3D indicata o l'authCode è errato");
     }
   }
 
