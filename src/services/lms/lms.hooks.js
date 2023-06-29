@@ -1,5 +1,5 @@
 const { authenticate } = require('@feathersjs/authentication').hooks;
-
+const bcrypt = require('bcrypt');
 const {
   hashPassword, protect
 } = require('@feathersjs/authentication-local').hooks;
@@ -9,14 +9,21 @@ module.exports = {
     all: [],
     find: [ authenticate('jwt') ],
     get: [ authenticate('jwt') ],
-    create: [ hashPassword('password') ],
+    create: [
+      async (context) => {
+        const { password } = context.data;
+        const hashedPassword = await bcrypt.hash(password, 10);
+        context.data.password = hashedPassword;
+        return context;
+      }
+    ],
     update: [ hashPassword('password'),  authenticate('jwt') ],
     patch: [ hashPassword('password'),  authenticate('jwt') ],
     remove: [ authenticate('jwt') ]
   },
 
   after: {
-    all: [ 
+    all: [
       // Make sure the password field is never sent to the client
       // Always must be the last hook
       protect('password')
