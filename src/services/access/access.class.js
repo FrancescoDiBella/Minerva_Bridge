@@ -20,7 +20,7 @@ exports.Access = class Access extends Service {
     //Check if user exists;
     const user = await lmsModel.findOne({
       where: {
-        id: idLms
+        id: parseInt(idLms)
       }
     });
 
@@ -35,7 +35,7 @@ exports.Access = class Access extends Service {
       //Check if user already exists
       const _user = await utentiModel.findOne({
         where: {
-          idLms:idLms,
+          idLms:parseInt(idLms),
           idUsr: idUsr,
           idApp3D: idApp3D
         }
@@ -47,7 +47,7 @@ exports.Access = class Access extends Service {
 
       await utentiModel.create({
         idUsr,
-        idLms,
+        idLms: parseInt(idLms),
         idApp3D
       })
 

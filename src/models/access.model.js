@@ -11,7 +11,7 @@ module.exports = function (app) {
       allowNull: false
     },
     idLms: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false
     },
     idApp3D: {
@@ -34,8 +34,7 @@ module.exports = function (app) {
 
   // eslint-disable-next-line no-unused-vars
   utenti.associate = function (models) {
-    // Define associations here
-    // See https://sequelize.org/master/manual/assocs.html
+    utenti.belongsTo(models.lms);
   };
 
   return utenti;
