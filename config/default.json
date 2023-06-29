@@ -27,7 +27,7 @@
       "passwordField": "password"
     }
   },
-  "postgres": "postgres://user1:password@localhost:5432/minerva_bridge",
+  "postgres": "postgres://postgres:password@postgres:5432",
   "lrsql":{
     "endpoint":"http://127.0.0.1:8080/xapi",
     "username":"a1f579f1d31500af981ceb1c942629c8eaa6c5105b7db28171231ddaf7442a11",
