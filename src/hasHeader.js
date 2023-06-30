@@ -1,7 +1,10 @@
 const { NotAuthenticated } = require('@feathersjs/errors')
 
-module.exports = async function hasHeader( headers ){
-  if (!headers.authorization) {
-    throw new NotAuthenticated('Manca l\'header `Authorization`');
+exports.hasHeader = class hasHeader{
+  constructor () {}
+  async hasAuthorization( headers ){
+    if (!headers.authorization) {
+      throw new NotAuthenticated('Manca l\'header `Authorization`');
+    }
   }
 }
