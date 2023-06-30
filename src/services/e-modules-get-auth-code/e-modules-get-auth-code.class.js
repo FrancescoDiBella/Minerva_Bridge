@@ -1,4 +1,3 @@
-const { Service } = require('feathers-sequelize');
 const getAuth = require('../../models/get-auth-code.model');
 const utenti = require('../../models/access.model');
 const crypto = require('crypto');
