@@ -2,7 +2,6 @@
 const jwt = require('jsonwebtoken');
 const { AuthenticationService } = require('@feathersjs/authentication');
 const getAuth = require('../../models/get-auth-code.model');
-const utenti = require('../../models/access.model');
 const { BadRequest } = require('@feathersjs/errors');
 
 exports.JwtService = class JwtService extends AuthenticationService {
