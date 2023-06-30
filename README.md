@@ -41,18 +41,36 @@ or with the port selected at 4).
 
 8. To open and browse lrsql LRS go to http://localhost:8080/admin/index.html, login with Username: my_username and Password: my_password
 
-## Scaffolding
+## Getting Started
 
-Feathers has a powerful command line interface. Here are a few things it can do:
+1. Create a new `docker network`:
+    ```
+    docker network create minerva_network
+    ```
 
-```
-$ npm install -g @feathersjs/cli          # Install Feathers CLI
+2. Create an image of `minerva_bridge`:
+    ```
+    docker build -t minerva_bridge .
+    ```
 
-$ feathers generate service               # Generate a new Service
-$ feathers generate hook                  # Generate a new Hook
-$ feathers help                           # Show all commands
-```
+3. Start a postgres docker instance
+    
+    ```
+    docker run --name minerva-bridge -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres
+    ```
 
-## Help
+4. Start a minerva_bridge instance
 
-For more information on all the things you can do with Feathers visit [docs.feathersjs.com](http://docs.feathersjs.com).
+    ```
+    docker run -d --network minerva_network -p 3030:3030 --name minerva_bridge  minerva_bridge
+    ```
+
+5. Start a lrsql docker instance
+
+    ```
+    docker run -it -p 8080:8080 -e LRSQL_API_KEY_DEFAULT=my_key -e LRSQL_API_SECRET_DEFAULT=my_secret -e LRSQL_ADMIN_USER_DEFAULT=my_username -e LRSQL_ADMIN_PASS_DEFAULT=my_password -e LRSQL_ALLOW_ALL_ORIGINS=true -e LRSQL_DB_NAME=db/lrsql.sqlite.db -v lrsql-db:/lrsql/db yetanalytics/lrsql:latest
+    ```
+
+7. Edit ./config/default.json, line 31, lrsql.username to "my_key" and lrsql.password to "my_secret"
+
+8. To open and browse lrsql LRS go to http://localhost:8080/admin/index.html, login with Username: my_username and Password: my_password
