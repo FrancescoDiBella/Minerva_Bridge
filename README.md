@@ -57,7 +57,7 @@ or with the port selected at 4).
 3. Start a `postgres` docker instance:
     
     ```
-    docker run --name minerva-bridge -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres
+    docker run --network minerva_network --name minerva-bridge -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres
     ```
 
 4. Start a `minerva_bridge` docker instance:
