@@ -11,7 +11,7 @@ exports.VerifyEmail = class VerifyEmail {
   async find (params) {
     const email = await this.verifyToken(params.query.token);
     const lmsService = lms(this.app)
-    console.log(email)
+    //console.log(email)
     if (email) {
       await lmsService.update({verified: true }, { where: { email }})
       return "<h1>Email Verificata</h1>"

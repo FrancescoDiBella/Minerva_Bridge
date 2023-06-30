@@ -45,7 +45,7 @@ exports.SaveDatas = class SaveDatas {
   }
 
   async create (data, params) {
-    console.log(data)
+    //console.log(data)
     const {save_data, payload} = data;
 
     const {idUsr} = payload;

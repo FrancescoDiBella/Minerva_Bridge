@@ -52,7 +52,7 @@ exports.EModulesGetAuthCode = class EModulesGetAuthCode {
           validated: false
         }
       })
-      console.log("Eliminato")
+      //console.log("Eliminato")
     }, 10000*6)
   }
 

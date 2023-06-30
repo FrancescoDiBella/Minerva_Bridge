@@ -50,8 +50,6 @@ exports.Access = class Access extends Service {
         idLms: parseInt(idLms),
         idApp3D
       })
-
-      console.log("OK")
       return {statusMsg:"Utente registrato con successo"};
 
     }

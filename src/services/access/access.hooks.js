@@ -11,7 +11,7 @@ module.exports = {
     create:[
       async context => {
         const { headers } = context.params;
-        console.log("DATA:", context.data)
+        //console.log("DATA:", context.data)
         const data = context.data;
         // Check if the `Authorization` header is present
         if (!headers.authorization) {
