@@ -39,7 +39,9 @@ exports.ValidatePairing = class ValidatePairing {
     //check if there is a record for authCode assigned at that specific 3DApplication and if is the authCode passed
     const _user = await getAuthModel.findOne({
       where:{
-        idUsr
+        idUsr,
+        idLms,
+        idApp3D
       }
     })
 

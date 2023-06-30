@@ -1,5 +1,7 @@
-const { authenticate } = require('@feathersjs/authentication').hooks;
 const jwt = require('jsonwebtoken');
+const internalOnly = require('../../internal-only');
+const {BadRequest} = require('@feathersjs/errors');
+const { NotAuthenticated } = require('@feathersjs/errors')
 
 module.exports = {
   before: {
