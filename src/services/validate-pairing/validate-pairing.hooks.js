@@ -10,10 +10,11 @@ module.exports = {
     get: [internalOnly],
     create:[
         async context => {
+          const hasHeaderObj = new hasHeader();
           const { headers } = context.params;
           const data = context.data;
           // Check if the `Authorization` header is present
-          await hasHeader(headers);
+          await hasHeaderObj.hasAuthorization(headers);
           // Extract the JWT from the `Authorization` header
           const [, token] = headers.authorization.split(' ');
 

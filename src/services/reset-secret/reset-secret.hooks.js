@@ -10,12 +10,12 @@ module.exports = {
     find: [
 
       async context => {
+      const hasHeaderObj = new hasHeader();
       const { headers } = context.params;
       const lmsModel = lms(context.app);
 
       // Check if the `Authorization` header is present
-      await hasHeader(headers);
-
+      await hasHeaderObj.hasAuthorization(headers);
       // Extract the JWT from the `Authorization` header
       const [, token] = headers.authorization.split(' ');
 
