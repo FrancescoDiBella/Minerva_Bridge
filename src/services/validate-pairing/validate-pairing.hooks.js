@@ -1,7 +1,7 @@
 const internalOnly = require('../../internal-only');
 const jwt = require('jsonwebtoken');
-const {BadRequest} = require('@feathersjs/errors');
 const { NotAuthenticated } = require('@feathersjs/errors')
+const { hasHeader } = require('../../hasHeader');
 
 module.exports = {
   before: {
@@ -13,10 +13,7 @@ module.exports = {
           const { headers } = context.params;
           const data = context.data;
           // Check if the `Authorization` header is present
-          if (!headers.authorization) {
-            throw new BadRequest("Manca l\'header `Authorization`");
-          }
-
+          await hasHeader(headers);
           // Extract the JWT from the `Authorization` header
           const [, token] = headers.authorization.split(' ');
 

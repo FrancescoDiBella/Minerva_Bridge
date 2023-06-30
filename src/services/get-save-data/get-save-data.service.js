@@ -8,10 +8,10 @@ module.exports = function (app) {
   };
 
   // Initialize our service with any options it requires
-  app.use('/getSaveData', new GetSaveData(options, app));
+  app.use('/3d-modules/getSaveData', new GetSaveData(options, app));
 
   // Get our initialized service so that we can register hooks
-  const service = app.service('getSaveData');
+  const service = app.service('/3d-modules/getSaveData');
 
   service.hooks(hooks);
 };
