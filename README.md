@@ -13,7 +13,7 @@ This project uses [Feathers](http://feathersjs.com). An open source web framewor
     docker network create minerva_network
     ```
 
-2. Edit ./config/default.json, line 31, lrsql.username to "my_key" and lrsql.password to "my_secret"
+2. Edit `./config/default.json`, line 31, `lrsql.username` to "my_key" and `lrsql.password` to "my_secret"
 
 3. Create an image of `minerva_bridge`:
     ```
