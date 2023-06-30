@@ -36,12 +36,12 @@ module.exports = {
         }
       }
     ],
-    find: [],
-    get: [],
-    create: [],
-    update: [],
-    patch: [],
-    remove: []
+    find: [internalOnly],
+    get: [internalOnly],
+    create: [internalOnly],
+    update: [internalOnly],
+    patch: [internalOnly],
+    remove: [internalOnly]
   },
 
   after: {
