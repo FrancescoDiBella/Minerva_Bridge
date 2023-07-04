@@ -49,7 +49,8 @@ exports.JwtService = class JwtService extends AuthenticationService {
       }
 
       const userData = data;
-
+      userData.idLms = _utente.idLms;
+      userData.idUsr = _utente.idUsr;
       // Generate the JWT using the user data and a secret key
       const secret = this.app.get('authentication').secret;
       const token = jwt.sign(userData, secret);
