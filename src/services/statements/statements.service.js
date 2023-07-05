@@ -8,10 +8,10 @@ module.exports = function (app) {
   };
 
   // Initialize our service with any options it requires
-  app.use('/statements', new Statements(options, app));
+  app.use('/3d-modules/statements', new Statements(options, app));
 
   // Get our initialized service so that we can register hooks
-  const service = app.service('statements');
+  const service = app.service('/3d-modules/statements');
 
   service.hooks(hooks);
 };
