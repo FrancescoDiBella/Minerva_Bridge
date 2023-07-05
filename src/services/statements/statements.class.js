@@ -5,7 +5,6 @@ var TinCan = require('tincanjs');
 const jsonld = require('jsonld');
 const axios = require('axios')
 const { BadRequest } = require('@feathersjs/errors');
-const { Json } = require('sequelize/types/utils');
 
 exports.Statements = class Statements {
   constructor (options, app) {
