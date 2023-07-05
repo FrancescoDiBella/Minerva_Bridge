@@ -29,9 +29,9 @@
   },
   "postgres": "postgres://postgres:password@postgres:5432",
   "lrsql":{
-    "endpoint":"http://127.0.0.1:8080/xapi",
-    "username":"a1f579f1d31500af981ceb1c942629c8eaa6c5105b7db28171231ddaf7442a11",
-    "password":"342cd8b7ea56119fabe4e03efc503e42922522b555277bcefd182dd34b2cc9d8"
+    "endpoint":"http://lrs:8080/xapi/statements",
+    "username":"my_key",
+    "password":"my_secret"
   },
   "mailer":{
     "host":"smtp.gmail.com",
