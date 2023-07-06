@@ -120,55 +120,31 @@ exports.Statements = class Statements {
       }
 
 
-      var statement = new TinCan.Statement(
-        {
-            actor: {
-                mbox: "mailto"+idUsr+"@tincanapi.com",
-                name: idUsr,
-                /*
-                account: {
-                  homePage: "http://minerva.com",
-                  name: idUsr
-                }*/
-            },
-            verb: {
-                id: "https://test.org/verbs/"+parameter
-            },
-            target: {
-                id: "https://example.org/"+targetId
-            }//,
-            //context
-        }
-      );
-
-      var statementTmp = new TinCan.Statement(
-          {
-           actor: {
-            mbox: "mailto:"+idUsr+"@example.org",
-            name: "User "+idUsr
-          },
-           verb: {
-            id: "http://example.org/verb/did",
-            display: { "en-US": "Did" }
-          },
-          target: {
-            id: "http://example.org/activity/activity-1",
-            definition: {
-              name: { "en-US": "Activity 1" },
-              type: "http://example.org/activity-type/generic-activity"
-            }
-          },
-          context:{
-            extensions: {
-              "http://example.org/xapi/extensions/playcanvas": {
-                value: JSON.stringify(save_data)
-              }
+      const statement = {
+        "actor": {
+          "mbox": "mailto:"+idUsr+"@example.org",
+          "name": "Utente "+idUsr
+        },
+        "verb": {
+          "id": "http://example.org/verb/did",
+          "display": { "en-US": "Did" }
+        },
+        "object": {
+          "id": "http://example.org/activity/activity-1",
+          "definition": {
+            "name": { "en-US": "Activity 1" },
+            "type": "http://example.org/activity-type/generic-activity"
+          }
+        },
+        "context":{
+          "extensions": {
+            "http://example.org/xapi/extensions/playcanvas": {
+              "value": JSON.stringify(save_data)
             }
           }
         }
-      )
+      }
 
-      console.log("STATEMENT:", statementTmp);
 
       var statementSaved = false;
       try {
