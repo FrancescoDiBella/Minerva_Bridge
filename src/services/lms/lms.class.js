@@ -11,7 +11,7 @@ exports.Lms = class Lms extends Service {
   }
 
   async create(data, params){
-    const {name, email, password} = data;
+    const {name, email, password, baseURL, statementsType} = data;
     const lmsModel = lms(this.app);
 
     const secret =  crypto.randomBytes(6).toString('hex');
@@ -24,7 +24,9 @@ exports.Lms = class Lms extends Service {
       email,
       password,
       secret,
-      verified: true
+      verified: true,
+      baseURL,
+      statementsType
     })
 
     const id = _lms.id;
