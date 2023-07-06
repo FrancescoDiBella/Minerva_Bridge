@@ -32,11 +32,6 @@ exports.Lms = class Lms extends Service {
     const id = _lms.id;
     const created_at = _lms.createdAt;
     const updated_at = _lms.updatedAt;
-
-    const userData = {
-      email,
-      password
-    }
     /*await this.app.service('mails').create({
         from: this.app.get("mailer").email,
         to: email,
