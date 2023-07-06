@@ -37,8 +37,6 @@ exports.Lms = class Lms extends Service {
       email,
       password
     }
-    const key = this.app.get('authentication').secret;
-    const token = jwt.sign(userData, key);
     /*await this.app.service('mails').create({
         from: this.app.get("mailer").email,
         to: email,
@@ -48,7 +46,6 @@ exports.Lms = class Lms extends Service {
       idLms: id,
       name,
       email,
-      token,
       updatedAt:updated_at,
       createdAt:created_at
     }}
