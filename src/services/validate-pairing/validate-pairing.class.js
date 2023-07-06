@@ -49,6 +49,14 @@ exports.ValidatePairing = class ValidatePairing {
       throw new BadRequest("L'utente ha già associato un AuthCode");
     }
 
+    if(token == undefined){
+      throw new BadRequest("Non è stato fornito il token di contatto!");
+    }
+
+    if(postfix == undefined){
+      throw new BadRequest("Non è stato fornito il postfix!");
+    }
+
     const _utente = await getAuthModel.findOne({
       where: {
         idApp3D,
