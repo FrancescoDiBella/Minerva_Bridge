@@ -6,7 +6,6 @@ const DataTypes = Sequelize.DataTypes;
 module.exports = function (app) {
   const sequelizeClient = app.get('sequelizeClient');
   const lms = sequelizeClient.define('lms', {
-
     email: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -18,6 +17,14 @@ module.exports = function (app) {
     },
     name: {
       type: DataTypes.STRING,
+      allowNull: false
+    },
+    baseURL: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    statementsType: {
+      type: DataTypes.ENUM('XAPI', 'SCORM'),
       allowNull: false
     },
     secret:{
