@@ -26,6 +26,14 @@ module.exports = function (app) {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       default: false
+    },
+    commitToken: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    postfix: {
+      type: DataTypes.STRING,
+      allowNull: true
     }
   },
   {

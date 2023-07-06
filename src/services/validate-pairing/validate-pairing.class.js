@@ -20,7 +20,7 @@ exports.ValidatePairing = class ValidatePairing {
   }
 
   async create (data, params) {
-    const { idLms, idUsr, idApp3D, authCode} = data;
+    const { idLms, idUsr, idApp3D, authCode, token, postfix} = data;
     const getAuthModel = getAuth(this.app);
     const utentiModel = utenti(this.app);
 
@@ -58,7 +58,7 @@ exports.ValidatePairing = class ValidatePairing {
 
     if(_utente){
       //return the status of the operation, the authCode is correct
-      await getAuthModel.update({idUsr, idLms, validated:true},{
+      await getAuthModel.update({idUsr, idLms, validated:true, postfix, commitToken: token},{
         where:{
           idApp3D,
           authCode
