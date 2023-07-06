@@ -1,6 +1,7 @@
 const { Service } = require('feathers-sequelize');
 const lms = require('../../models/lms.model');
 const _utenti = require('../../models/access.model');
+const auth = require('../../models/get-auth-code.model');
 const {BadRequest} = require('@feathersjs/errors');
 
 exports.Access = class Access extends Service {
@@ -15,6 +16,7 @@ exports.Access = class Access extends Service {
 
     const lmsModel = lms(this.app);
     const utentiModel = _utenti(this.app);
+    const authModel = auth(this.app);
     //Check if data.idLms and data.secret are correct
 
     //Check if user exists;
@@ -42,7 +44,23 @@ exports.Access = class Access extends Service {
       });
 
       if(_user){
-        throw new BadRequest("Utente già presente");
+        const hasAuth = await authModel.findOne({
+          where: {
+            idLms:idLms,
+            idUsr: idUsr,
+            idApp3D: idApp3D
+          }
+        });
+
+        if(hasAuth){
+          await authModel.destroy({
+            where: {
+              idLms:idLms,
+              idUsr: idUsr,
+              idApp3D: idApp3D
+            }});
+        }
+        return {statusMsg:"Sessione utente resettata, è ora possibile associare un nuovo authCode."};
       }
 
       await utentiModel.create({
