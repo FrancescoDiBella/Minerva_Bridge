@@ -210,18 +210,25 @@
       })
       .then(response => response.json())
       .then(data => {
-        token = data.token;
-        //passa alla vista di iscrizione con nome, email, password
-        for(let i = 0; i < forms.length; i++) {
-          console.log(forms[i]);
-          forms[i].classList.remove('not-visible');
+        if(data.code >= 200 && data.code <300){
+          console.log(data);
+          token = data.token;
+          //passa alla vista di iscrizione con nome, email, password
+          for(let i = 0; i < forms.length; i++) {
+            console.log(forms[i]);
+            forms[i].classList.remove('not-visible');
+          }
+          button.textContent = 'Invia';
+          const emailInput = document.getElementsByName('email')[0];
+          emailInput.setAttribute('readonly', true);
+          //window.location.href = baseURL+data.postfix;
+        }else if(data.code >= 400 && data.code <500){
+          alert('Errore durante la richiesta di iscrizione, email già presente nel sistema.')
+        }else if(data.code >= 500){
+          alert('Errore durante la richiesta di iscrizione, riprova più tardi.')
         }
-        button.textContent = 'Invia';
-        //window.location.href = baseURL+data.postfix;
-      })
-      .catch((error) => {
-        console.error('Error:', error);
       });
+
     }else{
       //fai una fetch post allo stesso indirizzo su cui si trova la pagina e passa come parametro la mail inserita dall'utente
       const baseURL = window.location.protocol + "//" + window.location.host;

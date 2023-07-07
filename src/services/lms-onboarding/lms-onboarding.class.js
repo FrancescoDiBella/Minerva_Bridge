@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
-const { BadRequest } = require('@feathersjs/errors');
+const { BadRequest, NotAcceptable } = require('@feathersjs/errors');
 const jwt = require('jsonwebtoken');
+const lms = require('../../models/lms.model');
 
 exports.LmsOnboarding = class LmsOnboarding {
   constructor (options, app) {
@@ -12,11 +13,23 @@ exports.LmsOnboarding = class LmsOnboarding {
   async find (params) {
     const {email} = params.query;
 
+
     if(this.reg.test(email)){
+      //controlla se esiste un lms con questa mail, se esiste ritorna un errore
+      const lmsModel = lms(this.app);
+      const user = await lmsModel.findOne({
+        where: {
+          email: email
+        }
+      });
+
+      if(user){
+        throw new BadRequest("Email già presente");
+      }
       const token = await this.createToken(email);
       return {token:token}
     }
-    throw new BadRequest("Email non valida")
+    throw new NotAcceptable("Email non valida");
   }
 
   async get (id, params) {
