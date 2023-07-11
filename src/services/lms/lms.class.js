@@ -35,7 +35,7 @@ exports.Lms = class Lms extends Service {
     /*await this.app.service('mails').create({
         from: this.app.get("mailer").email,
         to: email,
-      })*/
+    })*/
 
     return {
       idLms: id,

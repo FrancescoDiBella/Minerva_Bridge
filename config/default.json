@@ -34,10 +34,10 @@
     "password":"my_secret"
   },
   "mailer":{
-    "host":"smtp.gmail.com",
-    "port":2525,
-    "email" : "inser email here",
-    "pass" : "insert pass"
-
-  }
+    "host":"smtp.mailosaur.net",
+    "port":587,
+    "email" : "",
+    "pass" : ""
+  },
+  "verifierURL":"http://localhost:3030/verify-email?"
 }

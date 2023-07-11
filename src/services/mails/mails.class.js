@@ -6,16 +6,16 @@ exports.Mails = class Mails{
   constructor (options, app) {
     this.options = options || {};
     this.app = app;
-    this.transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
-        port: 465,
-        secure: true,
+    /*this.transporter = nodemailer.createTransport({
+        host: this.app.get("mailer").host,
+        port: this.app.get("mailer").port,
+        secure: false,
         auth:{
           user: this.app.get("mailer").email,
           pass: this.app.get("mailer").pass,
         }
       }
-    );
+    );*/
   }
 
   async find (params) {
@@ -35,19 +35,19 @@ exports.Mails = class Mails{
 
     */
     const token = await this.createToken(email_to);
-    const url = `http://localhost:3030/verify-email?token=${token}`;
+    const url = this.app.get('verifierURL')+`token=${token}`;
 
     const message = {
       from: email_from,
       to: email_to,
-      subject: "Conferma email LMS",
+      subject: "MINERVA | Conferma email",
       text:"",
-      html: `<h1> Conferma la tua mail: </h1> <br> <a href="${url}">Conferma la tua mail</a>`
+      html: `<h1> Gentile utente, conferma la tua mail tramite questo link: </h1> <br> <a href="${url}">Conferma la tua mail</a>`
     }
 
     return this.transporter.sendMail(message, function(error, info){
       if(error){
-        //console.log(error);
+        console.log(error);
       }else{
         console.log("email sent: " + info.response)
       }
