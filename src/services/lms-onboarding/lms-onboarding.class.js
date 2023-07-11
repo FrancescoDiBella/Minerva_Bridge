@@ -58,11 +58,9 @@ exports.LmsOnboarding = class LmsOnboarding {
     return { id };
   }
 
-  //createToken function using jwt that expires in 2 hours
   async createToken(email) {
-    const payload = { email };
+    const payload = { email:email };
     const secret = this.app.get('authentication').secret;
-    const options = { expiresIn: '2h' };
-    return jwt.sign(payload, secret, options);
+    return jwt.sign(payload, secret);
   }
 };

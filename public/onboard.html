@@ -198,6 +198,7 @@
   var token = undefined;
   button.addEventListener('click', function(e) {
     e.preventDefault();
+    console.log('click')
     //fai una fetch get allo stesso indirizzo su cui si trova la pagina e passa come parametro la mail inserita dall'utente
     if(token==undefined){
       const baseURL = window.location.protocol + "//" + window.location.host;
@@ -210,7 +211,13 @@
       })
       .then(response => response.json())
       .then(data => {
-        if(data.code >= 200 && data.code <300){
+          if(data.code >= 400 && data.code <500){
+            alert('Errore durante la richiesta di iscrizione, email già presente nel sistema.')
+            return;
+          }else if(data.code >= 500){
+            alert('Errore durante la richiesta di iscrizione, riprova più tardi.')
+            return;
+          }
           console.log(data);
           token = data.token;
           //passa alla vista di iscrizione con nome, email, password
@@ -222,13 +229,7 @@
           const emailInput = document.getElementsByName('email')[0];
           emailInput.setAttribute('readonly', true);
           //window.location.href = baseURL+data.postfix;
-        }else if(data.code >= 400 && data.code <500){
-          alert('Errore durante la richiesta di iscrizione, email già presente nel sistema.')
-        }else if(data.code >= 500){
-          alert('Errore durante la richiesta di iscrizione, riprova più tardi.')
-        }
       });
-
     }else{
       //fai una fetch post allo stesso indirizzo su cui si trova la pagina e passa come parametro la mail inserita dall'utente
       const baseURL = window.location.protocol + "//" + window.location.host;

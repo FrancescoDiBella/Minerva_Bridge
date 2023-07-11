@@ -4,6 +4,8 @@ const {
   hashPassword, protect
 } = require('@feathersjs/authentication-local').hooks;
 const{hasHeader} = require('../../hasHeader');
+const { NotAuthenticated } = require('@feathersjs/errors');
+const jwt = require('jsonwebtoken');
 
 module.exports = {
   before: {
@@ -13,6 +15,7 @@ module.exports = {
     create: [
       async (context) => {
         const { password } = context.data;
+        console.log("DATA:", context.data)
         const hashedPassword = await bcrypt.hash(password, 10);
         context.data.password = hashedPassword;
 
@@ -25,22 +28,19 @@ module.exports = {
         await hasHeaderObj.hasAuthorization(headers);
         // Extract the JWT from the `Authorization` header
         const [, token] = headers.authorization.split(' ');
-
+        console.log(token)
         // Verify the JWT using the secret key
         try {
           const secret = context.app.get('authentication').secret;
           const payload = jwt.verify(token, secret);
           context.data.email = payload.email;
-          context.data = data;
+          console.log("payload", payload)
           return context;
-
         } catch (error) {
           // If the JWT is invalid, throw an error
           throw new NotAuthenticated('Token non valido!');
         }
 
-
-        return context;
       }
     ],
     update: [ hashPassword('password'),  authenticate('jwt') ],
