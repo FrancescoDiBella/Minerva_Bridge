@@ -111,6 +111,12 @@
     border-color: #656565;
     width: 1.8rem;
   }
+
+  #registrationModal .modal-content {
+    background-color: #FFFFFF;
+    color: #000000;
+    border-radius: 9px;
+    }
 </style>
 </head>
 <body>
@@ -190,6 +196,26 @@
   </form>
 	<div class="text-center">Hai già un account? <a href="#">Effettua il login</a></div>
 </div>
+<div class="modal fade" id="registrationModal" tabindex="-1" role="dialog" aria-labelledby="registrationModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="registrationModalLabel">Registrazione completata</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>La registrazione è stata completata con successo!</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Chiudi</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 
 <script>
@@ -201,9 +227,9 @@
     console.log('click')
     //fai una fetch get allo stesso indirizzo su cui si trova la pagina e passa come parametro la mail inserita dall'utente
     if(token==undefined){
-      const baseURL = window.location.protocol + "//" + window.location.host;
+      const bridgeURL = window.location.protocol + "//" + window.location.host;
       const email = document.getElementsByName('email')[0].value;
-      fetch(baseURL+'/e-modules/lms-onboard?email='+email, {
+      fetch(bridgeURL+'/e-modules/lms-onboard?email='+email, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -232,6 +258,7 @@
       });
     }else{
       //fai una fetch post allo stesso indirizzo su cui si trova la pagina e passa come parametro la mail inserita dall'utente
+      const bridgeURL = window.location.protocol + "//" + window.location.host;
       const baseURL = document.getElementsByName('baseURL')[0].value;
       const email = document.getElementsByName('email')[0].value;
       const name = document.getElementsByName('username')[0].value;
@@ -239,7 +266,7 @@
       const confirmPassword = document.getElementsByName('confirm_password')[0].value;
       const statementsType = document.querySelector('input[name="statementsType"]:checked').value;
 
-      fetch(baseURL+'/e-modules/lms', {
+      fetch(bridgeURL+'/e-modules/lms', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -250,6 +277,9 @@
       .then(response => response.json())
       .then(data => {
         console.log(data);
+        var registrationModal = document.getElementById('registrationModal');
+        registrationModal.classList.add('show');
+        registrationModal.style.display = 'block';
       })
       .catch((error) => {
         console.error('Error:', error);
