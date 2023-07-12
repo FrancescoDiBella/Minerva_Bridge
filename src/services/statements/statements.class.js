@@ -168,6 +168,10 @@ exports.Statements = class Statements {
         console.log(err.message);
       }
 
+      //aggiungere codice che prende token e postfix dal db
+      //codice che fa la chiamata al server lms per salvare i dati
+
+      //distinguere se XAPI O SCORM
       var _token = null;
       await axios.get("https://sfera.elogos.cloud/scorms/getToken")
       .then(response => {
