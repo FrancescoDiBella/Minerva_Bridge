@@ -14,6 +14,7 @@ module.exports = {
     get: [ authenticate('jwt') ],
     create: [
       async (context) => {
+        return context;
         const { password } = context.data;
         console.log("DATA:", context.data)
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -29,6 +30,7 @@ module.exports = {
         // Extract the JWT from the `Authorization` header
         const [, token] = headers.authorization.split(' ');
         console.log(token)
+
         // Verify the JWT using the secret key
         try {
           const secret = context.app.get('authentication').secret;
