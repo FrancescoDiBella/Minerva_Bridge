@@ -14,12 +14,12 @@ module.exports = {
     get: [ authenticate('jwt') ],
     create: [
       async (context) => {
-        return context;
+
         const { password } = context.data;
         console.log("DATA:", context.data)
         const hashedPassword = await bcrypt.hash(password, 10);
         context.data.password = hashedPassword;
-
+        return context;
         //aggiugnere controllo header authorization e token jwt
         //console.log("DATA:", context.data)
         const hasHeaderObj = new hasHeader();
