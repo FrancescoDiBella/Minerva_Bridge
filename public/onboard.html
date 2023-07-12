@@ -232,7 +232,7 @@
       });
     }else{
       //fai una fetch post allo stesso indirizzo su cui si trova la pagina e passa come parametro la mail inserita dall'utente
-      const baseURL = window.location.protocol + "//" + window.location.host;
+      const baseURL = document.getElementsByName('baseURL')[0].value;
       const email = document.getElementsByName('email')[0].value;
       const name = document.getElementsByName('username')[0].value;
       const password = document.getElementsByName('password')[0].value;
