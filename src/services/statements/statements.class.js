@@ -56,6 +56,7 @@ exports.Statements = class Statements {
     console.log("save_data:", save_data);
 
     const getAuthModel = getAuth(this.app);
+    const lmsModel = _utenti(this.app);
     //const getHook = hook(this.app);
 
     const _utente = await getAuthModel.findOne({
@@ -80,16 +81,36 @@ exports.Statements = class Statements {
     if(!_utente){
       throw new BadRequest("Errore, token errato o authCode non verificato");
     }
+    /*
+    const _lms = await lmsModel.findOne({
+      where: {
+        id: idLms
+      }
+    });
 
-    //await this.traverseObject(save_data)
-
+    if(_lms.statementType == "XAPI"){
+      //routine per XAPI
+      for(let i = 0; i < save_data.length; i++){
+        //routine per statement
+        //scorporare il codice attuale in una funzione
+        const statement = await this.generateXAPIStatement(save_data[i]);
+        //send XAPI statement to LRS
+        const res = await this.sendXAPIStatement(statement);
+      }
+    }else if(_lms.statementType == "SCORM"){
+      //routine per SCORM
+      for(let i = 0; i < save_data.length; i++){
+        //routine per statement
+        //scorporare il codice attuale in una funzione
+        const scorm = await this.generateSCORMData(save_data[i]);
+        //send SCORM data to SCORM server
+        const res = await this.sendSCORMData(scorm);
+      }
+    }
+    */
+    //controllo sul statementType dell'lms associato all'utente
     if(true){
-      /*
-        _hook.type == 'XAPI'
-        fare check sul valore di save_data['hasValue']['value']['contextOption']["@type"], switch case per settare al meglio l'oggetto che definisce l'estensione
-      */
-      //rivedere per intero la logica della routine
-
+      //rivedere per intero la logica della routine di salvataggio
       const {identifier, parameter, object, value, timestamp} = save_data;
 
       //const names_tmp = save_data['id'].split(':');
@@ -265,7 +286,7 @@ exports.Statements = class Statements {
       }else{
         throw new Error("Errore interno, riprova!");
       }
-    }//
+    }
   }
 
   async update (id, data, params) {
@@ -278,5 +299,46 @@ exports.Statements = class Statements {
 
   async remove (id, params) {
     return { id };
+  }
+
+  async generateXAPIStatement(data){
+    const statement = {
+      "actor": {
+        "mbox": "mailto:"+idUsr+"@example.org",
+        "name": "Utente "+idUsr
+      },
+      "verb": {
+        "id": "http://example.org/verb/did",
+        "display": { "en-US": "Did" }
+      },
+      "object": {
+        "id": "http://example.org/activity/activity-1",
+        "definition": {
+          "name": { "en-US": "Activity 1" },
+          "type": "http://example.org/activity-type/generic-activity"
+        }
+      },
+      "context":{
+        "extensions": {
+          "http://example.org/xapi/extensions/playcanvas": {
+            "value": JSON.stringify(data)
+          }
+        }
+      }
+    }
+
+    return {msg : 'ciao'}
+  }
+
+  async generateSCORMData(data){
+    return {msg : 'ciao'}
+  }
+
+  async sendXAPIStatement(statement){
+    return {msg : 'ciao'}
+  }
+
+  async sendSCORMData(data){
+    return {msg : 'ciao'}
   }
 };
