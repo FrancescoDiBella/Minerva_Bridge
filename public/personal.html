@@ -194,6 +194,21 @@
       profileIdlms.textContent = user.id;
       var profileSecret = document.querySelector(".secret-input");
       profileSecret.value = user.secret;
+
+      fetch("/e-modules/createUser?idLms=" + user.id)
+        .then(response => response.json())
+        .then(res => {
+          var users = res.data;
+          var dataDisplay = document.querySelector(".data-display");
+          var dataDisplayH2 = document.querySelector(".data-display h2");
+          var dataDisplayP = document.querySelector(".data-display p");
+          dataDisplayH2.textContent = "Benvenuto " + user.name + "!";
+          dataDisplayP.textContent = "Numero utenti registrati: " + users.length + '. Lista utenze: ';
+
+          users.forEach(element => {
+            dataDisplayP.textContent +='(' + element.idUsr + ', ' + element.idApp3D + '); ';
+          });
+        });
     });
     const secretInput = document.querySelector(".secret-input");
     secretInput.addEventListener("click", function() {

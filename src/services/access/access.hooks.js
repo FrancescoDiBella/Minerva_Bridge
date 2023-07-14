@@ -7,8 +7,8 @@ const{hasHeader} = require('../../hasHeader');
 module.exports = {
   before: {
     all: [],
-    find: [internalOnly],
-    get: [internalOnly],
+    find: [],
+    get: [],
     create:[
       async context => {
         const hasHeaderObj = new hasHeader();
