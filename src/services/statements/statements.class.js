@@ -9,28 +9,7 @@ exports.Statements = class Statements {
   constructor (options, app) {
     this.options = options || {};
     this.app = app;
-
-    const endpoint = app.get("lrsql").endpoint;
-    const username = app.get("lrsql").username;
-    const password = app.get("lrsql").password;
-
-    this.lrs;
-
-    try {
-        this.lrs = new TinCan.LRS(
-            {
-                endpoint: endpoint,
-                username: username,
-                password: password,
-                allowFail: false
-            }
-        );
-        console.log(this.lrs)
     }
-    catch (ex) {
-        throw new Error("Failed to setup LRS object: " + ex);
-    }
-  }
 
   async find (params) {
     return [];
@@ -58,7 +37,6 @@ exports.Statements = class Statements {
     const getAuthModel = getAuth(this.app);
     const lmsModel = _utenti(this.app);
     //const getHook = hook(this.app);
-
     const _utente = await getAuthModel.findOne({
       where: {
         idLms: idLms,
@@ -110,97 +88,30 @@ exports.Statements = class Statements {
     */
     //controllo sul statementType dell'lms associato all'utente
     if(true){
-      //rivedere per intero la logica della routine di salvataggio
-      const {identifier, parameter, object, value, timestamp} = save_data;
-
-      //const names_tmp = save_data['id'].split(':');
-      //const target_name = names_tmp[names_tmp.length - 1]
-
-      /*
-      var context = {
-        extensions: {
-          "http://example.org/xapi/extensions/unity": {
-            scene: names_tmp[5],
-            object: target_name
-          },
-          "http://id.tincanapi.com/extension/3dObjectsProperties": {
-            properties: save_data['properties'].value
-          }
-        }
-      };
-      */
-
-      var targetId = "";
-      var contextPropertyValue = "";
-
-      if(object!=undefined){
-        targetId = idUsr+":"+object;
-      }else if(value != undefined){
-        contextPropertyValue = value;
+      var statement = null;
+      var result = [];
+      for(let i = 0; i < save_data.length; i++){
+        //routine per statement
+        //scorporare il codice attuale in una funzione
+        statement = await this.generateXAPIStatement(save_data[i], idUsr, idLms, idApp3D);
+        //send XAPI statement to LRS
+        const res = await this.sendXAPIStatement(statement);
+        result[i] = res;
       }
-
-
-      const statement = {
-        "actor": {
-          "mbox": "mailto:"+idUsr+"@example.org",
-          "name": "Utente "+idUsr
-        },
-        "verb": {
-          "id": "http://example.org/verb/did",
-          "display": { "en-US": "Did" }
-        },
-        "object": {
-          "id": "http://example.org/activity/activity-1",
-          "definition": {
-            "name": { "en-US": "Activity 1" },
-            "type": "http://example.org/activity-type/generic-activity"
-          }
-        },
-        "context":{
-          "extensions": {
-            "http://example.org/xapi/extensions/playcanvas": {
-              "value": JSON.stringify(save_data)
-            }
-          }
-        }
-      }
-
-
-      var statementSaved = false;
-      try {
-        const response = await axios.post(
-          this.app.get("lrsql").endpoint,
-          statement,
-          {
-            auth: {
-              username: this.app.get("lrsql").username,
-              password: this.app.get("lrsql").password,
-            },
-
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Experience-API-Version' : '1.0.2'
-            },
-          },
-        );
-
-        statementSaved = true;
-      } catch (err) {
-        console.log(err.message);
-      }
-
       //aggiungere codice che prende token e postfix dal db
       //codice che fa la chiamata al server lms per salvare i dati
 
       //distinguere se XAPI O SCORM
       var _token = null;
-      await axios.get("https://sfera.elogos.cloud/scorms/getToken")
-      .then(response => {
-        _token = response.data.token;
-      })
-      .catch(error => {
-        console.error('Errore:', error);
-      });
+      /*
+        await axios.get("https://sfera.elogos.cloud/scorms/getToken")
+        .then(response => {
+          _token = response.data.token;
+        })
+        .catch(error => {
+          console.error('Errore:', error);
+        });
+      */
 
       if(_token != null){
         const config = {
@@ -284,8 +195,11 @@ exports.Statements = class Statements {
         }
 
       }else{
-        throw new Error("Errore interno, riprova!");
+        //throw new Error("Errore interno, riprova!");
+        return result;
       }
+
+
     }
   }
 
@@ -301,33 +215,36 @@ exports.Statements = class Statements {
     return { id };
   }
 
-  async generateXAPIStatement(data){
+  async generateXAPIStatement(data, idUsr, idLms, idApp3D){
+    const {identifier, parameter, object, value, timestamp} = data;
     const statement = {
       "actor": {
-        "mbox": "mailto:"+idUsr+"@example.org",
+        "mbox": "mailto:"+idUsr+"."+idLms+'.'+idApp3D+'.'+identifier+"@minerva.sferainnovazione.com",
         "name": "Utente "+idUsr
       },
       "verb": {
-        "id": "http://example.org/verb/did",
+        "id": "http://minerva.sferainnovazione.com/verb/isContainedIn",
         "display": { "en-US": "Did" }
       },
       "object": {
-        "id": "http://example.org/activity/activity-1",
+        "id": "http://minerva.sferainnovazione.com/activity/3dApp/"+idApp3D,
         "definition": {
-          "name": { "en-US": "Activity 1" },
-          "type": "http://example.org/activity-type/generic-activity"
+          "name": { "en-US": "E-learning 3D Application." },
+          "type": "http://minerva.sferainnovazione.com/activity-type/e-learning"
         }
       },
       "context":{
         "extensions": {
-          "http://example.org/xapi/extensions/playcanvas": {
-            "value": JSON.stringify(data)
+          "http://minerva.sferainnovazione.com/xapi/extensions/properties": {
+            "timestamp":timestamp
           }
         }
       }
     }
 
-    return {msg : 'ciao'}
+    statement.context.extensions["http://minerva.sferainnovazione.com/xapi/extensions/properties"][parameter] = value;
+
+    return statement;
   }
 
   async generateSCORMData(data){
@@ -335,7 +252,27 @@ exports.Statements = class Statements {
   }
 
   async sendXAPIStatement(statement){
-    return {msg : 'ciao'}
+    try {
+      const response = await axios.post(
+        this.app.get("lrsql").endpoint,
+        statement,
+        {
+          auth: {
+            username: this.app.get("lrsql").username,
+            password: this.app.get("lrsql").password,
+          },
+
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Experience-API-Version' : '1.0.2'
+          },
+        },
+      );
+
+      return {statusMsg:"Statement salvato correttamente!", statementId: response.data};
+    } catch (err) {
+      return {statusMsg:"Statement non salvato!", statementId: null};
+    }
   }
 
   async sendSCORMData(data){
