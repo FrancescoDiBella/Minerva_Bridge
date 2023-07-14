@@ -215,34 +215,61 @@ exports.Statements = class Statements {
 
   async generateXAPIStatement(data, idUsr, idLms, idApp3D){
     const {identifier, parameter, object, value, timestamp} = data;
-    const statement = {
-      "actor": {
-        "mbox": "mailto:"+idUsr+"."+idLms+'.'+idApp3D+'.'+identifier+"@minerva.sferainnovazione.com",
-        "name": "Utente "+idUsr
-      },
-      "verb": {
-        "id": "http://minerva.sferainnovazione.com/verb/isContainedIn",
-        "display": { "en-US": "Did" }
-      },
-      "object": {
-        "id": "http://minerva.sferainnovazione.com/activity/3dApp/"+idApp3D,
-        "definition": {
-          "name": { "en-US": "E-learning 3D Application." },
-          "type": "http://minerva.sferainnovazione.com/activity-type/e-learning"
-        }
-      },
-      "context":{
-        "extensions": {
-          "http://minerva.sferainnovazione.com/xapi/extensions/properties": {
-            "timestamp":timestamp
+    if(value !=undefined){
+      const statement = {
+        "actor": {
+          "mbox": "mailto:"+idUsr+"."+idLms+'.'+idApp3D+'.'+identifier+"@minerva.sferainnovazione.com",
+          "name": idUsr+"."+idLms+'.'+idApp3D+'.'+identifier
+        },
+        "verb": {
+          "id": "http://minerva.sferainnovazione.com/verb/isContainedIn",
+          "display": { "en-US": "isContainedIn" }
+        },
+        "object": {
+          "id": "http://minerva.sferainnovazione.com/activity/3dApp/"+idApp3D,
+          "definition": {
+            "name": { "en-US": "E-learning 3D Application." },
+            "type": "http://minerva.sferainnovazione.com/activity-type/e-learning"
+          }
+        },
+        "context":{
+          "extensions": {
+            "http://minerva.sferainnovazione.com/xapi/extensions/properties": {
+              "timestamp":timestamp
+            }
           }
         }
       }
+
+      statement.context.extensions["http://minerva.sferainnovazione.com/xapi/extensions/properties"][parameter] = value;
+      return statement;
+    }else if(object != undefined){
+      const statement = {
+        "actor": {
+          "mbox": "mailto:"+idUsr+"."+idLms+'.'+idApp3D+'.'+identifier+"@minerva.sferainnovazione.com",
+          "name": idUsr+"."+idLms+'.'+idApp3D+'.'+identifier
+        },
+        "verb": {
+          "id": "http://minerva.sferainnovazione.com/verb/isContainedIn",
+          "display": { "en-US": "isContainedIn" }
+        },
+        "object": {
+          "objectType": "Agent",
+          "mbox": "mailto:"+idUsr+"."+idLms+'.'+idApp3D+'.'+object+"@minerva.sferainnovazione.com",
+          'name': idUsr+"."+idLms+'.'+idApp3D+'.'+object
+        },
+        "context":{
+          "extensions": {
+            "http://minerva.sferainnovazione.com/xapi/extensions/properties": {
+              "timestamp":timestamp
+            }
+          }
+        }
+      }
+
+      statement.context.extensions["http://minerva.sferainnovazione.com/xapi/extensions/properties"][parameter] = "mailto:"+idUsr+"."+idLms+'.'+idApp3D+'.'+object+"@minerva.sferainnovazione.com";
+      return statement;
     }
-
-    statement.context.extensions["http://minerva.sferainnovazione.com/xapi/extensions/properties"][parameter] = value;
-
-    return statement;
   }
 
   async generateSCORMData(data){
