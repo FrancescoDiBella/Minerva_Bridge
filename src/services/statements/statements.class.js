@@ -1,7 +1,5 @@
 const _utenti = require('../../models/access.model');
 const getAuth = require('../../models/get-auth-code.model');
-var TinCan = require('tincanjs');
-const jsonld = require('jsonld');
 const axios = require('axios')
 const { BadRequest } = require('@feathersjs/errors');
 
@@ -88,16 +86,16 @@ exports.Statements = class Statements {
     */
     //controllo sul statementType dell'lms associato all'utente
     if(true){
-      var statement = null;
-      var result = [];
+      var statements = [];
+      var result;
       for(let i = 0; i < save_data.length; i++){
         //routine per statement
         //scorporare il codice attuale in una funzione
-        statement = await this.generateXAPIStatement(save_data[i], idUsr, idLms, idApp3D);
-        //send XAPI statement to LRS
-        const res = await this.sendXAPIStatement(statement);
-        result[i] = res;
+        statements[i] = await this.generateXAPIStatement(save_data[i], idUsr, idLms, idApp3D);
       }
+      //send XAPI statement to LRSQL
+      const res = await this.sendXAPIStatement(statements);
+      result = res;
       //aggiungere codice che prende token e postfix dal db
       //codice che fa la chiamata al server lms per salvare i dati
 
@@ -269,9 +267,9 @@ exports.Statements = class Statements {
         },
       );
 
-      return {statusMsg:"Statement salvato correttamente!", statementId: response.data};
+      return {statusMsg:"Statements salvati correttamente!", statementId: response.data};
     } catch (err) {
-      return {statusMsg:"Statement non salvato!", statementId: null};
+      return {statusMsg:"Statements non salvati!", statementId: null};
     }
   }
 
