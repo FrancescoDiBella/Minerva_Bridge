@@ -161,7 +161,6 @@
         <input type="password" class="form-control" name="password" placeholder="Password" required="required" style="margin-right: 5px;">
         <span class="input-group-addon">
           <i class="fa fa-lock"></i>
-          <i class="fa fa-check"></i>
         </span>
         <input type="password" class="form-control" name="confirm_password" placeholder="Conferma Password" required="required">
       </div>
@@ -190,6 +189,17 @@
     </div>
     </div>
 
+    <div class="form-group not-visible">
+      <div class="input-group">
+        <span class="input-group-addon"><i class="fa fa-external-link-square"></i></span>
+        <input type="text" class="form-control" name="authUsername" placeholder="AUTH Username" style="margin-right: 5px;">
+        <span class="input-group-addon">
+          <i class="fa fa-lock"></i>
+        </span>
+        <input type="text" class="form-control" name="authPassword" placeholder="AUTH Password">
+      </div>
+    </div>
+
 		<div class="form-group">
       <button type="submit" class="btn btn-primary btn-lg" id="signupButton">Vai al modulo di iscrizione</button>
     </div>
@@ -210,7 +220,7 @@
         <p>La registrazione è stata completata con successo!</p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Chiudi</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="closeModal()">Chiudi</button>
       </div>
     </div>
   </div>
@@ -265,6 +275,20 @@
       const password = document.getElementsByName('password')[0].value;
       const confirmPassword = document.getElementsByName('confirm_password')[0].value;
       const statementsType = document.querySelector('input[name="statementsType"]:checked').value;
+      const authUsername = document.getElementsByName('authUsername')[0].value;
+      const authPassword = document.getElementsByName('authPassword')[0].value;
+
+      if(password != confirmPassword){
+        alert('Le password non coincidono');
+        return;
+      }
+      var data;
+      if(authPassword == "" || authUsername == "" || authPassword == undefined || authUsername == undefined || authPassword == null || authUsername == null || authPassword == " " || authUsername == " "
+      ){
+        data = {email: email, name: name, password: password, baseURL, statementsType}
+      }else{
+        data = {email: email, name: name, password: password, baseURL, statementsType, authPassword, authUsername}
+      }
 
       fetch(bridgeURL+'/e-modules/lms', {
         method: 'POST',
@@ -272,7 +296,7 @@
           'Content-Type': 'application/json',
           'Authorization': 'Bearer '+token
         },
-        body: JSON.stringify({email: email, name: name, password: password, baseURL, statementsType})
+        body: JSON.stringify(data)
       })
       .then(response => response.json())
       .then(data => {
@@ -288,6 +312,10 @@
       });
     }
   });
+
+  function closeModal(){
+    window.location.href = '/login.html';
+  }
 
 </script>
 
