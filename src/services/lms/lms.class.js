@@ -11,24 +11,37 @@ exports.Lms = class Lms extends Service {
   }
 
   async create(data, params){
-    const {name, email, password, baseURL, statementsType} = data;
+    const {name, email, password, baseURL, statementsType, authUsername, authPassword} = data;
     const lmsModel = lms(this.app);
 
     const secret =  crypto.randomBytes(6).toString('hex');
     //criptare anche il secret
     //creare il secret SOLO se si conferma email
     try{
-
-    const _lms = await lmsModel.create({
-      name,
-      email,
-      password,
-      secret,
-      verified: true,
-      baseURL,
-      statementsType
-    })
-
+      var _lms;
+      if(authUsername == undefined || authPassword == undefined){
+        _lms = await lmsModel.create({
+          name,
+          email,
+          password,
+          secret,
+          verified: true,
+          baseURL,
+          statementsType
+        })
+      }else if(authUsername != undefined && authPassword != undefined){
+        _lms = await lmsModel.create({
+          name,
+          email,
+          password,
+          secret,
+          verified: true,
+          baseURL,
+          statementsType,
+          authUsername,
+          authPassword
+        })
+      }
     const id = _lms.id;
     const created_at = _lms.createdAt;
     const updated_at = _lms.updatedAt;

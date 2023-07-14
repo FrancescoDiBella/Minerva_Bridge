@@ -35,6 +35,14 @@ module.exports = function (app) {
       type: DataTypes.BOOLEAN,
       default: false,
       allowNull: false
+    },
+    authUsername:{
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    authPassword:{
+      type: DataTypes.STRING,
+      allowNull: true
     }
   }, {
     hooks: {
