@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+<title>Minerva | Login</title>
+<script src="https://kit.fontawesome.com/72f900170b.js" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+<style>
+	body {
+		color: #fff;
+		background: #19aa8d;
+		font-family: 'Roboto', sans-serif;
+	}
+	.form-control, .form-control:focus, .input-group-addon {
+		border-color: #e1e1e1;
+	}
+    .form-control, .btn {
+        border-radius: 3px;
+    }
+	.signup-form {
+		margin: 0 auto;
+		padding: 30px;
+		max-width: 570px;
+		width: 75%;
+	}
+    .signup-form form {
+		color: #999;
+		border-radius: 3px;
+    	margin-bottom: 15px;
+        background: #fff;
+        box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+        padding: 30px;
+    }
+	.signup-form h2 {
+		color: #333;
+		font-weight: bold;
+        margin-top: 0;
+    }
+    .signup-form hr {
+        margin: 0 -30px 20px;
+    }
+	.signup-form .form-group {
+		margin-bottom: 20px;
+	}
+	.signup-form label {
+		font-weight: normal;
+		font-size: 13px;
+	}
+	.signup-form .form-control {
+		min-height: 38px;
+		box-shadow: none !important;
+	}
+	.signup-form .input-group-addon {
+		max-width: 42px;
+		text-align: center;
+	}
+	.signup-form input[type="checkbox"] {
+		margin-top: 2px;
+    width: 1rem;
+	}
+    .signup-form .btn{
+        font-size: 16px;
+        font-weight: bold;
+		background: #19aa8d;
+		border: none;
+		min-width: 140px;
+    }
+	.signup-form .btn:hover, .signup-form .btn:focus {
+		background: #179b81;
+        outline: none;
+	}
+	.signup-form a {
+		color: #fff;
+		text-decoration: underline;
+	}
+	.signup-form a:hover {
+		text-decoration: none;
+	}
+	.signup-form form a {
+		color: #19aa8d;
+		text-decoration: none;
+	}
+	.signup-form form a:hover {
+		text-decoration: underline;
+	}
+	.signup-form .fa {
+		font-size: 21px;
+	}
+	.signup-form .fa-paper-plane {
+		font-size: 18px;
+	}
+	.signup-form .fa-check {
+		color: #fff;
+		left: 17px;
+		top: 18px;
+		font-size: 7px;
+		position: absolute;
+	}
+
+  .not-visible {
+    display: none;
+  }
+  .input-group-addon{
+    border-width: 1px;
+    margin-top: 7px;
+    margin-right: 3px;
+    border-color: #656565;
+    width: 1.8rem;
+  }
+
+  #registrationModal .modal-content {
+    background-color: #FFFFFF;
+    color: #000000;
+    border-radius: 9px;
+    }
+
+    #lockPass:hover {
+      cursor: pointer;
+      color: #656565;
+      width: 1.8rem;
+    }
+</style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-lg">
+    <a class="navbar-brand" href="/index.html">Minerva</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/onboard.html">Iscriviti</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/login.html">Login</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+<div class="signup-form">
+  <form>
+		<h2>Accedi</h2>
+    <p>Accedi al tuo account Minerva.</p>
+		<hr>
+
+    <div class="form-group">
+        <div class="input-group">
+          <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
+          <input type="email" id="emailIn" class="form-control" name="email" placeholder="Indirizzo e-mail" required="required">
+        </div>
+    </div>
+
+    <div class="form-group">
+      <div class="input-group">
+        <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+        <input type="password" id="passwordIn" class="form-control" name="password" placeholder="Password" required="required"><span class="input-group-addon"><i id="lockPass" class="fa-solid fa-eye" onclick="togglePassword()"></i></span>
+      </div>
+    </div>
+
+		<div class="form-group">
+      <button type="submit" class="btn btn-primary btn-lg" id="loginButton">Accedi</button>
+    </div>
+  </form>
+	<div class="text-center">Non hai ancora un account? <a style="color: aqua;" href="/onboard.html">Iscriviti ora</a>.</div>
+</div>
+
+<script>
+  const button = document.getElementById('loginButton');
+  const email = document.getElementById('emailIn');
+  const password = document.getElementById('passwordIn');
+  const lockPass = document.getElementById('lockPass');
+  const bridgeURL = window.location.protocol + "//" + window.location.host;
+
+  var token = undefined;
+  button.addEventListener('click', function(e) {
+    e.preventDefault();
+    console.log('click');
+    fetch(bridgeURL+'/e-modules/getSecret', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({email: email.value, password: password.value})
+    })
+    .then(response => response.json())
+    .then(data => {
+      if(data.secret == undefined) {
+        alert('Credenziali errate');
+        return;
+      }
+      localStorage.setItem('secret', data.secret);
+      localStorage.setItem('idLms', data.idLms);
+      localStorage.setItem('name', data.name);
+      window.location.href = '/personal.html';
+    })
+  });
+
+  function togglePassword() {
+    if (password.type === "password") {
+      password.type = "text";
+      lockPass.classList.remove('fa-eye');
+      lockPass.classList.add('fa-eye-slash');
+    } else {
+      password.type = "password";
+      lockPass.classList.remove('fa-eye-slash');
+      lockPass.classList.add('fa-eye');
+    }
+  }
+</script>
+
+</body>
+</html>

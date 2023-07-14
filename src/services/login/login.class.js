@@ -36,7 +36,7 @@ exports.Login = class Login {
     const passwordIsCorrect = await bcrypt.compare(password, user.password)
 
     if(passwordIsCorrect){
-      return {secret: user.secret}
+      return {secret: user.secret, idLms: user.id, name:user.name}
     }
 
     throw new BadRequest("Password sbagliata, ritenta");

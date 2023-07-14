@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
-<title>Minerva Sign Up</title>
+<title>Minerva | Sign Up</title>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
 <style>
@@ -132,7 +132,7 @@
           <a class="nav-link" href="/onboard.html">Iscriviti</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Login</a>
+          <a class="nav-link" href="/login.html">Login</a>
         </li>
       </ul>
     </div>
@@ -194,7 +194,7 @@
       <button type="submit" class="btn btn-primary btn-lg" id="signupButton">Vai al modulo di iscrizione</button>
     </div>
   </form>
-	<div class="text-center">Hai già un account? <a href="#">Effettua il login</a></div>
+	<div class="text-center">Hai già un account? <a style="color: aqua;" href="/login.html">Effettua il login</a>.</div>
 </div>
 <div class="modal fade" id="registrationModal" tabindex="-1" role="dialog" aria-labelledby="registrationModalLabel"
   aria-hidden="true">
@@ -280,6 +280,8 @@
         var registrationModal = document.getElementById('registrationModal');
         registrationModal.classList.add('show');
         registrationModal.style.display = 'block';
+        //indirizza alla pagina di login o alla pagina del proprio LMS
+        //localStorage.setItem('token', data.token); oppure settare dati ad esempio id e password
       })
       .catch((error) => {
         console.error('Error:', error);
