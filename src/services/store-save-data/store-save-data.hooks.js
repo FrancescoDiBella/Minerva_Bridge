@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const internalOnly = require('../../internal-only');
-const { NotAuthenticated } = require('@feathersjs/errors')
+const { NotAuthenticated, BadRequest } = require('@feathersjs/errors')
 const {hasHeader} = require('../../hasHeader');
 
 module.exports = {
@@ -27,11 +27,22 @@ module.exports = {
             payload
           }
           context.params.clientData = clientData;
-          return context;
-
         } catch (error) {
           // If the JWT is invalid, throw an error
           throw new NotAuthenticated('Token non valido!');
+        }
+
+        try{
+          const base64_data = context.data.save_data;
+          console.log("BASE64:", base64_data)
+          //converti base64_data da base64 a json
+          const buff = Buffer.from(base64_data, 'base64');
+          const json_data = buff.toString('utf-8');
+          console.log("JSON:", json_data)
+          context.data = JSON.parse(json_data);
+          return context;
+        }catch{
+          throw new BadRequest('Dati non validi!');
         }
       }
     ],
