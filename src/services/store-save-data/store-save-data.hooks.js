@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const internalOnly = require('../../internal-only');
-const {BadRequest} = require('@feathersjs/errors');
+const { NotAuthenticated } = require('@feathersjs/errors')
 const {hasHeader} = require('../../hasHeader');
 
 module.exports = {
@@ -13,7 +13,6 @@ module.exports = {
         const hasHeaderObj = new hasHeader();
         const { headers } = context.params;
         //console.log("DATA:", context.data)
-        const save_data = context.data.save_data;
         // Check if the `Authorization` header is present
         await hasHeaderObj.hasAuthorization(headers);
         // Extract the JWT from the `Authorization` header
@@ -23,17 +22,16 @@ module.exports = {
         try {
           const secret = context.app.get('authentication').secret;
           const payload = jwt.verify(token, secret);
-
+          console.log("PAYLOAD:", payload)
           const clientData = {
-            save_data,
             payload
           }
-          context.data = clientData;
+          context.params.clientData = clientData;
           return context;
 
         } catch (error) {
           // If the JWT is invalid, throw an error
-          throw new BadRequest('Token non valido!');
+          throw new NotAuthenticated('Token non valido!');
         }
       }
     ],
