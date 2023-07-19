@@ -11,7 +11,6 @@ exports.Access = class Access extends Service {
   }
 
   async create(data, params){
-    console.log(data)
     const {idLms, idUsr, idApp3D, secret} = data;
 
     const lmsModel = lms(this.app);
