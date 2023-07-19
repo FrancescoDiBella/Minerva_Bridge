@@ -1,7 +1,9 @@
 const _utenti = require('../../models/access.model');
+const _lmsModel = require('../../models/lms.model');
 const getAuth = require('../../models/get-auth-code.model');
 const axios = require('axios')
 const { BadRequest } = require('@feathersjs/errors');
+const lmsModel = require('../../models/lms.model');
 
 exports.Statements = class Statements {
   constructor (options, app) {
@@ -29,11 +31,8 @@ exports.Statements = class Statements {
 
     const save_data = data;
 
-    console.log(idUsr, idLms, authCode, idApp3D, save_data);
-    console.log("save_data:", save_data);
-
     const getAuthModel = getAuth(this.app);
-    const lmsModel = _utenti(this.app);
+    const lmsModel = _lmsModel(this.app);
     //const getHook = hook(this.app);
     const _utente = await getAuthModel.findOne({
       where: {
@@ -45,47 +44,49 @@ exports.Statements = class Statements {
       }
     });
 
-    //controllare quale sia l'hook corrispondente all'IdLms
-    /*
-    const _hook = await getHook.findOne({
-      where: {
-        idLms
-      }
-    })
-    */
-
-    if(!_utente){
-      throw new BadRequest("Errore, token errato o authCode non verificato");
-    }
-    /*
+    //controllare quale sia il baseURL dell'LMS associato
     const _lms = await lmsModel.findOne({
       where: {
         id: idLms
       }
     });
 
-    if(_lms.statementType == "XAPI"){
+    const baseURL = _lms.baseURL;
+    const statementType = _lms.statementsType;
+    const postfix = _utente.postfix;
+    const authToken = _utente.commitToken;
+    const key = _lms.authUsername;
+    const secret = _lms.authPassword;
+
+    if(!_utente){
+      throw new BadRequest("Errore, token errato o authCode non verificato");
+    }
+
+    var statements = [];
+    if(statementType == "XAPI"){
       //routine per XAPI
       for(let i = 0; i < save_data.length; i++){
         //routine per statement
         //scorporare il codice attuale in una funzione
-        const statement = await this.generateXAPIStatement(save_data[i]);
+        statements[i] = await this.generateXAPIStatement(save_data[i], idUsr, idLms, idApp3D);
         //send XAPI statement to LRS
-        const res = await this.sendXAPIStatement(statement);
       }
+      const res = await this.sendXAPIStatement(statements, baseURL, postfix, authToken, key, secret);
+      return res;
     }else if(_lms.statementType == "SCORM"){
       //routine per SCORM
       for(let i = 0; i < save_data.length; i++){
         //routine per statement
         //scorporare il codice attuale in una funzione
-        const scorm = await this.generateSCORMData(save_data[i]);
+        statements[i] = await this.generateSCORMData(save_data[i]);
         //send SCORM data to SCORM server
-        const res = await this.sendSCORMData(scorm);
       }
+      const res = await this.sendSCORMData(statements);
+      return res;
     }
-    */
+
     //controllo sul statementType dell'lms associato all'utente
-    if(true){
+    if(false){
       var statements = [];
       var result;
       for(let i = 0; i < save_data.length; i++){
@@ -276,27 +277,44 @@ exports.Statements = class Statements {
     return {msg : 'ciao'}
   }
 
-  async sendXAPIStatement(statement){
+  async sendXAPIStatement(statement, baseURL, postfix, authToken, key, secret){
     try {
-      const response = await axios.post(
-        this.app.get("lrsql").endpoint,
-        statement,
-        {
-          auth: {
-            username: this.app.get("lrsql").username,
-            password: this.app.get("lrsql").password,
-          },
+      if(authToken == null){
+          const response = await axios.post(
+            baseURL + postfix,
+            statement,
+            {
+              auth: {
+                username: key,
+                password: secret,
+              },
 
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Experience-API-Version' : '1.0.2'
-          },
-        },
-      );
+              headers: {
+                'Content-Type': 'application/json',
+                'X-Experience-API-Version' : '1.0.2'
+              },
+            },
+          );
 
-      return {statusMsg:"Statements salvati correttamente!", statementId: response.data};
+          return {statusMsg:"Statements salvati correttamente!", statementId: response.data};
+      }else{
+        const response = await axios.post(
+          baseURL + postfix,
+          statement,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Experience-API-Version' : '1.0.2',
+              'Authorization': 'Bearer '+authToken,
+            },
+          },
+        );
+
+        return {statusMsg:"Statements salvati correttamente!", statementId: response.data};
+      }
+
     } catch (err) {
-      return {statusMsg:"Statements non salvati!", statementId: null};
+      return {statusMsg:"Errore, Statements non salvati!", statementId: null};
     }
   }
 
