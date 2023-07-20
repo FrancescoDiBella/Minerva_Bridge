@@ -22,7 +22,6 @@ module.exports = {
         try {
           const secret = context.app.get('authentication').secret;
           const payload = jwt.verify(token, secret);
-          console.log("PAYLOAD:", payload)
           const clientData = {
             payload
           }
@@ -32,17 +31,16 @@ module.exports = {
           throw new NotAuthenticated('Token non valido!');
         }
 
+        //converti base64_data da base64 a json
         try{
-          const base64_data = context.data.save_data;
-          console.log("BASE64:", base64_data)
+          const base64_data = context.data.data;
           //converti base64_data da base64 a json
           const buff = Buffer.from(base64_data, 'base64');
           const json_data = buff.toString('utf-8');
-          console.log("JSON:", json_data)
           context.data = JSON.parse(json_data);
           return context;
         }catch{
-          throw new BadRequest('Dati non validi!');
+          throw new BadRequest('I dati non sono validi!');
         }
       }
     ],

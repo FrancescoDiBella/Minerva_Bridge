@@ -19,20 +19,23 @@ module.exports = {
         try {
           const secret = context.app.get('authentication').secret;
           const payload = jwt.verify(token, secret);
-
-          return context;
-
+          const clientData = {
+            payload
+          }
+          context.params.clientData = clientData;
         } catch (error) {
           // If the JWT is invalid, throw an error
           throw new NotAuthenticated('Token non valido!');
         }
       }
     ],
-    get: [
+    get: [internalOnly
+      /*
       async context => {
+        const hasHeaderObj = new hasHeader();
         const { headers } = context.params;
         // Check if the `Authorization` header is present
-        await hasAuthorization(headers);
+        await hasHeaderObj.hasAuthorization(headers);
         // Extract the JWT from the `Authorization` header
         const [, token] = headers.authorization.split(' ');
 
@@ -40,14 +43,15 @@ module.exports = {
         try {
           const secret = context.app.get('authentication').secret;
           const payload = jwt.verify(token, secret);
-
-          return context;
-
+          const clientData = {
+            payload
+          }
+          context.params.clientData = clientData;
         } catch (error) {
           // If the JWT is invalid, throw an error
           throw new NotAuthenticated('Token non valido!');
         }
-      }
+      }*/
     ],
     create: [internalOnly],
     update: [internalOnly],
