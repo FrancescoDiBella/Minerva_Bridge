@@ -42,6 +42,25 @@ app.configure(socketio());
 
 app.configure(sequelize);
 
+/*
+const entities = {
+  lms: require('./models/lms.model'),
+  utenti: require('./models/access.model'),
+  saves: require('./models/store-save-datas.model'),
+  auth: require('./models/get-auth-code.model')
+}
+
+entities.lms.hasMany(entities.utenti, {foreignKey: 'idLms'});
+entities.utenti.belongsTo(entities.lms);
+entities.utenti.hasMany(entities.saves, {foreignKey: 'id_utenza'});
+entities.saves.belongsTo(entities.utenti);
+
+sequelize.sync({force: false}).then(() => {
+  console.log("Database synced");
+}).catch((err) => {
+  console.log(err);
+});
+*/
 // Configure other middleware (see `middleware/index.js`)
 app.configure(middleware);
 app.configure(authentication);
