@@ -73,7 +73,7 @@ exports.Statements = class Statements {
       }
       const res = await this.sendXAPIStatement(statements, baseURL, postfix, authToken, key, secret);
       return res;
-    }else if(_lms.statementType == "SCORM"){
+    }else if(statementType == "SCORM"){
       //routine per SCORM
       for(let i = 0; i < save_data.length; i++){
         //routine per statement
