@@ -69,6 +69,4 @@ exports.Mails = class Mails{
     const token = jwt.sign({ email }, this.app.get('authentication').secret, { expiresIn: '1h' });
     return token;
   }
-
-
 };
