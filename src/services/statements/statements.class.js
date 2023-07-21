@@ -78,127 +78,11 @@ exports.Statements = class Statements {
       for(let i = 0; i < save_data.length; i++){
         //routine per statement
         //scorporare il codice attuale in una funzione
-        statements[i] = await this.generateSCORMData(save_data[i]);
+        statements[i] = await this.generateSCORMData(save_data[i],idUsr, idLms, idApp3D);
         //send SCORM data to SCORM server
       }
-      const res = await this.sendSCORMData(statements);
+      const res = await this.sendSCORMData(statements, baseURL, postfix, authToken, key, secret);
       return res;
-    }
-
-    //controllo sul statementType dell'lms associato all'utente
-    if(false){
-      var statements = [];
-      var result;
-      for(let i = 0; i < save_data.length; i++){
-        //routine per statement
-        //scorporare il codice attuale in una funzione
-        statements[i] = await this.generateXAPIStatement(save_data[i], idUsr, idLms, idApp3D);
-      }
-      //send XAPI statement to LRSQL
-      const res = await this.sendXAPIStatement(statements);
-      result = res;
-      //aggiungere codice che prende token e postfix dal db
-      //codice che fa la chiamata al server lms per salvare i dati
-
-      //distinguere se XAPI O SCORM
-      var _token = null;
-      /*
-        await axios.get("https://sfera.elogos.cloud/scorms/getToken")
-        .then(response => {
-          _token = response.data.token;
-        })
-        .catch(error => {
-          console.error('Errore:', error);
-        });
-      */
-
-      if(_token != null){
-        const config = {
-          'headers': {
-            'Authorization': 'Bearer '+_token,
-            'Content-Type': 'application/json'
-          }
-        };
-
-        console.log(JSON.stringify(save_data));
-
-        const scorm = {
-          "id_member" : "1",
-          "id_modulo" : "1",
-          "data" : [
-              {
-                  "element":"cmi.core.score.raw",
-                  "value":"100"
-              },
-              {
-                  "element":"adlcp:masteryscore",
-                  "value":"100"
-              },
-              {
-                  "element":"cmi.student_data.mastery_score",
-                  "value":"100"
-              },
-              {
-                  "element":"cmi.launch_data",
-                  "value":"launch_data"
-              },
-                {
-                  "element":"cmi.suspend_data",
-                  "value": JSON.stringify(save_data)
-              },
-              {
-                  "element":"cmi.core.lesson_location",
-                  "value":"lesson_location"
-              },
-              {
-                  "element":"cmi.core.lesson_status",
-                  "value":"incomplete"
-              },
-              {
-                  "element":"cmi.core.lesson_location",
-                  "value":"lesson_location"
-              },
-              {
-                  "element":"cmi.core.entry",
-                  "value":"entry"
-              },
-              {
-                  "element":"cmi.core.exit",
-                  "value":"exit"
-              },
-              {
-                  "element":"cmi.core.total_time",
-                  "value":"12:00:12"
-              },
-              {
-                  "element":"cmi.core.session_time",
-                  "value":"05:00:00"
-              }]
-      };
-
-        await axios.post('https://sfera.elogos.cloud/scorms/commit', scorm, config)
-        .then(response => {
-          statementSaved = true;
-          console.log(response);
-          return "SCORM DATA SAVED!"
-        })
-        .catch(error => {
-          console.error('Errore:', error);
-          return "SCORM DATA NOT SAVED!"
-        });
-
-        if(statementSaved){
-          return {statusMsg:"Statement salvato correttamente!"};
-        }else{
-          throw new Error("Statement non salvato! Riprovare più tardi.");
-        }
-
-      }else{
-        //throw new Error("Errore interno, riprova!");
-        return result;
-      }
-
-
     }
   }
 
@@ -273,8 +157,63 @@ exports.Statements = class Statements {
     }
   }
 
-  async generateSCORMData(data){
-    return {msg : 'ciao'}
+  async generateSCORMData(data, idUsr, idLms, idApp3D){
+    const scorm = {
+      "id_member" : idUsr,
+      "id_modulo" : idApp3D,
+      "data" : [
+          {
+              "element":"cmi.core.score.raw",
+              "value":"100"
+          },
+          {
+              "element":"adlcp:masteryscore",
+              "value":"100"
+          },
+          {
+              "element":"cmi.student_data.mastery_score",
+              "value":"100"
+          },
+          {
+              "element":"cmi.launch_data",
+              "value":"launch_data"
+          },
+          {
+              "element":"cmi.suspend_data",
+              "value": JSON.stringify(data)
+          },
+          {
+              "element":"cmi.core.lesson_location",
+              "value":"lesson_location"
+          },
+          {
+              "element":"cmi.core.lesson_status",
+              "value":"incomplete"
+          },
+          {
+              "element":"cmi.core.lesson_location",
+              "value":"lesson_location"
+          },
+          {
+              "element":"cmi.core.entry",
+              "value":"entry"
+          },
+          {
+              "element":"cmi.core.exit",
+              "value":"exit"
+          },
+          {
+              "element":"cmi.core.total_time",
+              "value":"12:00:12"
+          },
+          {
+              "element":"cmi.core.session_time",
+              "value":"05:00:00"
+          }]
+    };
+
+
+    return scorm;
   }
 
   async sendXAPIStatement(statement, baseURL, postfix, authToken, key, secret){
@@ -296,7 +235,7 @@ exports.Statements = class Statements {
             },
           );
 
-          return {statusMsg:"Statements salvati correttamente!", statementId: response.data};
+          return {statusMsg:"Statements salvati correttamente!", statementsId: response.data};
       }else{
         const response = await axios.post(
           baseURL + postfix,
@@ -310,15 +249,50 @@ exports.Statements = class Statements {
           },
         );
 
-        return {statusMsg:"Statements salvati correttamente!", statementId: response.data};
+        return {statusMsg:"Statements salvati correttamente!", statementsId: response.data};
       }
 
     } catch (err) {
-      return {statusMsg:"Errore, Statements non salvati!", statementId: null};
+      return {statusMsg:"Errore, Statements non salvati!", statementsId: null};
     }
   }
 
-  async sendSCORMData(data){
-    return {msg : 'ciao'}
+  async sendSCORMData(statement, baseURL, postfix, authToken, key, secret){
+    try {
+      if(authToken == null){
+          const response = await axios.post(
+            baseURL + postfix,
+            statement,
+            {
+              auth: {
+                username: key,
+                password: secret,
+              },
+
+              headers: {
+                'Content-Type': 'application/json'
+              },
+            },
+          );
+
+          return {statusMsg:"Statements salvati correttamente!", statementsId: response.data};
+      }else{
+        const response = await axios.post(
+          baseURL + postfix,
+          statement,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer '+authToken
+            },
+          },
+        );
+
+        return {statusMsg:"Statements salvati correttamente!", statementsId: response.data};
+      }
+
+    } catch (err) {
+      return {statusMsg:"Errore, Statements non salvati!", statementsId: null};
+    }
   }
 };
