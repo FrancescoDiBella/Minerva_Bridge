@@ -6,25 +6,11 @@ const DataTypes = Sequelize.DataTypes;
 module.exports = function (app) {
   const sequelizeClient = app.get('sequelizeClient');
   const utenti = sequelizeClient.define('utenti', {
-    idUsr: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    idLms: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    idApp3D: {
+    text: {
       type: DataTypes.STRING,
       allowNull: false
     }
-  },
-  {
-    unique:{
-      fields:['idUsr', 'idLms', 'idApp3D']
-    }
-  }
-  , {
+  }, {
     hooks: {
       beforeCount(options) {
         options.raw = true;
@@ -34,13 +20,9 @@ module.exports = function (app) {
 
   // eslint-disable-next-line no-unused-vars
   utenti.associate = function (models) {
-    utenti.belongsTo(models.lms);
-    utenti.hasMany(models.saves, {foreignKey: 'id_utenza'});
+    // Define associations here
+    // See https://sequelize.org/master/manual/assocs.html
   };
 
   return utenti;
 };
-
-
-
-

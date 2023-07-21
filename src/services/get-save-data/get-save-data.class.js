@@ -1,3 +1,7 @@
+const _saveDatas = require('../../models/store-save-datas.model');
+const _auth = require('../../models/get-auth-code.model');
+const {BadRequest} = require('@feathersjs/errors');
+const _utenti = require('../../models/access.model');
 /* eslint-disable no-unused-vars */
 exports.GetSaveData = class GetSaveData {
   constructor (options, app) {
@@ -6,12 +10,92 @@ exports.GetSaveData = class GetSaveData {
   }
 
   async find (params) {
-    return [];
+    const {idUsr, idLms, idApp3D, authCode} = params.clientData.payload;
+
+    const _saveDatasModel = _saveDatas(this.app);
+    const _authModel = _auth(this.app);
+    const _utentiModel = _utenti(this.app);
+
+    const _Auth = await _authModel.findOne({
+      where: {
+        idUsr,
+        idLms,
+        idApp3D,
+        authCode
+      }
+    });
+
+    if(!_Auth){
+      throw new BadRequest("Errore, token errato o authCode non verificato");
+    }
+
+    const user = await _utentiModel.findOne({
+      where: {
+        idUsr,
+        idLms,
+        idApp3D
+      }
+    });
+
+    if(!user){
+      throw new BadRequest("Errore, utente non trovato");
+    }
+
+    const _savedData = await _saveDatasModel.findOne({
+      where: {
+        id_utenza: user.id
+      }
+    });
+
+    if(!_savedData){
+      throw new BadRequest("Errore, dati non trovati! Salvare i dati prima di poterli recuperare");
+    }
+
+    return {
+      data: _savedData.data
+    };
   }
 
   async get (id, params) {
+    const {idUsr, idLms, idApp3D, authCode} = params.clientData.payload;
+
+    const _saveDatasModel = _saveDatas(this.app);
+    const _authModel = _auth(this.app);
+    const _utentiModel = _utenti(this.app);
+
+    const _Auth = await _authModel.findOne({
+      where: {
+        idUsr,
+        idLms,
+        idApp3D,
+        authCode
+      }
+    });
+
+    if(!_Auth){
+      throw new BadRequest("Errore, token errato o authCode non verificato");
+    }
+
+    const user = await _utentiModel.findOne({
+      where: {
+        idUsr,
+        idLms,
+        idApp3D
+      }
+    });
+
+    if(!user){
+      throw new BadRequest("Errore, utente non trovato");
+    }
+
+    const _savedData = await _saveDatasModel.findOne({
+      where: {
+        id_utenza: user.id
+      }
+    });
+
     return {
-      id, text: `A new message with ID: ${id}!`
+      data: _savedData.data
     };
   }
 
