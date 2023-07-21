@@ -4,6 +4,7 @@ const getAuth = require('../../models/get-auth-code.model');
 const axios = require('axios')
 const { BadRequest } = require('@feathersjs/errors');
 const lmsModel = require('../../models/lms.model');
+const ngsild = require('../../ngsild.js');
 
 exports.Statements = class Statements {
   constructor (options, app) {
@@ -67,20 +68,18 @@ exports.Statements = class Statements {
       //routine per XAPI
       for(let i = 0; i < save_data.length; i++){
         //routine per statement
-        //scorporare il codice attuale in una funzione
         statements[i] = await this.generateXAPIStatement(save_data[i], idUsr, idLms, idApp3D);
-        //send XAPI statement to LRS
       }
+      //send XAPI data to LRS
       const res = await this.sendXAPIStatement(statements, baseURL, postfix, authToken, key, secret);
       return res;
     }else if(statementType == "SCORM"){
       //routine per SCORM
       for(let i = 0; i < save_data.length; i++){
         //routine per statement
-        //scorporare il codice attuale in una funzione
         statements[i] = await this.generateSCORMData(save_data[i],idUsr, idLms, idApp3D);
-        //send SCORM data to SCORM server
       }
+      //send SCORM data to SCORM server
       const res = await this.sendSCORMData(statements, baseURL, postfix, authToken, key, secret);
       return res;
     }
@@ -212,7 +211,6 @@ exports.Statements = class Statements {
           }]
     };
 
-
     return scorm;
   }
 
@@ -294,5 +292,10 @@ exports.Statements = class Statements {
     } catch (err) {
       return {statusMsg:"Errore, Statements non salvati!", statementsId: null};
     }
+  }
+
+  async generateNGSILD(data, idUsr, idLms, idApp3D, authCode){
+    //genera NGSILD
+    const ngsildObj = new ngsild();
   }
 };
