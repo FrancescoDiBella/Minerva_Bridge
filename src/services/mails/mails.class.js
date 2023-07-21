@@ -42,7 +42,7 @@ exports.Mails = class Mails{
       to: email_to,
       subject: "MINERVA | Conferma email",
       text:"",
-      html: `<h1> Gentile utente, conferma la tua mail tramite questo link: </h1> <br> <a href="${url}">Conferma la tua mail</a>`
+      html: `<h1> Gentile utente, conferma la tua mail tramite questo link: </h1> <br> <button href="${url}">Conferma la tua mail</button>`
     }
 
     return this.transporter.sendMail(message, function(error, info){
