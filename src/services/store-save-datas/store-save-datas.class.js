@@ -30,7 +30,6 @@ exports.StoreSaveDatas = class StoreSaveDatas extends Service {
     const {idApp3D} = payload
 
     const save_data = data.data;
-    console.log("save_data:", save_data);
 
     const getAuthModel = getAuth(this.app);
     const saveDatasModel = _saveDatas(this.app);
