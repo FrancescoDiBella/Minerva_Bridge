@@ -159,7 +159,7 @@ exports.Statements = class Statements {
   async generateSCORMData(data, idUsr, idLms, idApp3D){
     const scorm = {
       "id_member" : idUsr,
-      "id_modulo" : idApp3D,
+      "id_modulo" : 21,
       "data" : [
           {
               "element":"cmi.core.score.raw",
