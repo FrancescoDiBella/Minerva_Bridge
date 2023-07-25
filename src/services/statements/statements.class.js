@@ -75,13 +75,14 @@ exports.Statements = class Statements {
       return res;
     }else if(statementType == "SCORM"){
       //routine per SCORM
+      var scorms = []
       for(let i = 0; i < save_data.length; i++){
         //routine per statement
         statements[i] = await this.generateSCORMData(save_data[i],idUsr, idLms, idApp3D);
+        scorms[i] = await this.sendSCORMData(statements[i], baseURL, postfix, authToken, key, secret);
       }
       //send SCORM data to SCORM server
-      const res = await this.sendSCORMData(statements, baseURL, postfix, authToken, key, secret);
-      return res;
+      return scorms;
     }
   }
 
@@ -158,8 +159,6 @@ exports.Statements = class Statements {
 
   async generateSCORMData(data, idUsr, idLms, idApp3D){
     const scorm = {
-      "id_member" : toString(idUsr),
-      "id_modulo" : "1",
       "data" : [
           {
               "element":"cmi.core.score.raw",
@@ -275,7 +274,11 @@ exports.Statements = class Statements {
             },
           );
           console.log(response.data, response.status);
-          return {statusMsg:"Statements salvati correttamente!"};
+          if(response.status == 200 || response.status == 201){
+            return {statusMsg:"Statements salvati correttamente!"};
+          }else{
+            return BadRequest("Errore, Statements non salvati! Dettagli: "  + response.data);
+          }
       }else{
         const response = await axios.post(
           baseURL + _postfix,
@@ -288,7 +291,11 @@ exports.Statements = class Statements {
           },
         );
         console.log(response.data, response.status);
-        return {statusMsg:"Statements salvati correttamente!"};
+          if(response.status == 200 || response.status == 201){
+            return {statusMsg:"Statements salvati correttamente!"};
+          }else{
+            return BadRequest("Errore, Statements non salvati! Dettagli: "  + response.data);
+          }
       }
 
     } catch (err) {
