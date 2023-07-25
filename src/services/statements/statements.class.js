@@ -232,8 +232,8 @@ exports.Statements = class Statements {
               },
             },
           );
-
-          return {statusMsg:"Statements salvati correttamente!", statementsId: response.data};
+          console.log(response.data)
+          return {statusMsg:"Statements salvati correttamente!"};
       }else{
         const response = await axios.post(
           baseURL + postfix,
@@ -246,12 +246,12 @@ exports.Statements = class Statements {
             },
           },
         );
-
-        return {statusMsg:"Statements salvati correttamente!", statementsId: response.data};
+        console.log(response.data);
+        return {statusMsg:"Statements salvati correttamente!"};
       }
 
     } catch (err) {
-      return {statusMsg:"Errore, Statements non salvati!", statementsId: null};
+      return BadRequest("Errore, Statements non salvati! Dettagli: "  + err);
     }
   }
 
@@ -272,8 +272,8 @@ exports.Statements = class Statements {
               },
             },
           );
-
-          return {statusMsg:"Statements salvati correttamente!", statementsId: response.data};
+          console.log(response.data);
+          return {statusMsg:"Statements salvati correttamente!"};
       }else{
         const response = await axios.post(
           baseURL + postfix,
@@ -285,12 +285,12 @@ exports.Statements = class Statements {
             },
           },
         );
-
-        return {statusMsg:"Statements salvati correttamente!", statementsId: response.data};
+        console.log(response.data);
+        return {statusMsg:"Statements salvati correttamente!"};
       }
 
     } catch (err) {
-      return {statusMsg:"Errore, Statements non salvati!", statementsId: null};
+      return BadRequest("Errore, Statements non salvati! Dettagli: "  + err);
     }
   }
 
