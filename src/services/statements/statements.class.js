@@ -257,9 +257,11 @@ exports.Statements = class Statements {
 
   async sendSCORMData(statement, baseURL, postfix, authToken, key, secret){
     try {
+      //se il postfix non inizia con / aggiungilo, altrimenti lascialo così
+      const _postfix = postfix.indexOf('/') == 0 ? postfix : '/'+postfix;
       if(authToken == null){
           const response = await axios.post(
-            baseURL + postfix,
+            baseURL + _postfix,
             statement,
             {
               auth: {
@@ -276,7 +278,7 @@ exports.Statements = class Statements {
           return {statusMsg:"Statements salvati correttamente!"};
       }else{
         const response = await axios.post(
-          baseURL + postfix,
+          baseURL + _postfix,
           statement,
           {
             headers: {
