@@ -163,15 +163,15 @@ exports.Statements = class Statements {
       "data" : [
           {
               "element":"cmi.core.score.raw",
-              "value":"100"
+              "value":"10"
           },
           {
               "element":"adlcp:masteryscore",
-              "value":"100"
+              "value":"10"
           },
           {
               "element":"cmi.student_data.mastery_score",
-              "value":"100"
+              "value":"10"
           },
           {
               "element":"cmi.launch_data",
@@ -274,7 +274,7 @@ exports.Statements = class Statements {
               },
             },
           );
-          console.log(response.data);
+          console.log(response.data, response.status);
           return {statusMsg:"Statements salvati correttamente!"};
       }else{
         const response = await axios.post(
@@ -287,7 +287,7 @@ exports.Statements = class Statements {
             },
           },
         );
-        console.log(response.data);
+        console.log(response.data, response.status);
         return {statusMsg:"Statements salvati correttamente!"};
       }
 
