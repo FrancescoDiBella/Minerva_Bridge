@@ -13,7 +13,8 @@ exports.Lms = class Lms extends Service {
   async create(data, params){
     const {name, email, password, baseURL, statementsType, authUsername, authPassword} = data;
     const lmsModel = lms(this.app);
-
+    //Elimina al baseURL il / alla fine
+    const _baseURL = toString(baseURL).lastIndexOf('/') == baseURL.length-1 ? baseURL.substring(0, baseURL.length-1) : baseURL;
     const secret =  crypto.randomBytes(6).toString('hex');
     //criptare anche il secret
     //creare il secret SOLO se si conferma email
@@ -26,7 +27,7 @@ exports.Lms = class Lms extends Service {
           password,
           secret,
           verified: true,
-          baseURL,
+          baseURL: _baseURL,
           statementsType
         })
       }else if(authUsername != undefined && authPassword != undefined){
@@ -36,7 +37,7 @@ exports.Lms = class Lms extends Service {
           password,
           secret,
           verified: true,
-          baseURL,
+          baseURL: _baseURL,
           statementsType,
           authUsername,
           authPassword
