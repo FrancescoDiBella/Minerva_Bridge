@@ -4,7 +4,7 @@ const getAuth = require('../../models/get-auth-code.model');
 const axios = require('axios')
 const { BadRequest } = require('@feathersjs/errors');
 const lmsModel = require('../../models/lms.model');
-const ngsild = require('../../ngsild.js');
+const {ngsild} = require('../../ngsild.js');
 
 exports.Statements = class Statements {
   constructor (options, app) {
@@ -72,7 +72,9 @@ exports.Statements = class Statements {
       }
       //send XAPI data to LRS
       const res = await this.sendXAPIStatement(statements, baseURL, postfix, authToken, key, secret);
-      return res;
+      const ngsi = await this.generateNGSILD(save_data, idUsr, idLms, idApp3D, authCode);
+      console.log(ngsi)
+      return {res};
     }else if(statementType == "SCORM"){
       //routine per SCORM
       var scorms = []
@@ -305,6 +307,35 @@ exports.Statements = class Statements {
 
   async generateNGSILD(data, idUsr, idLms, idApp3D, authCode){
     //genera NGSILD
-    const ngsildObj = new ngsild();
+    const ngsildObj = new ngsild("urn:ngsi-ld:Minerva:XAPIStatement:0001",
+        "XAPIStatement",
+        [{
+          name : "color",
+          value : {
+            "type": "Property",
+            "value": "red"
+          }
+        },
+        {
+          name : "mbox",
+          value : {
+            "type": "Property",
+            "value": "mailto:"+idUsr+"."+idLms+'.'+idApp3D+'.'+authCode+"@minerva.sferainnovazione.com"
+          }
+        },],
+        [{
+          name : "hasObject",
+          value : {
+            "type": "Relationship",
+            "object": "urn:ngsi-ld:Building:001"
+          }
+        }],
+        [
+          "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld",
+          "https://schema.lab.fiware.org/ld/context"
+        ]
+        );
+
+    return ngsildObj.generateEntity();
   }
 };
