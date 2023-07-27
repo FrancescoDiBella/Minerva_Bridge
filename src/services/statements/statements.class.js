@@ -73,18 +73,19 @@ exports.Statements = class Statements {
       //send XAPI data to LRS
       const res = await this.sendXAPIStatement(statements, baseURL, postfix, authToken, key, secret);
       const ngsi = await this.generateNGSILD(save_data, idUsr, idLms, idApp3D, authCode);
+
       console.log(ngsi)
       return {res};
     }else if(statementType == "SCORM"){
       //routine per SCORM
-      var scorms = []
-      for(let i = 0; i < save_data.length; i++){
-        //routine per statement
-        statements[i] = await this.generateSCORMData(save_data[i],idUsr, idLms, idApp3D);
-        scorms[i] = await this.sendSCORMData(statements[i], baseURL, postfix, authToken, key, secret);
+      var scorm;
+      scorm = await this.generateSCORMData(save_data,idUsr);
+      console.log(scorm);
+      if(scorm != null){
+        const resp = await this.sendSCORMData(scorm, baseURL, postfix, authToken, key, secret);
+        return resp;
       }
-      //send SCORM data to SCORM server
-      return scorms;
+      return {statusMsg:"Non erano presenti statements SCORM da inviare!"};
     }
   }
 
@@ -159,7 +160,24 @@ exports.Statements = class Statements {
     }
   }
 
-  async generateSCORMData(data, idUsr, idLms, idApp3D){
+  async areSCORMStatemntsValid(data){
+    for(let i = 0; i < data.length; i++){
+      const {identifier} = data[i];
+      if(identifier == "defaultplayer"){
+        console.log("defaultplayer!");
+        return true;
+      }
+    }
+    console.log("not defaultplayer!");
+    return false;
+  }
+
+  async generateSCORMData(data, idUsr){
+    const isDefaultPlayer = await this.areSCORMStatemntsValid(data);
+    if(!isDefaultPlayer){
+      return null;
+    }
+
     const scorm = {
       "data" : [
           {
@@ -209,8 +227,23 @@ exports.Statements = class Statements {
           {
               "element":"cmi.core.session_time",
               "value":"05:00:00"
-          }]
+          },
+          {
+              "element":"cmi.core.student_id",
+              "value":idUsr
+          },]
     };
+
+    for(let i = 0; i < data.length; i++){
+      const {identifier, parameter, value, timestamp} = data[i];
+      if(identifier == "defaultplayer"){
+        for(let j = 0; j < scorm.data.length; j++){
+          if(scorm.data[j].element == parameter){
+            scorm.data[j].value = value;
+          }
+        }
+      }
+    }
 
     return scorm;
   }
