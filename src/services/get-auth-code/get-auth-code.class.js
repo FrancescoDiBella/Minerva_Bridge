@@ -52,7 +52,6 @@ exports.GetAuthCode = class GetAuthCode extends Service {
           validated: false
         }
       })
-      //console.log("Eliminato")
     }, 10000*6)
   }
 
