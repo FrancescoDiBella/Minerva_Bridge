@@ -260,12 +260,15 @@ exports.Statements = class Statements {
     return true;
   }
 
+  //genera un oggetto SCORM
   async generateSCORMData(data, idUsr){
+    //controlla se è presente l'identifier 'defaultplayer'
     const isDefaultPlayer = await this.areSCORMStatementsValid(data);
     if(!isDefaultPlayer){
       return null;
     }
 
+    //oggetto SCORM da base
     const scorm = {
       "data" : [
           {
@@ -326,7 +329,11 @@ exports.Statements = class Statements {
           },]
     };
 
+    //varibile che trova gli errori, al momento gestiamo così quanti errori accettabili ci sono
     var isNotAccepted = 0;
+
+    //per ognuno degli oggetti preleviamo il parametro e il valore
+    //e li inseriamo nell'oggetto SCORM se sono presenti nella mappa
     for(let i = 0; i < data.length; i++){
       const {identifier, parameter, value, timestamp} = data[i];
       if(identifier != "defaultplayer"){
@@ -340,6 +347,8 @@ exports.Statements = class Statements {
         }
 
         if(scorm.data[j].element == _param){
+          //se il valore non è valido per SCORM
+          //non inserirlo nell'oggetto SCORM
           if(!this.isSCORMValueValid(_param, value)){
             isNotAccepted++;
             continue;
@@ -349,6 +358,8 @@ exports.Statements = class Statements {
       }
     }
 
+    //se ci sono più di due errori accettabili
+    //non inviare l'oggetto SCORM
     if(isNotAccepted >= this.maxAcceptableErrors){
       return null;
     }
