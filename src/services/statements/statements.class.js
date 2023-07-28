@@ -10,7 +10,9 @@ exports.Statements = class Statements {
   constructor (options, app) {
     this.options = options || {};
     this.app = app;
+    //array dei valori accettati da lesson_status
     this.lesson_status = ["passed", "completed", "failed", "incomplete", "browsed", "not attempted"];
+    //mappa dei parametri usati nelle richieste HTTP per comvertirli in quelli SCORM
     this.scormMap = {
       "score": "cmi.core.score.raw",
       "masteryscore": "adlcp:masteryscore",
@@ -88,7 +90,7 @@ exports.Statements = class Statements {
         statements[i] = await this.generateXAPIStatement(save_data[i], idUsr, idLms, idApp3D);
       }
       //send XAPI data to LRS
-      const res = await this.sendXAPIStatement(statements, baseURL, postfix, authToken, key, secret);
+      const res = await this.sendXAPIStatements(statements, baseURL, postfix, authToken, key, secret);
       const ngsi = await this.generateNGSILD(save_data, idUsr, idLms, idApp3D, authCode);
 
       console.log(ngsi)
@@ -177,12 +179,12 @@ exports.Statements = class Statements {
     }
   }
 
-  async sendXAPIStatement(statement, baseURL, postfix, authToken, key, secret){
+  async sendXAPIStatements(statements, baseURL, postfix, authToken, key, secret){
     try {
       if(authToken == null){
           const response = await axios.post(
             baseURL + postfix,
-            statement,
+            statements,
             {
               auth: {
                 username: key,
@@ -200,7 +202,7 @@ exports.Statements = class Statements {
       }else{
         const response = await axios.post(
           baseURL + postfix,
-          statement,
+          statements,
           {
             headers: {
               'Content-Type': 'application/json',
@@ -214,7 +216,7 @@ exports.Statements = class Statements {
       }
 
     } catch (err) {
-      return BadRequest("Errore, Statements non salvati! Dettagli: "  + err);
+      return new BadRequest("Errore, Statements non salvati! Dettagli: "  + err);
     }
   }
 
