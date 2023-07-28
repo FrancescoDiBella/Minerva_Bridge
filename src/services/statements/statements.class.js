@@ -102,7 +102,7 @@ exports.Statements = class Statements {
         const resp = await this.sendSCORMData(scorm, baseURL, postfix, authToken, key, secret);
         return resp;
       }
-      return {statusMsg:"Non erano presenti statements SCORM da inviare!"};
+      return {statusMsg:"Non erano presenti statements SCORM da inviare all'LMS! Inviati solo NGSI-LD"};
     }
   }
 
@@ -381,16 +381,15 @@ exports.Statements = class Statements {
             },
           },
         );
-        console.log(response.data, response.status);
           if(response.status == 200 || response.status == 201){
             return {statusMsg:"Statements salvati correttamente!"};
           }else{
-            return BadRequest("Errore, Statements non salvati! Dettagli: "  + response.data);
+            return new BadRequest("Errore, Statements non salvati! Dettagli: "  + response.data);
           }
       }
 
     } catch (err) {
-      return BadRequest("Errore, Statements non salvati! Dettagli: "  + err);
+      return new BadRequest("Errore, Statements non salvati! Dettagli: "  + err);
     }
   }
 
