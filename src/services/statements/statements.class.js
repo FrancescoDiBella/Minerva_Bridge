@@ -230,6 +230,7 @@ exports.Statements = class Statements {
     return false;
   }
 
+  //controlla se il valore ha un tipo valido per SCORM
   async isSCORMValueValid(parameter, value){
     switch(parameter){
       case "score":
@@ -393,6 +394,7 @@ exports.Statements = class Statements {
     }
   }
 
+  //controllo se è un numero anche se è una stringa
   async isNumber(n) { return !isNaN(parseFloat(n)) && !isNaN(n - 0) }
 
   async generateNGSILD(data, idUsr, idLms, idApp3D, authCode){
