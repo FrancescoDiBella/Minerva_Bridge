@@ -160,7 +160,48 @@ exports.Statements = class Statements {
     }
   }
 
-  async areSCORMStatemntsValid(data){
+  async sendXAPIStatement(statement, baseURL, postfix, authToken, key, secret){
+    try {
+      if(authToken == null){
+          const response = await axios.post(
+            baseURL + postfix,
+            statement,
+            {
+              auth: {
+                username: key,
+                password: secret,
+              },
+
+              headers: {
+                'Content-Type': 'application/json',
+                'X-Experience-API-Version' : '1.0.2'
+              },
+            },
+          );
+          console.log(response.data)
+          return {statusMsg:"Statements salvati correttamente!"};
+      }else{
+        const response = await axios.post(
+          baseURL + postfix,
+          statement,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Experience-API-Version' : '1.0.2',
+              'Authorization': 'Bearer '+authToken,
+            },
+          },
+        );
+        console.log(response.data);
+        return {statusMsg:"Statements salvati correttamente!"};
+      }
+
+    } catch (err) {
+      return BadRequest("Errore, Statements non salvati! Dettagli: "  + err);
+    }
+  }
+
+  async areSCORMStatementsValid(data){
     for(let i = 0; i < data.length; i++){
       const {identifier} = data[i];
       if(identifier == "defaultplayer"){
@@ -172,8 +213,22 @@ exports.Statements = class Statements {
     return false;
   }
 
+  async isSCORMValueValid(data){
+    for(let i = 0; i < data.length; i++){
+      const {identifier, parameter, value, timestamp} = data[i];
+      if(identifier == "defaultplayer"){
+        if(parameter == "cmi.core.score.raw" || parameter == "adlcp:masteryscore" || parameter == "cmi.student_data.mastery_score"){
+          if(value == null || value == undefined || value == "" || value == " "){
+            return false;
+          }
+        }
+      }
+    }
+    return true;
+  }
+
   async generateSCORMData(data, idUsr){
-    const isDefaultPlayer = await this.areSCORMStatemntsValid(data);
+    const isDefaultPlayer = await this.areSCORMStatementsValid(data);
     if(!isDefaultPlayer){
       return null;
     }
@@ -247,48 +302,6 @@ exports.Statements = class Statements {
 
     return scorm;
   }
-
-  async sendXAPIStatement(statement, baseURL, postfix, authToken, key, secret){
-    try {
-      if(authToken == null){
-          const response = await axios.post(
-            baseURL + postfix,
-            statement,
-            {
-              auth: {
-                username: key,
-                password: secret,
-              },
-
-              headers: {
-                'Content-Type': 'application/json',
-                'X-Experience-API-Version' : '1.0.2'
-              },
-            },
-          );
-          console.log(response.data)
-          return {statusMsg:"Statements salvati correttamente!"};
-      }else{
-        const response = await axios.post(
-          baseURL + postfix,
-          statement,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Experience-API-Version' : '1.0.2',
-              'Authorization': 'Bearer '+authToken,
-            },
-          },
-        );
-        console.log(response.data);
-        return {statusMsg:"Statements salvati correttamente!"};
-      }
-
-    } catch (err) {
-      return BadRequest("Errore, Statements non salvati! Dettagli: "  + err);
-    }
-  }
-
   async sendSCORMData(statement, baseURL, postfix, authToken, key, secret){
     try {
       //se il postfix non inizia con / aggiungilo, altrimenti lascialo così
