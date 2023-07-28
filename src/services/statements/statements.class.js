@@ -12,7 +12,7 @@ exports.Statements = class Statements {
     this.app = app;
     //array dei valori accettati da lesson_status
     this.lesson_status = ["passed", "completed", "failed", "incomplete", "browsed", "not attempted"];
-    //mappa dei parametri usati nelle richieste HTTP per comvertirli in quelli SCORM
+    //mappa dei parametri usati nelle richieste HTTP per cnmvertirli in quelli SCORM
     this.scormMap = {
       "score": "cmi.core.score.raw",
       "masteryscore": "adlcp:masteryscore",
@@ -97,9 +97,10 @@ exports.Statements = class Statements {
       return res;
     }else if(statementType == "SCORM"){
       //routine per SCORM
-      var scorm;
-      scorm = await this.generateSCORMData(save_data,idUsr);
+      const scorm = await this.generateSCORMData(save_data,idUsr);
       console.log(scorm);
+      //se è stato generato un oggetto SCORM
+      //invia i dati SCORM
       if(scorm != null){
         const resp = await this.sendSCORMData(scorm, baseURL, postfix, authToken, key, secret);
         return resp;
@@ -176,6 +177,8 @@ exports.Statements = class Statements {
 
       statement.context.extensions["http://minerva.sferainnovazione.com/xapi/extensions/properties"][parameter] = "mailto:"+idUsr+"."+idLms+'.'+idApp3D+'.'+object+"@minerva.sferainnovazione.com";
       return statement;
+    }else{
+      return null;
     }
   }
 
@@ -220,6 +223,8 @@ exports.Statements = class Statements {
     }
   }
 
+  //controlla se è presente l'identifier 'defaultplayer'
+  //che determina la creazione di un oggetto SCORM
   async areSCORMStatementsValid(data){
     for(let i = 0; i < data.length; i++){
       const {identifier} = data[i];
@@ -233,6 +238,8 @@ exports.Statements = class Statements {
   }
 
   //controlla se il valore ha un tipo valido per SCORM
+  //es. score deve essere un numero
+  //es. progress deve essere uno dei valori accettati
   async isSCORMValueValid(parameter, value){
     switch(parameter){
       case "score":
@@ -347,6 +354,7 @@ exports.Statements = class Statements {
     }
     return scorm;
   }
+
   async sendSCORMData(statement, baseURL, postfix, authToken, key, secret){
     try {
       //se il postfix non inizia con / aggiungilo, altrimenti lascialo così
@@ -398,6 +406,7 @@ exports.Statements = class Statements {
   //controllo se è un numero anche se è una stringa
   async isNumber(n) { return !isNaN(parseFloat(n)) && !isNaN(n - 0) }
 
+  //routine per generare entità NGSILD
   async generateNGSILD(data, idUsr, idLms, idApp3D, authCode){
     //genera NGSILD
     const ngsildObj = new ngsild("urn:ngsi-ld:Minerva:XAPIStatement:0001",
