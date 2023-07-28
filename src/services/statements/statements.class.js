@@ -94,7 +94,7 @@ exports.Statements = class Statements {
       const ngsi = await this.generateNGSILD(save_data, idUsr, idLms, idApp3D, authCode);
 
       console.log(ngsi)
-      return {res};
+      return res;
     }else if(statementType == "SCORM"){
       //routine per SCORM
       var scorm;
