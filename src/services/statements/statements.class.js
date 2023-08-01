@@ -356,6 +356,8 @@ exports.Statements = class Statements {
           scorm.data[j].value = value;
         }
       }
+
+      console.log(scorm);
     }
 
     //se ci sono più di due errori accettabili
