@@ -241,6 +241,7 @@ exports.Statements = class Statements {
   //es. score deve essere un numero
   //es. progress deve essere uno dei valori accettati
   async isSCORMValueValid(parameter, value){
+    console.log("SCORM VALUE VALID", parameter, value);
     switch(parameter){
       case "score":
       case "masteryscore":
@@ -251,6 +252,7 @@ exports.Statements = class Statements {
         break;
       case "progress":
         if(!this.lesson_status.includes(value)){
+          console.log("progress not valid");
           return false;
         }
         break;
@@ -349,7 +351,7 @@ exports.Statements = class Statements {
         if(scorm.data[j].element == _param){
           //se il valore non è valido per SCORM
           //non inserirlo nell'oggetto SCORM
-          if(!this.isSCORMValueValid(_param, value)){
+          if(!this.isSCORMValueValid(parameter, value)){
             isNotAccepted++;
             continue;
           }
