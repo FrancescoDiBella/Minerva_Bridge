@@ -240,7 +240,7 @@ exports.Statements = class Statements {
   //controlla se il valore ha un tipo valido per SCORM
   //es. score deve essere un numero
   //es. progress deve essere uno dei valori accettati
-  async isSCORMValueValid(parameter, value){
+  isSCORMValueValid(parameter, value){
     console.log("SCORM VALUE VALID", parameter, value);
     switch(parameter){
       case "score":
@@ -251,10 +251,12 @@ exports.Statements = class Statements {
         }
         break;
       case "progress":
+        return true;
+        /*
         if(!this.lesson_status.includes(value)){
           console.log("progress not valid");
           return false;
-        }
+        }*/
         break;
       default:
         break;
@@ -355,7 +357,26 @@ exports.Statements = class Statements {
             isNotAccepted++;
             continue;
           }
-          scorm.data[j].value = value;
+
+          if(parameter == "progress"){
+            //se il valore è progress
+            //inserisci il valore corretto
+            //es. "passed" -> "completed"
+
+            console.log("PRIMA ", scorm.data[j].value)
+            if(value){
+              scorm.data[j].value = "completed";
+            }else{
+              scorm.data[j].value = "incomplete";
+            }
+            console.log("DOPO ", scorm.data[j].value)
+
+          }else{
+            console.log("PRIMA ", scorm.data[j].value)
+            scorm.data[j].value = value;
+            console.log("DOPO ", scorm.data[j].value)
+          }
+
         }
       }
 
