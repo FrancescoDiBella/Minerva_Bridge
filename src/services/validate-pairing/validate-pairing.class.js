@@ -2,6 +2,7 @@
 const getAuth = require('../../models/get-auth-code.model');
 const utenti = require('../../models/access.model');
 const { BadRequest } = require('@feathersjs/errors');
+const {NotFound} = require('@feathersjs/errors');
 
 exports.ValidatePairing = class ValidatePairing {
   constructor (options, app) {
@@ -10,7 +11,34 @@ exports.ValidatePairing = class ValidatePairing {
   }
 
   async find (params) {
-    return [];
+    const {idUsr, idApp3D} = params.query;
+    const {idLms}  = params;
+    const getAuthModel = getAuth(this.app);
+    const utentiModel = utenti(this.app);
+
+    //Check if exists a user with idLms and idUsr and idApp3D
+    const user = await utentiModel.findOne({
+      where: {
+        idLms,
+        idUsr,
+        idApp3D
+      }});
+    if(!user){
+      throw new BadRequest("Non c'è nessun utente associato a tale idUsr");
+    }
+
+    //check if there is a record for authCode assigned at that specific 3DApplication and if is the authCode passed
+    const _user = await getAuthModel.findOne({
+      where:{
+        idUsr,
+        idLms,
+        idApp3D
+      }});
+    if(_user){
+      return {statusMsg:"Associazione presente."};
+    }
+
+    throw new NotFound("Non c’è nessuna associazione tra idUsr e idApp3D validata.");
   }
 
   async get (id, params) {
