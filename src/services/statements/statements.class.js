@@ -92,8 +92,8 @@ exports.Statements = class Statements {
       //send XAPI data to LRS
       const res = await this.sendXAPIStatements(statements, baseURL, postfix, authToken, key, secret);
       const ngsi = await this.generateNGSILD(save_data, idUsr, idLms, idApp3D, authCode);
-
-      console.log("DIMENSIONE ",ngsi.length)
+      const ngsiRes = await this.sendNGSILD(ngsi);
+      console.log(ngsiRes);
       return res;
     }else if(statementType == "SCORM"){
       //routine per SCORM
@@ -456,11 +456,11 @@ exports.Statements = class Statements {
     let objs = {};
     for(let i = 0; i < identifiers.length; i++){
       objs[identifiers[i]] = {
-        id: "minerva:"+idLms+"."+idUsr+"."+idApp3D+"."+identifiers[i],
+        id: "minerva:"+idLms+":"+idUsr+":"+idApp3D+":"+identifiers[i],
         type: "3DObject",
         properties: [],
         realtionships: [],
-        context: ["https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.6.jsonld"]
+        //context: ["https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.6.jsonld"]
       }
     }
 
@@ -480,7 +480,7 @@ exports.Statements = class Statements {
           name: parameter,
           value: {
             type: "Relationship",
-            object: object
+            object: "minerva:"+idLms+":"+idUsr+":"+idApp3D+":" +object
           }
         });
       }
@@ -490,10 +490,36 @@ exports.Statements = class Statements {
     for(let j = 0; j < identifiers.length; j++){
       const i = identifiers[j];
 
-      const ngsi = new ngsild(objs[i].id, objs[i].type, objs[i].properties, objs[i].realtionships, objs[i].context)
-      ngsildObjs[i] = ngsi.generateEntity();
+      const ngsi = new ngsild(objs[i].id, objs[i].type, objs[i].properties, objs[i].realtionships)
+      ngsildObjs[j] = ngsi.generateEntity();
       console.log(ngsildObjs[i]);
     }
     return ngsildObjs;
   }
+
+  async sendNGSILD(ngsildObjs){
+    const baseURL =  this.app.get('brokerURL');
+    console.log(ngsildObjs)
+    try{
+      const resp = await axios.post(
+      baseURL + 'ngsi-ld/v1/entityOperations/upsert',
+      ngsildObjs,
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        },
+      );
+
+      console.log(resp.data);
+      return resp;
+    }catch(e){
+      console.log(e);
+      return {error:e};
+    }
+
+
+  }
 };
+
+

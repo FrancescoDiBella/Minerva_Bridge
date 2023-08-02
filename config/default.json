@@ -39,5 +39,6 @@
     "email" : "",
     "pass" : ""
   },
-  "verifierURL":"http://localhost:3030/verify-email?"
+  "verifierURL":"http://localhost:3030/verify-email?",
+  "brokerURL": "https://orion.ngsild.sferainnovazione.com/"
 }
