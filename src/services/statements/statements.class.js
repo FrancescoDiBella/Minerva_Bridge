@@ -93,7 +93,7 @@ exports.Statements = class Statements {
       const res = await this.sendXAPIStatements(statements, baseURL, postfix, authToken, key, secret);
       const ngsi = await this.generateNGSILD(save_data, idUsr, idLms, idApp3D, authCode);
 
-      console.log(ngsi)
+      console.log("DIMENSIONE ",ngsi.length)
       return res;
     }else if(statementType == "SCORM"){
       //routine per SCORM
@@ -442,38 +442,58 @@ exports.Statements = class Statements {
   //controllo se è un numero anche se è una stringa
   async isNumber(n) { return !isNaN(parseFloat(n)) && !isNaN(n - 0) }
 
-  //routine per generare entità NGSILD
-  async generateNGSILD(data, idUsr, idLms, idApp3D, authCode){
-    //genera NGSILD
-    const ngsildObj = new ngsild("urn:ngsi-ld:Minerva:XAPIStatement:0001",
-        "XAPIStatement",
-        [{
-          name : "color",
-          value : {
-            "type": "Property",
-            "value": "red"
-          }
-        },
-        {
-          name : "mbox",
-          value : {
-            "type": "Property",
-            "value": "mailto:"+idUsr+"."+idLms+'.'+idApp3D+'.'+authCode+"@minerva.sferainnovazione.com"
-          }
-        },],
-        [{
-          name : "hasObject",
-          value : {
-            "type": "Relationship",
-            "object": "urn:ngsi-ld:Building:001"
-          }
-        }],
-        [
-          "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld",
-          "https://schema.lab.fiware.org/ld/context"
-        ]
-        );
 
-    return ngsildObj.generateEntity();
+  //routine per generare entità NGSILD
+  async generateNGSILD(array, idUsr, idLms, idApp3D, authCode){
+    //genera NGSILD
+    let identifiers = [];
+    for(let i = 0; i < array.length; i++){
+      if(identifiers.indexOf(array[i].identifier) == -1){
+        identifiers.push(array[i].identifier);
+      }
+    }
+
+    let objs = {};
+    for(let i = 0; i < identifiers.length; i++){
+      objs[identifiers[i]] = {
+        id: "minerva:"+idLms+"."+idUsr+"."+idApp3D+"."+identifiers[i],
+        type: "3DObject",
+        properties: [],
+        realtionships: [],
+        context: ["https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.6.jsonld"]
+      }
+    }
+
+    for(let i = 0; i < array.length; i++){
+      const {identifier, parameter, object, value, timestamp} = array[i];
+
+      if(value != undefined){
+        objs[identifier].properties.push({
+          name: parameter,
+          value: {
+            type: "Property",
+            value: value
+          }
+        });
+      }else{
+        objs[identifier].realtionships.push({
+          name: parameter,
+          value: {
+            type: "Relationship",
+            object: object
+          }
+        });
+      }
+    }
+
+    let ngsildObjs = new Array(identifiers.length);
+    for(let j = 0; j < identifiers.length; j++){
+      const i = identifiers[j];
+
+      const ngsi = new ngsild(objs[i].id, objs[i].type, objs[i].properties, objs[i].realtionships, objs[i].context)
+      ngsildObjs[i] = ngsi.generateEntity();
+      console.log(ngsildObjs[i]);
+    }
+    return ngsildObjs;
   }
 };
