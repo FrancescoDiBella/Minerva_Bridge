@@ -34,7 +34,8 @@ exports.GetAuthCode = class GetAuthCode extends Service {
     await getAuthModel.create({
       idApp3D,
       authCode:code.toString(),
-      validated: false
+      validated: false,
+      tokenRequested: false
     })
 
     this.deleteAuthCode(code.toString(), idApp3D)

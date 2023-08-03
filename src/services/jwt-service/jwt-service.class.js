@@ -54,6 +54,13 @@ exports.JwtService = class JwtService extends AuthenticationService {
       // Generate the JWT using the user data and a secret key
       const secret = this.app.get('authentication').secret;
       const token = jwt.sign(userData, secret);
+      await getAuthModel.update({tokenRequested:true},{
+        where:{
+          idApp3D,
+          authCode,
+          validated: true
+        }
+      })
 
       // Return the JWT to the client
       return { token };

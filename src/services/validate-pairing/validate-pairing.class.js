@@ -32,13 +32,15 @@ exports.ValidatePairing = class ValidatePairing {
       where:{
         idUsr,
         idLms,
-        idApp3D
+        idApp3D,
+        validated: true,
+        tokenRequested: true
       }});
     if(_user){
-      return {statusMsg:"Associazione presente."};
+      return {statusMsg:"Il token è stato richiesto e generato correttamente!"};
     }
 
-    throw new NotFound("Non c’è nessuna associazione tra idUsr e idApp3D validata.");
+    throw new NotFound("Non è stato ancora richiesto nessun token per l'utente specificato!");
   }
 
   async get (id, params) {
