@@ -34,6 +34,11 @@ module.exports = function (app) {
     postfix: {
       type: DataTypes.STRING,
       allowNull: true
+    },
+    tokenRequested: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
     }
   },
   {
@@ -48,6 +53,8 @@ module.exports = function (app) {
       }
     }
   });
+
+  getAuthCode.sync({alter: true});
 
   // eslint-disable-next-line no-unused-vars
   getAuthCode.associate = function (models) {
