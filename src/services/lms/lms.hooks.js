@@ -10,7 +10,32 @@ const jwt = require('jsonwebtoken');
 module.exports = {
   before: {
     all: [],
-    find: [ authenticate('jwt') ],
+    find: [
+      async (context) => {
+        const hasHeaderObj = new hasHeader();
+        const { headers } = context.params;
+        //console.log("DATA:", context.data)
+        // Check if the `Authorization` header is present
+        await hasHeaderObj.hasAuthorization(headers);
+        // Extract the JWT from the `Authorization` header
+        const [, token] = headers.authorization.split(' ');
+        console.log(token)
+
+        // Verify the JWT using the secret key
+        try {
+          const secret = context.app.get('authentication').secret;
+          const payload = jwt.verify(token, secret);
+          context.params.idAdmin = payload.idAdmin;
+          console.log("payload", payload.idAdmin)
+          console.log("idADmin", context.params.idAdmin)
+          return context;
+        } catch (error) {
+          // If the JWT is invalid, throw an error
+          throw new NotAuthenticated('Token non valido!');
+        }
+
+      }
+    ],
     get: [ authenticate('jwt') ],
     create: [
       async (context) => {

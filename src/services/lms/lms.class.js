@@ -10,6 +10,17 @@ exports.Lms = class Lms extends Service {
     this.app = app;
   }
 
+  async find(params){
+    const lmsModel = lms(this.app);
+    const _lms = await lmsModel.findAll({
+      where: {
+        idAdmin: params.idAdmin
+      }
+    });
+
+    return _lms;
+  }
+
   async create(data, params){
     const {name, baseURL, statementsType, authUsername, authPassword, idAdmin} = data;
     const lmsModel = lms(this.app);
