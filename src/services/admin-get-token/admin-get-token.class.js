@@ -1,10 +1,10 @@
 /* eslint-disable no-unused-vars */
-const { Service } = require('feathers-sequelize');
-const lms = require('../../models/_lms.model');
+const admins = require('../../models/admin.model');
 const { BadRequest } = require('@feathersjs/errors');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
-exports.GetToken = class GetToken {
+exports.AdminGetToken = class AdminGetToken {
   constructor (options, app) {
     this.options = options || {};
     this.app = app;
@@ -22,26 +22,25 @@ exports.GetToken = class GetToken {
 
   async create (data, params) {
     //codice che controlla se data.idLms e data.secret sono corretti
-    const {idLms, secret} = data;
-    const lmsModel = lms(this.app);
+    const {email, password} = data;
+    const adminsModel = admins(this.app);
 
     //Check if user exists;
-    const user = await lmsModel.findOne({
+    const _admin = await adminsModel.findOne({
       where: {
-        id: idLms
+        email
       }
     });
 
-    if(!user){
-      throw new BadRequest("LMS non registrato.");
+    if(!_admin){
+      throw new BadRequest("Admin non registrato.");
     }
 
-    const secretIsCorrect = secret ==  user.secret ? true:false;
-    if(secretIsCorrect){
+    const passwordIsCorrect = await bcrypt.compare(password, _admin.password);
+    if(passwordIsCorrect){
       // Generate the JWT using the user data and a secret key
       const userData = {
-        idLms: user.id,
-        secret: user.secret
+        idAdmin: _admin.id,
       }
 
       const secret_ = this.app.get('authentication').secret;
@@ -53,7 +52,7 @@ exports.GetToken = class GetToken {
       // Return the JWT to the client
       return { token, iat, exp};
     }else{
-      throw new BadRequest("Secret errato, riprovare");
+      throw new BadRequest("Password errata, riprovare");
     }
 
   }

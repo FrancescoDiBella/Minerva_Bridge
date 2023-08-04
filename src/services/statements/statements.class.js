@@ -1,9 +1,9 @@
 const _utenti = require('../../models/access.model');
-const _lmsModel = require('../../models/lms.model');
+const _lmsModel = require('../../models/_lms.model');
 const getAuth = require('../../models/get-auth-code.model');
 const axios = require('axios')
 const { BadRequest } = require('@feathersjs/errors');
-const lmsModel = require('../../models/lms.model');
+const lmsModel = require('../../models/_lms.model');
 const {ngsild} = require('../../ngsild.js');
 
 exports.Statements = class Statements {

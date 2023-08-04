@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 const jwt = require('jsonwebtoken');
-const lms = require('../../models/lms.model');
+const lms = require('../../models/_lms.model');
 
 exports.VerifyEmail = class VerifyEmail {
   constructor (options, app) {

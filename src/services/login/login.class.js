@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-const lms = require('../../models/lms.model');
+const lms = require('../../models/_lms.model');
 const bcrypt = require('bcrypt');
 const { BadRequest } = require('@feathersjs/errors');
 

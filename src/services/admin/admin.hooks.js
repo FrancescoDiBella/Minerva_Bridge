@@ -3,39 +3,71 @@ const bcrypt = require('bcrypt');
 const {
   hashPassword, protect
 } = require('@feathersjs/authentication-local').hooks;
-const{hasHeader} = require('../../hasHeader');
-const { NotAuthenticated } = require('@feathersjs/errors');
 const jwt = require('jsonwebtoken');
+const { NotAuthenticated } = require('@feathersjs/errors')
+const {hasHeader} = require('../../hasHeader.js');
 
 module.exports = {
   before: {
     all: [],
-    find: [ authenticate('jwt') ],
-    get: [ authenticate('jwt') ],
-    create: [
+    find: [
       async (context) => {
         const hasHeaderObj = new hasHeader();
         const { headers } = context.params;
-        //console.log("DATA:", context.data)
+
         // Check if the `Authorization` header is present
         await hasHeaderObj.hasAuthorization(headers);
         // Extract the JWT from the `Authorization` header
         const [, token] = headers.authorization.split(' ');
-        console.log(token)
 
         // Verify the JWT using the secret key
         try {
           const secret = context.app.get('authentication').secret;
           const payload = jwt.verify(token, secret);
-          context.data.idAdmin = payload.idAdmin;
-          console.log("payload", payload.idAdmin)
-          console.log("idADmin", context.data.idAdmin)
+
+          const clientData = {
+            payload
+          }
+          context.params = clientData;
           return context;
         } catch (error) {
           // If the JWT is invalid, throw an error
-          throw new NotAuthenticated('Token non valido!');
+          throw new NotAuthenticated('Token non valido!')
         }
+      },
+    ],
+    get: [
+      async (context) => {
+        const hasHeaderObj = new hasHeader();
+        const { headers } = context.params;
 
+        // Check if the `Authorization` header is present
+        await hasHeaderObj.hasAuthorization(headers);
+        // Extract the JWT from the `Authorization` header
+        const [, token] = headers.authorization.split(' ');
+
+        // Verify the JWT using the secret key
+        try {
+          const secret = context.app.get('authentication').secret;
+          const payload = jwt.verify(token, secret);
+
+          const clientData = {
+            payload
+          }
+          context.params = clientData;
+        } catch (error) {
+          // If the JWT is invalid, throw an error
+          throw new NotAuthenticated('Token non valido!')
+        }
+      },
+    ],
+    create: [
+      async (context) => {
+
+        const { password } = context.data;
+        const hashedPassword = await bcrypt.hash(password, 10);
+        context.data.password = hashedPassword;
+        return context;
       }
     ],
     update: [ hashPassword('password'),  authenticate('jwt') ],

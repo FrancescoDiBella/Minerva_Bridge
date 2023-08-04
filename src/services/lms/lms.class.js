@@ -1,5 +1,5 @@
 const { Service } = require('feathers-sequelize');
-const lms = require('../../models/lms.model');
+const lms = require('../../models/_lms.model');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const { BadRequest } = require('@feathersjs/errors');
@@ -11,7 +11,7 @@ exports.Lms = class Lms extends Service {
   }
 
   async create(data, params){
-    const {name, email, password, baseURL, statementsType, authUsername, authPassword} = data;
+    const {name, baseURL, statementsType, authUsername, authPassword, idAdmin} = data;
     const lmsModel = lms(this.app);
     //Elimina al baseURL il / alla fine
     const _baseURL = toString(baseURL).lastIndexOf('/') == baseURL.length-1 ? baseURL.substring(0, baseURL.length-1) : baseURL;
@@ -23,24 +23,20 @@ exports.Lms = class Lms extends Service {
       if(authUsername == undefined || authPassword == undefined){
         _lms = await lmsModel.create({
           name,
-          email,
-          password,
           secret,
-          verified: true,
           baseURL: _baseURL,
-          statementsType
+          statementsType,
+          idAdmin
         })
       }else if(authUsername != undefined && authPassword != undefined){
         _lms = await lmsModel.create({
           name,
-          email,
-          password,
           secret,
-          verified: true,
           baseURL: _baseURL,
           statementsType,
           authUsername,
-          authPassword
+          authPassword,
+          idAdmin
         })
       }
     const id = _lms.id;
@@ -54,11 +50,12 @@ exports.Lms = class Lms extends Service {
     return {
       idLms: id,
       name,
-      email,
+      idAdmin,
       updatedAt:updated_at,
       createdAt:created_at
     }}
     catch(e){
+      console.log(e);
       throw new BadRequest("Errore nella creazione utente LMS, ricontrollare i dati.")
     }
   }

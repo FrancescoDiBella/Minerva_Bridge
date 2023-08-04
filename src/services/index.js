@@ -14,6 +14,8 @@ const getToken = require('./get-token/get-token.service.js');
 const eModulesGetAuthCode = require('./e-modules-get-auth-code/e-modules-get-auth-code.service.js');
 const lmsOnboarding = require('./lms-onboarding/lms-onboarding.service.js');
 const storeSaveDatas = require('./store-save-datas/store-save-datas.service.js');
+const admin = require('./admin/admin.service.js');
+const adminGetToken = require('./admin-get-token/admin-get-token.service.js');
 // eslint-disable-next-line no-unused-vars
 module.exports = function (app) {
   app.configure(lms);
@@ -32,4 +34,6 @@ module.exports = function (app) {
   app.configure(eModulesGetAuthCode);
   app.configure(lmsOnboarding);
   app.configure(storeSaveDatas);
+  app.configure(admin);
+  app.configure(adminGetToken);
 };

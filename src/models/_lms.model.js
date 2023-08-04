@@ -6,15 +6,6 @@ const DataTypes = Sequelize.DataTypes;
 module.exports = function (app) {
   const sequelizeClient = app.get('sequelizeClient');
   const lms = sequelizeClient.define('lms', {
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true
-    },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
     name: {
       type: DataTypes.STRING,
       allowNull: false
@@ -31,11 +22,6 @@ module.exports = function (app) {
       type: DataTypes.STRING,
       allowNull: false
     },
-    verified:{
-      type: DataTypes.BOOLEAN,
-      default: false,
-      allowNull: false
-    },
     authUsername:{
       type: DataTypes.STRING,
       allowNull: true
@@ -43,6 +29,10 @@ module.exports = function (app) {
     authPassword:{
       type: DataTypes.STRING,
       allowNull: true
+    },
+    idAdmin:{
+      type: DataTypes.INTEGER,
+      allowNull: false
     }
   }, {
     hooks: {
@@ -54,7 +44,9 @@ module.exports = function (app) {
 
   // eslint-disable-next-line no-unused-vars
   lms.associate = function (models) {
+    console.log(models);
     lms.hasMany(models.utenti, {foreignKey: 'idLms'});
+    lms.belongsTo(models.admins);
   };
 
   return lms;

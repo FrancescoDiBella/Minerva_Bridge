@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const lms = require('../../models/lms.model');
+const lms = require('../../models/_lms.model');
 const crypto = require('crypto');
 const { NotAuthenticated } = require('@feathersjs/errors')
 const {hasHeader} = require('../../hasHeader');

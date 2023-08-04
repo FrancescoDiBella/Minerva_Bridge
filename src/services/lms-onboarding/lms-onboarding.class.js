@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 const { BadRequest, NotAcceptable } = require('@feathersjs/errors');
 const jwt = require('jsonwebtoken');
-const lms = require('../../models/lms.model');
+const lms = require('../../models/_lms.model');
 
 exports.LmsOnboarding = class LmsOnboarding {
   constructor (options, app) {

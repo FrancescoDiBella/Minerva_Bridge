@@ -1,5 +1,5 @@
 const { Service } = require('feathers-sequelize');
-const lms = require('../../models/lms.model');
+const lms = require('../../models/_lms.model');
 const _utenti = require('../../models/access.model');
 const auth = require('../../models/get-auth-code.model');
 const {BadRequest} = require('@feathersjs/errors');
