@@ -10,7 +10,7 @@ module.exports = {
     find: [],
     get: [],
     create:[
-      async context => {
+      /*async context => {
         const hasHeaderObj = new hasHeader();
         const { headers } = context.params;
         //console.log("DATA:", context.data)
@@ -33,7 +33,7 @@ module.exports = {
           // If the JWT is invalid, throw an error
           throw new NotAuthenticated('Token non valido!');
         }
-      }
+      }*/
     ],
     update: [internalOnly],
     patch: [internalOnly],
