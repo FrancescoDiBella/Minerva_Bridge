@@ -10,7 +10,7 @@ module.exports = {
     find: [],
     get: [],
     create:[
-      /*async context => {
+      async context => {
         const hasHeaderObj = new hasHeader();
         const { headers } = context.params;
         //console.log("DATA:", context.data)
@@ -24,8 +24,7 @@ module.exports = {
         try {
           const secret = context.app.get('authentication').secret;
           const payload = jwt.verify(token, secret);
-          data.idLms = payload.idLms.toString();
-          data.secret = payload.secret;
+          context.params.idAdmin = payload.idAdmin.toString();
           context.data = data;
           return context;
 
@@ -33,7 +32,7 @@ module.exports = {
           // If the JWT is invalid, throw an error
           throw new NotAuthenticated('Token non valido!');
         }
-      }*/
+      }
     ],
     update: [internalOnly],
     patch: [internalOnly],

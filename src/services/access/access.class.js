@@ -60,6 +60,7 @@ exports.Access = class Access extends Service {
   async create(data, params){
     const {idUsr, idApp3D} = data;
     const {idLms} = params.route;
+    const {idAdmin} = params;
 
     const lmsModel = lms(this.app);
     const utentiModel = _utenti(this.app);
@@ -69,12 +70,13 @@ exports.Access = class Access extends Service {
     //Check if user exists;
     const user = await lmsModel.findOne({
       where: {
-        id: parseInt(idLms)
+        id: parseInt(idLms),
+        idAdmin: idAdmin
       }
     });
 
     if(!user){
-      throw new BadRequest("LMS non registrato.");
+      throw new BadRequest("Non esiste nessun LMS con tale idLms o tale LMS non è di proprietà dell'admin specificato.");
     }
 
     const _user = await utentiModel.findOne({
@@ -113,6 +115,5 @@ exports.Access = class Access extends Service {
       idApp3D
     })
     return {statusMsg:"Utente registrato con successo"};
-    //throw new BadRequest("Secret errato, riprovare");
   }
 };
