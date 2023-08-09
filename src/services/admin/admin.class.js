@@ -10,9 +10,7 @@ exports.Admin = class Admin extends Service {
   }
 
   async find (params) {
-    console.log(params);
     const {idAdmin} = params.payload;
-    console.log(idAdmin);
     //resituisce tutti gli admin solo se l'utente è superadmin
     const adminsModel = admins(this.app);
     const _admin = await adminsModel.findOne({
