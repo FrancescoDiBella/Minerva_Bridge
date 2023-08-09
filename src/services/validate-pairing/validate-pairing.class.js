@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 const getAuth = require('../../models/get-auth-code.model');
 const utenti = require('../../models/access.model');
+const lms = require('../../models/_lms.model');
 const { BadRequest } = require('@feathersjs/errors');
 const {NotFound} = require('@feathersjs/errors');
 
@@ -12,9 +13,23 @@ exports.ValidatePairing = class ValidatePairing {
 
   async find (params) {
     const {idUsr, idApp3D} = params.query;
-    const {idLms}  = params;
+    const {idAdmin}  = params;
+    const {idLms} = params.route;
     const getAuthModel = getAuth(this.app);
     const utentiModel = utenti(this.app);
+
+    //Check if exist an LMS with idLms under the admin idAdmin
+    const lmsModel = lms(this.app);
+    const _lms = await lmsModel.findOne({
+      where:{
+        id: idLms,
+        idAdmin
+      }
+    });
+
+    if(!_lms){
+      throw new BadRequest("Non esiste nessun LMS con tale idLms o tale LMS non è di proprietà dell'admin specificato.");
+    }
 
     //Check if exists a user with idLms and idUsr and idApp3D
     const user = await utentiModel.findOne({
@@ -22,7 +37,9 @@ exports.ValidatePairing = class ValidatePairing {
         idLms,
         idUsr,
         idApp3D
-      }});
+      }
+    });
+
     if(!user){
       throw new BadRequest("Non c'è nessun utente associato a tale idUsr");
     }
@@ -35,7 +52,9 @@ exports.ValidatePairing = class ValidatePairing {
         idApp3D,
         validated: true,
         tokenRequested: true
-      }});
+      }
+    });
+
     if(_user){
       return {statusMsg:"Il token è stato richiesto e generato correttamente!"};
     }
@@ -50,10 +69,27 @@ exports.ValidatePairing = class ValidatePairing {
   }
 
   async create (data, params) {
-    const { idLms, idUsr, idApp3D, authCode, token, postfix} = data;
+    const { idUsr, idApp3D, authCode, token, postfix} = data;
+    const {idLms} = params.route;
+    const {idAdmin} = params;
+    console.log("idLms: ", idLms);
+    console.log("idAdmin: ", idAdmin);
     const getAuthModel = getAuth(this.app);
     const utentiModel = utenti(this.app);
+    const lmsModel = lms(this.app);
 
+    //Check if exist an LMS with idLms under the admin idAdmin
+
+    const _lms = await lmsModel.findOne({
+      where:{
+        id: idLms,
+        idAdmin
+      }
+    });
+
+    if(!_lms){
+      throw new BadRequest("Non esiste nessun LMS con tale idLms o tale LMS non è di proprietà dell'admin specificato.");
+    }
     //Check if exists a user with idLms and idUsr and idApp3D
     const user = await utentiModel.findOne({
       where: {

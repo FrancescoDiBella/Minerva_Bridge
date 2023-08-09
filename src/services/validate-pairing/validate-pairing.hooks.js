@@ -19,10 +19,8 @@ module.exports = {
         try {
           const secret = context.app.get('authentication').secret;
           const payload = jwt.verify(token, secret);
-          context.params.idLms = payload.idLms.toString();
-          context.params.secret = payload.secret;
+          context.params.idAdmin = payload.idAdmin.toString();
           return context;
-
         } catch (error) {
           // If the JWT is invalid, throw an error
           throw new NotAuthenticated('Token non valido.');
@@ -44,8 +42,7 @@ module.exports = {
           try {
             const secret = context.app.get('authentication').secret;
             const payload = jwt.verify(token, secret);
-            data.idLms = payload.idLms.toString();
-            data.secret = payload.secret;
+            context.params.idAdmin = payload.idAdmin.toString();
             context.data = data;
             return context;
 

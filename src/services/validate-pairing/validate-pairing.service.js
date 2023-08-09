@@ -8,10 +8,10 @@ module.exports = function (app) {
   };
 
   // Initialize our service with any options it requires
-  app.use('/e-modules/validatePairing', new ValidatePairing(options, app));
+  app.use('/admin/lms/:idLms/validatePairing', new ValidatePairing(options, app));
 
   // Get our initialized service so that we can register hooks
-  const service = app.service('e-modules/validatePairing');
+  const service = app.service('admin/lms/:idLms/validatePairing');
 
   service.hooks(hooks);
 };
