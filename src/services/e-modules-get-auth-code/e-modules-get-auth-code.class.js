@@ -10,17 +10,33 @@ exports.EModulesGetAuthCode = class EModulesGetAuthCode {
   }
 
   async create(data, params){
-    const { idApp3D } = data;
+    const { idApp3D, idAdmin } = data;
+    const {idLms} = params;
     if(idApp3D == null || idApp3D == undefined || idApp3D == "" || idApp3D == " "){
       throw new BadRequest("Non è stato fornito l'idApp3D.")
     }
+
+    //check if exists lms under the admin
+    const lmsModel = lms(this.app);
+    const lms = await lmsModel.findOne({
+      where: {
+        id: idLms,
+        idAdmin
+      }
+    });
+
+    if(!lms){
+      throw new BadRequest("Non esiste nessun LMS con tale id o non è associato all'Admin.");
+    }
+
     const getAuthModel = getAuth(this.app);
     const utentiModel = utenti(this.app);
 
-    //Check if user exists;
+    //Check if a user exists;
     const user = await utentiModel.findOne({
       where: {
-        idApp3D: idApp3D
+        idApp3D: idApp3D,
+        idLms
       }
     });
 
