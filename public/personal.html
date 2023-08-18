@@ -1,236 +1,262 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-<link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
-<title>Minerva | Pagina Personale</title>
-<script src="https://kit.fontawesome.com/72f900170b.js" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
-<style>
-	body {
-		color: #fff;
-		background: #19aa8d;
-		font-family: 'Roboto', sans-serif;
-	}
-	.navbar {
-		margin-bottom: 20px;
-	}
-	.user-profile {
-		text-align: left;
-		margin-top: 20px;
-		margin-right: 20px;
-    margin-bottom: 20px;
-	}
-	.user-profile .profile-image {
-		width: 80px;
-		height: 80px;
-		border-radius: 50%;
-		display: inline-block;
-		vertical-align: middle;
-		margin-right: 10px;
-		color: #fff;
-		font-size: 36px;
-		line-height: 80px;
-		text-align: center;
-	}
-	.user-profile .profile-details {
-		display: inline-block;
-		vertical-align: middle;
-	}
-	.user-profile .profile-name {
-		font-weight: bold;
-		font-size: 20px;
-		margin-bottom: 3px;
-	}
-	.user-profile .profile-idlms {
-		font-size: 14px;
-		color: #ccc;
-		margin-bottom: 2px;
-    user-select: text;
-	}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+    <!-- Aggiungi jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+         body, html {
+          background-color: #b9d0d374;
+          font-family: 'Roboto', sans-serif;
+        }
+        .navbar {
+            background-color: #f9f5f6;
+        }
+        .navbar-brand {
+            color:  #29201f74 !important;
+        }
+        .sidebar {
+            background-color: #f9f5f6;
+            height: calc(100vh - 64px); /* Adjusted for navbar height and margin */
+            overflow-y: auto; /* Add scrollbar if content exceeds height */
+            border-radius: 0px 8px 8px 0px;
+            color:  #29201f74 !important;
+            box-shadow:
+            0px 4px 6px rgba(0, 0, 0, 0.1),
+            3px 8px 10px rgba(0, 0, 0, 0.12),
+            5px 12px 16px rgba(0, 0, 0, 0.2),
+            6px 16px 20px rgba(0, 0, 0, 0.21),
+            10px 20px 24px rgba(0, 0, 0, 0.22);
+            position: absolute;
+        }
+        .nav-item{
+            padding: 10px 0px 10px 20px;
+            color:  #29201f74 !important;
+        }
+        .nav-item:hover{
+          background-color: #e5e3e3;
+          border-radius: 8px;
+          cursor: pointer;
+        }
+        .nav-link{
+          color:  #29201f74 !important;
+        }
+        .card {
+            background-color: #5de2c729;
+            border-color: #19aa8d95;
+        }
 
-  .user-profile .profile-secret {
-		font-size: 14px;
-		color: #ccc;
-		margin-bottom: 20px;
-    user-select: text;
-	}
+        #content-header {
+            background-color: transparent;
+            color: #29201f74;
+        }
 
-	.dashboard {
-		text-align: left;
-		margin-right: 20px;
-	}
-	.dashboard .dashboard-action {
-    width: 12rem;
-    padding-left: 12px;
-    padding-top: 6px;
-    padding-bottom: 6px;
-		margin-bottom: 10px;
-    border-radius: 8px;
-    border: #333 1px solid;
-    background-color: darkslategray;
-    box-shadow: #0a0a0a88 3px 3px 3px;
-  }
+        #content-body {
+            background-color: transparent;
+            color: #29201f74;
+        }
 
-  .dashboard .dashboard-action:hover {
-    background-color: #333;
-    cursor: pointer;
-  }
-	.data-display {
-		margin-top: 20px;
-		padding: 20px;
-		background: #ffffffdc;
-		border-radius: 5px;
-		color: #333;
-	}
-	.data-display h2 {
-		margin-top: 0;
-	}
-	.data-display p {
-		margin-bottom: 0;
-	}
-
-  /* Custom Styles */
-	.col-lg-4 {
-    height: 80vh;
-		margin-left: 0px;
-		width: calc(33.3333% - 40px);
-    border-radius: 8px;
-    user-select: none;
-	}
-
-  .secret-input {
-    background-color: transparent;
-    border: none;
-    width: 6.5rem;
-  }
-
-  .secret-input:hover {
-    cursor: pointer;
-  }
-
-  .secret-input:focus {
-    background-color: transparent;
-    border: none;
-    outline: none;
-  }
-  .container {
-    display: flex;
-    justify-content: space-evenly;
-  }
-  #idLms-user {
-    user-select: text;
-    color: #333;
-  }
-</style>
+        /* Media query for smaller screens */
+        @media (max-width: 768px) {
+            .sidebar {
+                height: auto;
+                position: relative;
+            }
+        }
+    </style>
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-lg">
-    <a class="navbar-brand" href="/index.html">Minerva</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ml-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="/onboard.html">Iscriviti</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/login.html">Login</a>
-        </li>
-      </ul>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light shadow-sm">
+        <a class="navbar-brand" href="#">Minerva Bridge</a>
+        <button class="profile-img"> </button>
+
+    </nav>
+
+    <div class="container-fluid h-auto">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar mt-2">
+                <div class="position-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item mt-2">
+                            <a class="nav-link" onclick="showLMS()">
+                                Mostra LMS
+                            </a>
+                        </li>
+                        <!-- Add more LMS options as needed -->
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main content -->
+            <main class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Minerva Dashboard</h1>
+                </div>
+
+                <!-- Display users for the selected LMS -->
+                <div class="card">
+                    <div class="card-header" id="content-header">
+                        Users in LMS 1
+                    </div>
+                    <!--Vorrei che il content-body si flex -->
+                    <div class="list-group list-group-flush" id="content-body">
+
+                    </div>
+                </div>
+            </main>
+        </div>
     </div>
-  </nav>
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-4">
-        <div class="user-profile">
-          <div id="profileImage" class="profile-image"></div>
-          <div class="profile-details">
-            <div class="profile-name">Nome Utente</div>
-            <div class="profile-idlms">ID LMS: <span id="idLms-user">123456</span></div>
-            <div class="profile-secret">Secret: <input class="secret-input" readonly="true" type="password" value="d67e6bde4d82"></div>
-          </div>
-        </div>
-        <div class="dashboard">
-          <div class="dashboard-action">Azione 1</div>
-          <div class="dashboard-action">Azione 2</div>
-          <div class="dashboard-action">Azione 3</div>
-        </div>
-      </div>
-      <div class="col-lg-8">
-        <div class="data-display">
-          <h2>Area di visualizzazione</h2>
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem vitae ratione modi unde non veritatis consequatur debitis sunt dolorem ea libero, minima ex nobis et placeat dolor. Labore, sint perferendis. Lorem ipsum dolor sit amet consectetur adipisicing elit. Id voluptates atque dolorem voluptate assumenda aut officiis. Quis et esse praesentium magni, perspiciatis autem ex corrupti. Delectus eius possimus quia laborum!.</p>
-        </div>
-      </div>
-    </div>
-  </div>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Aggiungi AXIOS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js">
+    </script>
+    <script>
+      const bridgeURL = window.location.protocol + "//" + window.location.host;
+
+        function getToken(){
+            return Cookies.get('token');
+        }
+
+        function getEmail(){
+            return Cookies.get('email');
+        }
+
+        function getRole(){
+            return Cookies.get('role');
+        }
+
+        async function getLMS(){
+            fetch(bridgeURL+'/admin/getToken', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({email: Cookies.get('email'), password: Cookies.get('password')})
+            })
+            .then(response => response.json())
+            .then(data => {
+              if(data.token == undefined) {
+                alert('Credenziali errate');
+                return;
+              }
+              Cookies.set('token', data.token, {expires: 1});
+
+              fetch(bridgeURL+'/admin/lms', {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + Cookies.get('token')
+                }
+              })
+              .then(response => response.json())
+              .then(async data => {
+                console.log("GET", data)
+                await showLMS(data);
+              })
+              .catch((error) => {
+                console.error('Error:', error);
+                return [];
+              });
+            })
+        }
+
+        // Show the users for the selected LMS
+        async function showLMS(lms) {
+          console.log("SHOW", lms);
+          //iter l'array e popolare la sidebar
+          //aggiungere nav item con lms.name
+          //aggiungere onclick="showUsers(lms.id)"
+
+          for(let i = 0; i < lms.length; i++) {
+            let lmsName = lms[i].name;
+            let lmsId = lms[i].id;
+            let navItem = document.createElement("li");
+            navItem.classList.add("nav-item");
+            navItem.innerHTML = `<a class="nav-link" onclick="showUsers(${lmsId})">${lmsName}</a>`;
+            document.querySelector(".nav").appendChild(navItem);
+          }
+        }
+
+        // Show the users for the selected LMS
+        async function showUsers(idLms){
+          fetch(bridgeURL+'/admin/getToken', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({email: Cookies.get('email'), password: Cookies.get('password')})
+            })
+            .then(response => response.json())
+            .then(data => {
+              if(data.token == undefined) {
+                alert('Credenziali errate');
+                return;
+              }
+              Cookies.set('token', data.token, {expires: 1});
+
+              fetch(bridgeURL+'/admin/lms/'+idLms+'/users', {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + Cookies.get('token')
+                }
+              })
+              .then(response => response.json())
+              .then(async data => {
+                  //mostra gli utenti nel content-body e modifica il content-header
+                  console.log("GET", data)
+                  let contentBody = document.getElementById("content-body");
+                  let contentHeader = document.getElementById("content-header");
+                  contentHeader.innerHTML = "Utenti di LMS " + idLms;
+                  contentBody.innerHTML = "";
+                  //itera l'array data e popola il content-body
+                  for(let i = 0; i < data.length; i++){
+                    //crea delle card che stanno dentro il content-body
+                    //una accanto all'altra (col-md-4)
+                    let card = document.createElement("li");
+                    card.classList.add('list-group-item', 'border', 'border-dark', 'rounded', 'text-left', 'text-dark', 'font-weight-bold', 'text-wrap', 'text-break');
+                    card.innerHTML = 'Id User: ' + data[i].idUsr + ' Id App 3d: ' + data[i].idApp3D;
+                    //crea 3 bottoni per ogni card
+                    let button1 = document.createElement("button");
+                    button1.classList.add('btn', 'btn-primary', 'btn-sm', 'float-right', 'mr-2');
+                    button1.innerHTML = 'Visualizza';
+                    let button2 = document.createElement("button");
+                    button2.classList.add('btn', 'btn-alert', 'btn-sm', 'float-right', 'mr-2');
+                    button2.innerHTML = 'Modifica';
+                    let button3 = document.createElement("button");
+                    button3.classList.add('btn', 'btn-danger', 'btn-sm', 'float-right', 'mr-2');
+                    button3.innerHTML = 'Elimina';
+                    //aggiungi i bottoni alla card
+                    card.appendChild(button1);
+                    card.appendChild(button2);
+                    card.appendChild(button3);
+                    //aggiungi la card al content-body
+                    contentBody.appendChild(card);
+                  }
 
 
-  <script>
-    $(document).ready(function() {
-      if(!localStorage.getItem("name") || !localStorage.getItem("idLms") || !localStorage.getItem("secret")) {
-        window.location.href = "/login.html";
-      }
-      var user = {
-        name: localStorage.getItem("name"),
-        id: localStorage.getItem("idLms"),
-        secret: localStorage.getItem("secret")
-      };
-      var profileImage = document.getElementById("profileImage");
-      var firstLetter = user.name.charAt(0).toUpperCase();
-      profileImage.textContent = firstLetter;
-      var backgroundColor = getRandomColor();
-      profileImage.style.backgroundColor = backgroundColor;
+              })
+              .catch((error) => {
+                console.error('Error:', error);
+                return [];
+              });
+            })
+        }
 
-      var profileName = document.querySelector(".profile-name");
-      profileName.textContent = user.name;
-      var profileIdlms = document.querySelector("#idLms-user");
-      profileIdlms.textContent = user.id;
-      var profileSecret = document.querySelector(".secret-input");
-      profileSecret.value = user.secret;
-
-      fetch("/e-modules/createUser?idLms=" + user.id)
-        .then(response => response.json())
-        .then(res => {
-          var users = res.data;
-          var dataDisplay = document.querySelector(".data-display");
-          var dataDisplayH2 = document.querySelector(".data-display h2");
-          var dataDisplayP = document.querySelector(".data-display p");
-          dataDisplayH2.textContent = "Benvenuto " + user.name + "!";
-          dataDisplayP.textContent = "Numero utenti registrati: " + users.length + '. Lista utenze: ';
-
-          users.forEach(element => {
-            dataDisplayP.textContent +='(' + element.idUsr + ', ' + element.idApp3D + '); ';
-          });
+        //richiama la show lms quando la pagina è pronta
+        $(document).ready(async function() {
+           await getLMS();
         });
-    });
-    const secretInput = document.querySelector(".secret-input");
-    secretInput.addEventListener("click", function() {
-      if(secretInput.type == 'password') {
-        secretInput.type = 'text';
-      }
-    });
 
+    </script>
 
-    secretInput.addEventListener('dblclick', function() {
-      if(secretInput.type == 'text') {
-        secretInput.type = 'password';
-      }
-    });
-    function getRandomColor() {
-      var colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#FFA726', '#546E7A', '#9CCC65', '#FF8A65', '#7E57C2'];
-      var color = colors[Math.floor(Math.random() * colors.length)];
-      if (color === '#FFFFFF' || color === '#F5F5F5' || color === '#FFFFFFF0') {
-        return getRandomColor();
-      }
-      return color;
-    }
-  </script>
 </body>
 </html>

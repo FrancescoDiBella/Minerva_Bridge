@@ -169,7 +169,9 @@
   </form>
 	<div class="text-center">Non hai ancora un account? <a style="color: aqua;" href="/onboard.html">Iscriviti ora</a>.</div>
 </div>
-
+<script src="
+https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js">
+</script>
 <script>
   const button = document.getElementById('loginButton');
   const email = document.getElementById('emailIn');
@@ -181,7 +183,7 @@
   button.addEventListener('click', function(e) {
     e.preventDefault();
     console.log('click');
-    fetch(bridgeURL+'/e-modules/getSecret', {
+    fetch(bridgeURL+'/admin/getToken', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -190,13 +192,14 @@
     })
     .then(response => response.json())
     .then(data => {
-      if(data.secret == undefined) {
+      if(data.token == undefined) {
         alert('Credenziali errate');
         return;
       }
-      localStorage.setItem('secret', data.secret);
-      localStorage.setItem('idLms', data.idLms);
-      localStorage.setItem('name', data.name);
+      Cookies.set('token', data.token, {expires: 1});
+      Cookies.set('email', email.value, {expires: 1});
+      Cookies.set('password', password.value, {expires: 1});
+
       window.location.href = '/personal.html';
     })
   });

@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-const lms = require('../../models/_lms.model');
+const admin = require('../../models/admin.model');
 const bcrypt = require('bcrypt');
 const { BadRequest } = require('@feathersjs/errors');
 
@@ -21,22 +21,22 @@ exports.Login = class Login {
 
   async create (data, params) {
     const {email, password} = data;
-    const lmsModel = lms(this.app);
+    const adminsModel = admin(this.app);
 
-    const user = await lmsModel.findOne({
+    const user = await adminsModel.findOne({
       where: {
         email
       }
     });
 
     if(!user){
-      throw new BadRequest("L'email non risulta associata a nessun LMS");
+      throw new BadRequest("L'email non risulta associata a nessun admin");
     }
 
     const passwordIsCorrect = await bcrypt.compare(password, user.password)
 
     if(passwordIsCorrect){
-      return {secret: user.secret, idLms: user.id}
+      return {statusMsg: "Login effettuato con successo", role: user.role}
     }
 
     throw new BadRequest("Password sbagliata, ritenta");
