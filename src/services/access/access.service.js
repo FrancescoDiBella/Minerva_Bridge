@@ -10,10 +10,10 @@ module.exports = function (app) {
   };
 
   // Initialize our service with any options it requires
-  app.use('/admin/lms/:idLms/user', new Access(options, app));
+  app.use('/admin/lms/:idLms/users', new Access(options, app));
 
   // Get our initialized service so that we can register hooks
-  const service = app.service('/admin/lms/:idLms/user');
+  const service = app.service('/admin/lms/:idLms/users');
 
   service.hooks(hooks);
 };

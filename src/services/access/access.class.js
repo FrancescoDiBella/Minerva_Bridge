@@ -3,6 +3,8 @@ const lms = require('../../models/_lms.model');
 const _utenti = require('../../models/access.model');
 const auth = require('../../models/get-auth-code.model');
 const {BadRequest} = require('@feathersjs/errors');
+const {NotAuthenticated} = require('@feathersjs/errors');
+const admins = require('../../models/admin.model');
 
 exports.Access = class Access extends Service {
   constructor(options, app){
@@ -60,12 +62,26 @@ exports.Access = class Access extends Service {
   async create(data, params){
     const {idUsr, idApp3D} = data;
     const {idLms} = params.route;
-    const {idAdmin} = params;
+    var {idAdmin} = params;
+    const _idAdmin = data.idLms;
 
     const lmsModel = lms(this.app);
     const utentiModel = _utenti(this.app);
     const authModel = auth(this.app);
     //Check if data.idLms and data.secret are correct
+
+    //resituisce tutti gli admin solo se l'utente è superadmin
+    const adminsModel = admins(this.app);
+    const _admin = await adminsModel.findOne({
+      where: {
+        id: idAdmin,
+        role: 'superadmin'
+      }
+    });
+
+    if(_admin){
+      idAdmin = _idAdmin;
+    }
 
     //Check if user exists;
     const user = await lmsModel.findOne({
