@@ -19,9 +19,16 @@
         .navbar-brand {
             color:  #29201f74 !important;
         }
+        #main-card {
+            max-width: 45rem;
+        }
+        .list-group-item {
+            background-color: transparent;
+            border-color: #19aa8d95;
+        }
         .sidebar {
             background-color: #f9f5f6;
-            height: calc(100vh - 64px); /* Adjusted for navbar height and margin */
+            height: calc(100vh - 72px); /* Adjusted for navbar height and margin */
             overflow-y: auto; /* Add scrollbar if content exceeds height */
             border-radius: 0px 8px 8px 0px;
             color:  #29201f74 !important;
@@ -41,6 +48,9 @@
           background-color: #e5e3e3;
           border-radius: 8px;
           cursor: pointer;
+        }
+        .d-inline-block{
+          background-color: #f9f5f6;
         }
         .nav-link{
           color:  #29201f74 !important;
@@ -80,7 +90,7 @@
     <div class="container-fluid h-auto">
         <div class="row">
             <!-- Sidebar -->
-            <nav class="col-md-3 col-lg-2 d-md-block sidebar mt-2">
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar mt-3">
                 <div class="position-sticky">
                     <ul class="nav flex-column">
                         <li class="nav-item mt-2">
@@ -100,7 +110,7 @@
                 </div>
 
                 <!-- Display users for the selected LMS -->
-                <div class="card">
+                <div class="card" id="main-card">
                     <div class="card-header" id="content-header">
                         Users in LMS 1
                     </div>
@@ -222,22 +232,39 @@
                     //crea delle card che stanno dentro il content-body
                     //una accanto all'altra (col-md-4)
                     let card = document.createElement("li");
-                    card.classList.add('list-group-item', 'border', 'border-dark', 'rounded', 'text-left', 'text-dark', 'font-weight-bold', 'text-wrap', 'text-break');
-                    card.innerHTML = 'Id User: ' + data[i].idUsr + ' Id App 3d: ' + data[i].idApp3D;
+                    card.classList.add('list-group-item', 'border', 'border-dark',
+                    'rounded', 'text-left', 'text-dark', 'font-weight-bold', 'text-wrap', 'text-break');
+                    //crea due tab distinti: uno per l'id dell'utente e uno per l'id dell'app 3d, fai in modo che abbiano un bordo
+                    //e che siano uno accanto all'altro, inoltre gli id devono essere in grassetto e di colore diverso
+
+                    let tab1 = document.createElement("div");
+                    tab1.classList.add('d-inline-block', 'border', 'border-dark', 'rounded', 'text-left', 'text-dark', 'font-weight-bold', 'text-wrap', 'text-break', 'p-2');
+                    tab1.innerHTML = "Utente: " + data[i].idUsr;
+
+                    let tab2 = document.createElement("div");
+                    tab2.classList.add('d-inline-block', 'border', 'border-dark', 'rounded', 'text-left', 'text-dark', 'font-weight-bold', 'text-wrap', 'text-break', 'p-2', 'ml-2');
+                    tab2.innerHTML = "App 3D: " + data[i].idApp3D;
+                    //aggiungi i tab alla card
+                    card.appendChild(tab1);
+                    card.appendChild(tab2);
+
+
                     //crea 3 bottoni per ogni card
                     let button1 = document.createElement("button");
-                    button1.classList.add('btn', 'btn-primary', 'btn-sm', 'float-right', 'mr-2');
+                    button1.classList.add('btn', 'btn-primary', 'btn-sm', 'float-right', 'mr-2', 'mt-1');
                     button1.innerHTML = 'Visualizza';
+
                     let button2 = document.createElement("button");
-                    button2.classList.add('btn', 'btn-alert', 'btn-sm', 'float-right', 'mr-2');
+                    button2.classList.add('btn', 'btn-warning', 'btn-sm', 'float-right', 'mr-2', 'mt-1');
                     button2.innerHTML = 'Modifica';
+
                     let button3 = document.createElement("button");
-                    button3.classList.add('btn', 'btn-danger', 'btn-sm', 'float-right', 'mr-2');
+                    button3.classList.add('btn', 'btn-danger', 'btn-sm', 'float-right', 'mr-2', 'mt-1');
                     button3.innerHTML = 'Elimina';
                     //aggiungi i bottoni alla card
-                    card.appendChild(button1);
-                    card.appendChild(button2);
                     card.appendChild(button3);
+                    card.appendChild(button2);
+                    card.appendChild(button1);
                     //aggiungi la card al content-body
                     contentBody.appendChild(card);
                   }
