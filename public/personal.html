@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
          body, html {
-          background-color: #b9d0d374;
+          background-color: #b9d0d3;
           font-family: 'Roboto', sans-serif;
         }
         .navbar {
@@ -20,25 +20,11 @@
             color:  #29201f74 !important;
         }
         #main-card {
-            max-width: 45rem;
+            max-width: 90rem;
         }
         .list-group-item {
             background-color: transparent;
             border-color: #19aa8d95;
-        }
-        .sidebar {
-            background-color: #f9f5f6;
-            height: calc(100vh - 72px); /* Adjusted for navbar height and margin */
-            overflow-y: auto; /* Add scrollbar if content exceeds height */
-            border-radius: 0px 8px 8px 0px;
-            color:  #29201f74 !important;
-            box-shadow:
-            0px 4px 6px rgba(0, 0, 0, 0.1),
-            3px 8px 10px rgba(0, 0, 0, 0.12),
-            5px 12px 16px rgba(0, 0, 0, 0.2),
-            6px 16px 20px rgba(0, 0, 0, 0.21),
-            10px 20px 24px rgba(0, 0, 0, 0.22);
-            position: absolute;
         }
         .nav-item{
             padding: 10px 0px 10px 20px;
@@ -55,10 +41,6 @@
         .nav-link{
           color:  #29201f74 !important;
         }
-        .card {
-            background-color: #5de2c729;
-            border-color: #19aa8d95;
-        }
 
         #content-header {
             background-color: transparent;
@@ -69,53 +51,256 @@
             background-color: transparent;
             color: #29201f74;
         }
+        .sidebar {
+          width: 6rem; /* Larghezza fissa della sidebar */
+          max-width: 75px;
+          height: 100vh; /* Altezza uguale a quella della viewport */
+          background-color: #f9f5f6;
+          color: white;
+          display: flex;
+          flex-direction: column;
+          justify-content: center; /* Centra verticalmente */
+          align-items: center; /* Centra orizzontalmente */
+          gap: 4rem;
+          border-radius: 10px 32px 32px 10px;
+          position: sticky;
+          top: 0;
+        }
+
+        .right-sidebar {
+          width: 7rem; /* Larghezza fissa della sidebar */
+          max-width: 100px;
+          height: 100vh; /* Altezza uguale a quella della viewport */
+          background-color: #f9f5f6;
+          color: white;
+          display: flex;
+          flex-direction: column;
+          justify-content: center; /* Centra verticalmente */
+          align-items: center; /* Centra orizzontalmente */
+          gap: 4rem;
+          border-radius: 10px 32px 32px 10px;
+          position: sticky;
+          right: 0;
+          top: 0;
+        }
+
+        .side-item{
+          color: #646464;
+        }
+
+        .side-item i:hover{
+          color: #222222;
+        }
+
+        .container-fluid {
+          height: 100vh;
+        }
+
+        .info-card{
+          height: 10.6rem;
+          width: 13rem;
+          border-radius: 15px;
+          background-color: #ffffff91;
+          backdrop-filter: blur(8px);
+          padding-top: 1rem;
+          color: black;
+        }
+
+        .info-card-full{
+          height: 35rem;
+          width: 29rem;
+          border-radius: 15px;
+          background-color: #ffffff91;
+          backdrop-filter: blur(8px);
+          padding-top: 1rem;
+          color: black;
+        }
+
+        .card-decorator{
+          height: 3rem;
+          top: 0px;
+          width: 13%;
+          position: relative;
+          display: inline-block;
+          border-radius: 0px 15px 15px 0px;
+          background-color: #19aa8d;
+        }
+
+        .info-card-header{
+          width: 8rem;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+          display: inline-block;
+          color: black;
+          font-weight: bolder;
+          font-size: 1.4rem;
+          margin-left: 1rem;
+          margin-top: 0.2rem;
+          margin-bottom: 0.5rem;
+        }
+
+        .info-card-content{
+          color: rgb(48, 48, 48);
+          font-size: 0.9rem;
+          margin-left: 3rem;
+          margin-top: 0.3rem;
+          margin-bottom: 0.5rem;
+        }
+
+        .info-card-header-full{
+          width: 15rem;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+          display: inline-block;
+          color: black;
+          font-weight: bolder;
+          font-size: 1.4rem;
+          margin-left: 1rem;
+          margin-top: 0.2rem;
+          margin-bottom: 0.5rem;
+        }
+
+        .info-card-content-full{
+          color: rgb(48, 48, 48);
+          font-size: 0.9rem;
+          margin-left: 5rem;
+          margin-top: 0.3rem;
+          margin-bottom: 0.5rem;
+        }
+
+        .flex-box{
+          flex-wrap: wrap;
+          justify-content: center;
+          align-items: center;
+          gap: 1rem;
+        }
+
+        .button{
+          font-size: 0.8rem;
+        }
+
+        .vis{
+          display: none;
+        }
+
+        .info-grid{
+          display: grid;
+          grid-template-columns: 1fr 1fr 1fr;
+          grid-template-rows: 1fr 1fr;
+          gap: 1rem;
+        }
 
         /* Media query for smaller screens */
         @media (max-width: 768px) {
             .sidebar {
-                height: auto;
-                position: relative;
+                width: 100%;
+                max-width: unset;
+                flex-direction: row;
+                height: 3rem;
+                margin-left: auto;
+                gap: 3rem;
+                margin-right: auto;
+                border-radius: 0px 0px 32px 32px;
+                position: sticky;
+                top: 0;
+                z-index: 99;
+                background-color: #ffffffb0;
+                border: 2px solid #dbdbdbda;
+                border-top: 0px;
+
+                backdrop-filter: blur(8px);
+            }
+
+
+            .side-item{
+              margin: 7px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light shadow-sm">
-        <a class="navbar-brand" href="#">Minerva Bridge</a>
-        <button class="profile-img"> </button>
 
-    </nav>
 
-    <div class="container-fluid h-auto">
+    <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
-            <nav class="col-md-3 col-lg-2 d-md-block sidebar mt-3">
-                <div class="position-sticky">
-                    <ul class="nav flex-column">
-                        <li class="nav-item mt-2">
-                            <a class="nav-link" onclick="showLMS()">
-                                Mostra LMS
-                            </a>
-                        </li>
-                        <!-- Add more LMS options as needed -->
-                    </ul>
-                </div>
-            </nav>
+            <div class="col-2 sidebar">
+              <!-- Contenuto della sidebar -->
+              <a class="side-item" href="#" onclick="getLMS()">
+                <i class="fa-solid fa-sitemap fa-xl" ></i>
+              </a>
+              <a class="side-item" href="#">
+                <i class="fa-solid fa-users fa-xl"></i>
+              </a>
+              <a class="side-item" href="#">
+                <i class="fa-solid fa-chart-line fa-xl"></i>
+              </a>
+              <a class="side-item" href="#">
+                <i class="fa-solid fa-sitemap fa-xl"></i>
+              </a>
+              <a class="side-item" href="#">
+                <i class="fa-solid fa-gear fa-xl"></i>
+              </a>
+            </div>
+
+
 
             <!-- Main content -->
-            <main class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+            <main class="col-md-9 ml-md-5">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2">Minerva Dashboard</h1>
                 </div>
 
                 <!-- Display users for the selected LMS -->
-                <div class="card" id="main-card">
-                    <div class="card-header" id="content-header">
-                        Users in LMS 1
+                <div id="main-card">
+                    <div class="modal-header" id="content-header">
                     </div>
                     <!--Vorrei che il content-body si flex -->
-                    <div class="list-group list-group-flush" id="content-body">
+                    <div class="d-flex flex-md-row flex-box" id="content-body">
+                      <div class="info-card vis">
+                        <div class="card-decorator"></div>
+                        <div class="info-card-header">LMS di test ciao</div>
+                        <div class="info-card-content">URL Base:</div>
+                        <button type="button" class="btn btn-secondary ml-5 mt-2 button">Mostra dettagli</button>
+                      </div>
+
+
+                      <div class="info-card-full vis">
+                        <div class="card-decorator"></div>
+                        <div class="info-card-header-full">LMS di test ciao</div>
+                        <div class="info-card-content-full">URL Base:</div>
+                        <button type="button" class="btn btn-secondary ml-5 mt-2 button">Mostra dettagli</button>
+                      </div>
+
+                      <div class="info-card-full vis">
+                        <div class="card-decorator"></div>
+                        <div class="info-card-header-full">LMS di test ciao</div>
+                        <div class="info-card-content-full">
+                          URL Base:
+                          <div class="info-card">
+                            <div class="card-decorator"></div>
+                            <div class="info-card-header">LMS di test ciao</div>
+                            <div class="info-card-content">URL Base:</div>
+                            <button type="button" class="btn btn-secondary ml-5 mt-2 button">Mostra dettagli</button>
+                          </div>
+                          <div class="info-card">
+                            <div class="card-decorator"></div>
+                            <div class="info-card-header">LMS di test ciao</div>
+                            <div class="info-card-content">URL Base:</div>
+                            <button type="button" class="btn btn-secondary ml-5 mt-2 button">Mostra dettagli</button>
+                          </div>
+                          <div class="info-card">
+                            <div class="card-decorator"></div>
+                            <div class="info-card-header">LMS di test ciao</div>
+                            <div class="info-card-content">URL Base:</div>
+                            <button type="button" class="btn btn-secondary ml-5 mt-2 button">Mostra dettagli</button>
+                          </div>
+
+                        </div>
+                        <button type="button" class="btn btn-secondary ml-5 mt-2 button">Mostra dettagli</button>
+                      </div>
 
                     </div>
                 </div>
@@ -123,6 +308,7 @@
         </div>
     </div>
 
+    <script src="https://kit.fontawesome.com/72f900170b.js" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <!-- Aggiungi AXIOS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
@@ -169,6 +355,9 @@
               .then(response => response.json())
               .then(async data => {
                 console.log("GET", data)
+                //Ripulisci il content-body e il content-header
+                document.getElementById("content-body").innerHTML = "";
+                document.getElementById("content-header").innerHTML = "";
                 await showLMS(data);
               })
               .catch((error) => {
@@ -180,7 +369,6 @@
 
         // Show the users for the selected LMS
         async function showLMS(lms) {
-          console.log("SHOW", lms);
           //iter l'array e popolare la sidebar
           //aggiungere nav item con lms.name
           //aggiungere onclick="showUsers(lms.id)"
@@ -188,94 +376,145 @@
           for(let i = 0; i < lms.length; i++) {
             let lmsName = lms[i].name;
             let lmsId = lms[i].id;
-            let navItem = document.createElement("li");
-            navItem.classList.add("nav-item");
-            navItem.innerHTML = `<a class="nav-link" onclick="showUsers(${lmsId})">${lmsName}</a>`;
-            document.querySelector(".nav").appendChild(navItem);
+            let lmsCard = document.createElement("div");
+            lmsCard.classList.add('info-card');
+            let lmsCardDecorator = document.createElement("div");
+            lmsCardDecorator.classList.add('card-decorator');
+            //genera un colore random per ogni lms
+            lmsCardDecorator.style.backgroundColor = '#'+Math.floor(Math.random()*16777215).toString(16);
+            let lmsCardHeader = document.createElement("div");
+            lmsCardHeader.classList.add('info-card-header');
+            lmsCardHeader.innerHTML = lmsName;
+            let lmsCardContent = document.createElement("div");
+            lmsCardContent.classList.add('info-card-content');
+
+            let lmsCardButton = document.createElement("button");
+            lmsCardButton.classList.add('btn', 'btn-secondary', 'ml-5', 'mt-2', 'button');
+            lmsCardButton.innerHTML = 'Mostra dettagli';
+            lmsCardButton.onclick = function() {showInfo(lms[i])};
+            lmsCardContent.innerHTML = "URL Base: " + lms[i].baseURL;
+
+            lmsCard.appendChild(lmsCardDecorator);
+            lmsCard.appendChild(lmsCardHeader);
+            lmsCard.appendChild(lmsCardContent);
+            lmsCard.appendChild(lmsCardButton);
+
+            document.getElementById("content-body").appendChild(lmsCard);
           }
+        }
+
+        async function showInfo(lms){
+          //mostra le info nel content-body e modifica il content-header
+          let contentBody = document.getElementById("content-body");
+          let contentHeader = document.getElementById("content-header");
+          //aggiungi un bottone per tornare indietro
+          let backButton = document.createElement("button");
+          backButton.classList.add('btn', 'btn-secondary', 'ml-5', 'mt-2', 'button');
+          backButton.innerHTML = 'Torna indietro';
+          backButton.onclick = function() {getLMS()};
+          contentHeader.appendChild(backButton);
+          contentBody.innerHTML = "";
+          //crea una card che sta dentro il content-body
+          let card = document.createElement("div");
+          card.classList.add('info-card-full');
+          //crea un decorator per la card
+          let cardDecorator = document.createElement("div");
+          cardDecorator.classList.add('card-decorator');
+          //genera un colore random per ogni lms
+          cardDecorator.style.backgroundColor = '#'+Math.floor(Math.random()*16777215).toString(16);
+          //crea un header per la card
+          let cardHeader = document.createElement("div");
+          cardHeader.classList.add('info-card-header-full');
+          cardHeader.innerHTML = lms.name;
+          //crea un content per la card
+          let cardContent = document.createElement("div");
+          cardContent.classList.add('info-card-content-full');
+          cardContent.innerHTML = "URL Base: " + lms.baseURL;
+
+          //mostra una tabella con intestazione idUsr, idApp3D, richiamando la funzione showUsers(lms.id)
+          let table = document.createElement("table");
+          table.classList.add('table', 'table-striped', 'table-hover', 'table-sm', 'mt-3');
+          let thead = document.createElement("thead");
+          let tr = document.createElement("tr");
+          let th1 = document.createElement("th");
+          th1.innerHTML = "idUsr";
+          let th2 = document.createElement("th");
+          th2.innerHTML = "idApp3D";
+          let th3 = document.createElement("th");
+          th3.innerHTML = "Azioni";
+          tr.appendChild(th1);
+          tr.appendChild(th2);
+          tr.appendChild(th3);
+          thead.appendChild(tr);
+          table.appendChild(thead);
+          let tbody = document.createElement("tbody");
+          tbody.id = "tbody";
+          table.appendChild(tbody);
+
+          //crea un bottone per aggiungere un utente
+          let button = document.createElement("button");
+          button.classList.add('btn', 'btn-primary', 'btn-sm', 'float-right', 'mr-2', 'mt-1');
+          button.innerHTML = 'Aggiungi utente';
+          button.onclick = function() {addUser(lms.id)};
+          //aggiungi il decorator, l'header, il content e la tabella alla card
+          card.appendChild(cardDecorator);
+          card.appendChild(cardHeader);
+          card.appendChild(cardContent);
+          card.appendChild(table);
+          card.appendChild(button);
+          //aggiungi la card al content-body
+          contentBody.appendChild(card);
+          //richiama la funzione showUsers(lms.id)
+          await showUsers(lms.id);
         }
 
         // Show the users for the selected LMS
         async function showUsers(idLms){
-          fetch(bridgeURL+'/admin/getToken', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({email: Cookies.get('email'), password: Cookies.get('password')})
-            })
-            .then(response => response.json())
-            .then(data => {
-              if(data.token == undefined) {
-                alert('Credenziali errate');
-                return;
-              }
-              Cookies.set('token', data.token, {expires: 1});
+          const resp = await fetch(bridgeURL+'/admin/getToken', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({email: Cookies.get('email'), password: Cookies.get('password')})
+                      });
 
-              fetch(bridgeURL+'/admin/lms/'+idLms+'/users', {
-                method: 'GET',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': 'Bearer ' + Cookies.get('token')
-                }
-              })
-              .then(response => response.json())
-              .then(async data => {
-                  //mostra gli utenti nel content-body e modifica il content-header
-                  console.log("GET", data)
-                  let contentBody = document.getElementById("content-body");
-                  let contentHeader = document.getElementById("content-header");
-                  contentHeader.innerHTML = "Utenti di LMS " + idLms;
-                  contentBody.innerHTML = "";
-                  //itera l'array data e popola il content-body
-                  for(let i = 0; i < data.length; i++){
-                    //crea delle card che stanno dentro il content-body
-                    //una accanto all'altra (col-md-4)
-                    let card = document.createElement("li");
-                    card.classList.add('list-group-item', 'border', 'border-dark',
-                    'rounded', 'text-left', 'text-dark', 'font-weight-bold', 'text-wrap', 'text-break');
-                    //crea due tab distinti: uno per l'id dell'utente e uno per l'id dell'app 3d, fai in modo che abbiano un bordo
-                    //e che siano uno accanto all'altro, inoltre gli id devono essere in grassetto e di colore diverso
+          const data = await (await resp).json();
+          if(data.token == undefined) {
+            alert('Credenziali errate');
+            return;
+          }
 
-                    let tab1 = document.createElement("div");
-                    tab1.classList.add('d-inline-block', 'border', 'border-dark', 'rounded', 'text-left', 'text-dark', 'font-weight-bold', 'text-wrap', 'text-break', 'p-2');
-                    tab1.innerHTML = "Utente: " + data[i].idUsr;
+          Cookies.set('token', data.token, {expires: 1});
 
-                    let tab2 = document.createElement("div");
-                    tab2.classList.add('d-inline-block', 'border', 'border-dark', 'rounded', 'text-left', 'text-dark', 'font-weight-bold', 'text-wrap', 'text-break', 'p-2', 'ml-2');
-                    tab2.innerHTML = "App 3D: " + data[i].idApp3D;
-                    //aggiungi i tab alla card
-                    card.appendChild(tab1);
-                    card.appendChild(tab2);
+          const resp2 = await fetch(bridgeURL+'/admin/lms/'+idLms+'/users', {
+                            method: 'GET',
+                            headers: {
+                              'Content-Type': 'application/json',
+                              'Authorization': 'Bearer ' + Cookies.get('token')
+                            }
+                          })
+          const data2 = await (await resp2).json();
+          console.log("GET", data2)
+          let tbody = document.getElementById("tbody");
+          tbody.innerHTML = "";
 
-
-                    //crea 3 bottoni per ogni card
-                    let button1 = document.createElement("button");
-                    button1.classList.add('btn', 'btn-primary', 'btn-sm', 'float-right', 'mr-2', 'mt-1');
-                    button1.innerHTML = 'Visualizza';
-
-                    let button2 = document.createElement("button");
-                    button2.classList.add('btn', 'btn-warning', 'btn-sm', 'float-right', 'mr-2', 'mt-1');
-                    button2.innerHTML = 'Modifica';
-
-                    let button3 = document.createElement("button");
-                    button3.classList.add('btn', 'btn-danger', 'btn-sm', 'float-right', 'mr-2', 'mt-1');
-                    button3.innerHTML = 'Elimina';
-                    //aggiungi i bottoni alla card
-                    card.appendChild(button3);
-                    card.appendChild(button2);
-                    card.appendChild(button1);
-                    //aggiungi la card al content-body
-                    contentBody.appendChild(card);
-                  }
-
-
-              })
-              .catch((error) => {
-                console.error('Error:', error);
-                return [];
-              });
-            })
+          for(let i = 0; i < data2.length; i++) {
+            let tr = document.createElement("tr");
+            let td1 = document.createElement("td");
+            td1.innerHTML = data2[i].idUsr;
+            let td2 = document.createElement("td");
+            td2.innerHTML = data2[i].idApp3D;
+            let td3 = document.createElement("td");
+            let button = document.createElement("button");
+            button.classList.add('btn', 'btn-danger', 'btn-sm');
+            button.innerHTML = 'Elimina';
+            button.onclick = function() {deleteUser(idLms, data2[i].idUsr)};
+            td3.appendChild(button);
+            tr.appendChild(td1);
+            tr.appendChild(td2);
+            tr.appendChild(td3);
+            tbody.appendChild(tr);
+          }
         }
 
         //richiama la show lms quando la pagina è pronta
@@ -284,6 +523,5 @@
         });
 
     </script>
-
 </body>
 </html>
