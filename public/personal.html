@@ -107,8 +107,9 @@
         }
 
         .info-card-full{
-          height: 35rem;
-          width: 29rem;
+          height: auto;
+          width: 50rem;
+          max-width: 90%;
           border-radius: 15px;
           background-color: #ffffff91;
           backdrop-filter: blur(8px);
@@ -453,9 +454,9 @@
 
           //crea un bottone per aggiungere un utente
           let button = document.createElement("button");
-          button.classList.add('btn', 'btn-primary', 'btn-sm', 'float-right', 'mr-2', 'mt-1');
+          button.classList.add('btn', 'btn-primary', 'btn-sm', 'float-right', 'mr-2', 'mt-1', 'mb-1');
           button.innerHTML = 'Aggiungi utente';
-          button.onclick = function() {addUser(lms.id)};
+          button.onclick = function() {showModalAddUser(lms.id)};
           //aggiungi il decorator, l'header, il content e la tabella alla card
           card.appendChild(cardDecorator);
           card.appendChild(cardHeader);
@@ -515,6 +516,130 @@
             tr.appendChild(td3);
             tbody.appendChild(tr);
           }
+        }
+
+        async function showModalAddUser(idLMS){
+          //MOSTRA UN MODAL PER AGGIUNGERE UN UTENTE; il modal ha un form con due campi: idUsr e idApp3D e apparirà davanti all'attuale pagina
+          //il form ha un bottone per aggiungere l'utente
+          //il bottone chiama la funzione addUser(idLMS, idUsr, idApp3D)
+          //il modal ha un bottone per chiuderlo
+          //il bottone chiama la funzione closeModal()
+          //la funzione addUser(idLMS, idUsr, idApp3D) chiama la route POST /admin/lms/:idLMS/users
+          //la funzione addUser(idLMS, idUsr, idApp3D) chiama la funzione showUsers(idLMS)
+          //la funzione closeModal() chiama la funzione showUsers(idLMS)
+          let modal = document.createElement("div");
+          modal.classList.add('modal', 'fade');
+          modal.id = "modal";
+          modal.tabIndex = "-1";
+          modal.role = "dialog";
+          modal.setAttribute("aria-labelledby", "exampleModalLabel");
+          modal.setAttribute("aria-hidden", "true");
+          modal.innerHTML = ''+' <div class="modal-dialog" role="document">'+
+          '  <div class="modal-content">'+
+          '    <div class="modal-header">'+
+          '      <h5 class="modal-title" id="exampleModalLabel">Aggiungi utente</h5>'+
+          '      <button type="button" class="close" data-dismiss="modal" aria-label="Close">'+
+          '        <span aria-hidden="true">&times;</span>'+
+          '      </button>'+
+          '    </div>'+
+          '    <div class="modal-body">'+
+          '      <form>'+
+          '        <div class="form-group">'+
+          '          <label for="idUsr" class="col-form-label">idUsr:</label>'+
+          '          <input type="text" style="width: 10rem; display: inline-block" class="form-control" id="idUsr">'+
+          '        </div>'+
+          '        <div class="form-group">'+
+          '          <label for="idApp3D" class="col-form-label">idApp3D:</label>'+
+          '          <input type="text" style="width: 10rem; display: inline-block" class="form-control" id="idApp3D">'+
+          '        </div>'+
+          '      </form>'+
+          '    </div>'+
+          '    <div class="modal-footer">'+
+          '      <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>'+
+          '      <button type="button" class="btn btn-primary" onclick="addUser('+idLMS+')">Aggiungi</button>'+
+          '    </div>'+
+          '  </div>'+
+          '</div>';
+          document.body.appendChild(modal);
+          $('#modal').modal('show');
+        }
+
+        async function addUser(idLms){
+          //la funzione addUser(idLMS, idUsr, idApp3D) chiama la route POST /admin/lms/:idLMS/users
+          //la funzione addUser(idLMS, idUsr, idApp3D) chiama la funzione showUsers(idLMS)
+          let idUsr = document.getElementById("idUsr").value;
+          let idApp3D = document.getElementById("idApp3D").value;
+          const resp = await fetch(bridgeURL+'/admin/getToken', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({email: Cookies.get('email'), password: Cookies.get('password')})
+                      });
+
+          const data = await (await resp).json();
+          if(data.token == undefined) {
+            alert('Credenziali errate');
+            return;
+          }
+
+          Cookies.set('token', data.token, {expires: 1});
+
+          //la funzione addUser(idLMS, idUsr, idApp3D) chiama la route POST /admin/lms/:idLMS/users
+          const resp2 = await fetch(bridgeURL+'/admin/lms/'+idLms+'/users', {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + Cookies.get('token')
+                          },
+                          body: JSON.stringify({idUsr: idUsr, idApp3D: idApp3D})
+                        })
+
+          const data2 = await (await resp2).json();
+          console.log("POST", data2)
+
+          //la funzione addUser(idLMS, idUsr, idApp3D) chiama la funzione showUsers(idLMS)
+          await showUsers(idLms);
+          //la funzione closeModal() chiama la funzione showUsers(idLMS)
+          //prima di chiudere il modal, pulisci i campi del form
+          document.getElementById("idUsr").value = "";
+          document.getElementById("idApp3D").value = "";
+          closeModal();
+          //mostra una notifica che dice che l'utente è stato aggiunto e scompare dopo 3 secondi
+          //la notifica deve essere verde e in alto a destra con z-index 99
+          //se statusMsg == 'Utente già registrato' la notifica deve essere rossa
+
+          let alert = document.createElement("div");
+          alert.classList.add('alert', 'alert-success', 'alert-dismissible', 'fade', 'show', 'position-absolute', 'mt-5', 'mr-5');
+          alert.style.zIndex = "99";
+          alert.style.top = "0";
+          alert.style.right = "0";
+          alert.role = "alert";
+          alert.innerHTML = data2.statusMsg;
+
+          if(data2.statusMsg == 'Utente già registrato.'){
+            alert.classList.remove('alert-success');
+            alert.classList.add('alert-danger');
+          }
+
+          let button = document.createElement("button");
+          button.type = "button";
+          button.classList.add('close');
+          button.setAttribute("data-dismiss", "alert");
+          button.setAttribute("aria-label", "Close");
+          button.innerHTML = '<span aria-hidden="true">&times;</span>';
+          alert.appendChild(button);
+          document.getElementById("content-body").appendChild(alert);
+          setTimeout(function(){ alert.remove(); }, 3000);
+
+
+
+
+        }
+
+        function closeModal(){
+          //la funzione closeModal() chiama la funzione showUsers(idLMS)
+          $('#modal').modal('hide');
         }
 
         //richiama la show lms quando la pagina è pronta
