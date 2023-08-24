@@ -180,7 +180,7 @@ https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js">
   const bridgeURL = window.location.protocol + "//" + window.location.host;
 
   var token = undefined;
-  button.addEventListener('click', function(e) {
+  button.addEventListener('click', async function(e) {
     e.preventDefault();
     console.log('click');
     fetch(bridgeURL+'/admin/getToken', {
@@ -191,7 +191,7 @@ https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js">
       body: JSON.stringify({email: email.value, password: password.value})
     })
     .then(response => response.json())
-    .then(data => {
+    .then(async data => {
       if(data.token == undefined) {
         alert('Credenziali errate');
         return;
@@ -200,7 +200,19 @@ https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js">
       Cookies.set('email', email.value, {expires: 1});
       Cookies.set('password', password.value, {expires: 1});
 
-      window.location.href = '/personal.html';
+      fetch(bridgeURL+'/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({email: email.value, password: password.value})
+      })
+      .then(response => response.json())
+      .then(_data =>{
+        console.log(_data);
+        Cookies.set('role', _data.role, {expires: 1});
+        window.location.href = '/personal.html';
+      })
     })
   });
 
