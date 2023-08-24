@@ -106,6 +106,36 @@
           color: black;
         }
 
+        .info-card {
+          transition: transform 0.2s; /* Transizione più veloce */
+        }
+
+        /* Effetto su :hover */
+        .info-card:hover {
+          transform: scale(1.1);
+          transition: transform 0.1s; /* Transizione più rapida al passaggio */
+        }
+
+        /* Effetto su :not(:hover) */
+        .info-card:not(:hover) {
+          transition: transform 0.3s; /* Transizione più lenta all'uscita */
+        }
+
+        .side-item {
+          transition: transform 0.2s; /* Transizione più veloce */
+        }
+
+        /* Effetto su :hover */
+        .side-item:hover {
+          transform: scale(1.3);
+          transition: transform 0.2s; /* Transizione più rapida al passaggio */
+        }
+
+        /* Effetto su :not(:hover) */
+        .side-item:not(:hover) {
+          transition: transform 0.4s; /* Transizione più lenta all'uscita */
+        }
+
         .info-card-full{
           height: auto;
           width: 50rem;
@@ -191,6 +221,10 @@
           grid-template-columns: 1fr 1fr 1fr;
           grid-template-rows: 1fr 1fr;
           gap: 1rem;
+        }
+
+        ._visible{
+          display: unset;
         }
 
         /* Media query for smaller screens */
@@ -306,6 +340,48 @@
                     </div>
                 </div>
             </main>
+
+            <!-- Aggiungi il modale per la creazione dell'LMS nell'HTML e setta la sua visibilità ad hidden , verrà poi cambiate tramite codice -->
+
+            <!-- Modal -->
+            <div class="modal fade" tabindex="-1" id="lms-modal">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Crea LMS</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body" id="lms-modal-body">
+                    <input id="lms-admin" type="text" class="form-control vis" placeholder="id Admin">
+                    <input id="lms-name" type="text" class="form-control" placeholder="Nome LMS">
+                    <input id="lms-baseURL" type="text" class="form-control mt-2" placeholder="URL Base">
+                    <input id="lms-username" type="text" class="form-control mt-2" placeholder="Username">
+                    <input id="lms-password" type="password" class="form-control mt-2" placeholder="Password">
+                    <!--input per 'lms-type' deve essere a scelta tra due valori 'XAPI' e 'SCORM' tramite radio button-->
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="lms-type" id="XAPI">
+                      <label class="form-check-label" for="flexRadioDefault1">
+                        XAPI
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="lms-type" id="SCORM" checked>
+                      <label class="form-check-label" for="flexRadioDefault2">
+                        SCORM
+                      </label>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
+                    <button type="button" class="btn btn-primary">Aggiungi</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
         </div>
     </div>
 
@@ -373,7 +449,38 @@
           //iter l'array e popolare la sidebar
           //aggiungere nav item con lms.name
           //aggiungere onclick="showUsers(lms.id)"
+          //aggiungi per prima una card uguale a quelle del ciclo for ma con un bottone che apre un modale per aggiungere un lms
+          let contentBody = document.getElementById("content-body");
+          //aggiungi una card per aggiungere un lms
+          let card = document.createElement("div");
+          card.classList.add('info-card');
+          let cardDecorator = document.createElement("div");
+          cardDecorator.classList.add('card-decorator');
+          cardDecorator.style.backgroundColor = '#'+Math.floor(Math.random()*16777215).toString(16);
+          let cardHeader = document.createElement("div");
+          cardHeader.classList.add('info-card-header');
+          cardHeader.innerHTML = "Crea LMS";
+          let cardContent = document.createElement("div");
+          cardContent.classList.add('info-card-content');
+          cardContent.style.marginLeft = '0px';
+          let cardButton = document.createElement("button");
+          cardButton.classList.add('btn', 'btn-primary', 'mt-2', 'button');
+          //centra il bottone nel cardContent
+          cardButton.style.marginLeft = '3rem';
+          let icon = document.createElement("i");
+          icon.classList.add('fa-solid', 'fa-plus', 'fa-xl');
+          cardButton.appendChild(icon);
+          cardButton.onclick = function() {showModalAddLMS()};
 
+          //vorrei che il bottone sia nel cardContent
+          cardContent.appendChild(cardButton);
+
+          card.appendChild(cardDecorator);
+          card.appendChild(cardHeader);
+          card.appendChild(cardContent);
+          contentBody.appendChild(card);
+
+          //itera l'array e popola il content-body
           for(let i = 0; i < lms.length; i++) {
             let lmsName = lms[i].name;
             let lmsId = lms[i].id;
@@ -635,6 +742,24 @@
 
 
 
+        }
+
+        //crea funzione showModalAddLMS()
+        function showModalAddLMS(){
+          //se il ruolo dell'utente è superadmin aggiungi al modal un campo di input per  l'admin al quale aggiungere un lms
+          console.log(Cookies.get('role'));
+          if(Cookies.get('role') == 'superadmin'){
+            let lmsInput = document.getElementById('lms-admin');
+            lmsInput.classList.remove('vis');
+          }
+
+          //fai visualizare il modal
+          $('#lms-modal').modal('show');
+        }
+
+        function closeModalLMS(){
+          //fai scomparire il modal
+          $('#lms-modal').modal('hide');
         }
 
         function closeModal(){
