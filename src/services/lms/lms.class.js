@@ -3,6 +3,7 @@ const lms = require('../../models/_lms.model');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const { BadRequest } = require('@feathersjs/errors');
+const admins = require('../../models/admin.model');
 
 exports.Lms = class Lms extends Service {
   constructor(options, app){
@@ -12,11 +13,28 @@ exports.Lms = class Lms extends Service {
 
   async find(params){
     const lmsModel = lms(this.app);
-    const _lms = await lmsModel.findAll({
+    //controlla se idAdmin è superadmin
+    const adminsModel = admins(this.app);
+    const idAdmin = params.idAdmin;
+    console.log(idAdmin);
+
+    const _admin = await adminsModel.findOne({
       where: {
-        idAdmin: params.idAdmin
+        id: idAdmin,
+        role: 'superadmin'
       }
     });
+
+    let _lms;
+    if(!_admin){
+      _lms = await lmsModel.findAll({
+        where: {
+          idAdmin
+        }
+      });
+    }else{
+      _lms = await lmsModel.findAll({});
+    }
 
     return _lms;
   }
