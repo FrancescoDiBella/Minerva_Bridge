@@ -36,7 +36,7 @@ module.exports = {
 
       }
     ],
-    get: [ authenticate('jwt') ],
+    get: [  ],
     create: [
       async (context) => {
         const hasHeaderObj = new hasHeader();
@@ -63,9 +63,48 @@ module.exports = {
 
       }
     ],
-    update: [ hashPassword('password'),  authenticate('jwt') ],
-    patch: [ hashPassword('password'),  authenticate('jwt') ],
-    remove: [ authenticate('jwt') ]
+    update: [  ],
+    patch: [
+      async (context) => {
+        const hasHeaderObj = new hasHeader();
+        const { headers } = context.params;
+        console.log("DATA:", context.data)
+        // Check if the `Authorization` header is present
+        await hasHeaderObj.hasAuthorization(headers);
+        // Extract the JWT from the `Authorization` header
+        const [, token] = headers.authorization.split(' ');
+        console.log(token)
+
+        // Verify the JWT using the secret key
+        try {
+          const secret = context.app.get('authentication').secret;
+          const payload = jwt.verify(token, secret);
+          //controllo se admin è owner di lms in route params
+          const lmsModel = context.app.service('/admin/lms').Model;
+          const _lms = await lmsModel.findOne({
+            where: {
+              id: context.id,
+              idAdmin: payload.idAdmin
+            }
+          });
+
+          if(!_lms){
+            throw new NotAuthenticated("Non sei autorizzato a modificare questo lms");
+          }
+
+          //eliminare dal context.data eventuale se presente campo secret e idAdmin
+          delete context.data.secret;
+          delete context.data.idAdmin;
+          return context;
+        } catch (error) {
+          // If the JWT is invalid, throw an error
+          console.log(error);
+          throw new NotAuthenticated('Token non valido!');
+        }
+
+      }
+    ],
+    remove: [ ]
   },
 
   after: {
