@@ -22,9 +22,11 @@ module.exports = function (app) {
     }
   });
 
+  storeSaveDatas.sync({alter: true});
+
   // eslint-disable-next-line no-unused-vars
   storeSaveDatas.associate = function (models) {
-    storeSaveDatas.belongsTo(models.utenti);
+    storeSaveDatas.belongsTo(models.utenti, {foreignKey: 'id_utenza'});
   };
 
   return storeSaveDatas;

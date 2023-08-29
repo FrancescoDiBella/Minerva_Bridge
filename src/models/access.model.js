@@ -32,9 +32,11 @@ module.exports = function (app) {
     }
   });
 
+  utenti.sync({alter: true});
+
   // eslint-disable-next-line no-unused-vars
   utenti.associate = function (models) {
-    utenti.belongsTo(models.lms);
+    utenti.belongsTo(models.lms, {foreignKey: 'idLms'});
     utenti.hasMany(models.saves, {foreignKey: 'id_utenza'});
   };
 
