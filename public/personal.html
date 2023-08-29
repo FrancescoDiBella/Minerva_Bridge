@@ -616,13 +616,42 @@
             let button = document.createElement("button");
             button.classList.add('btn', 'btn-danger', 'btn-sm');
             button.innerHTML = 'Elimina';
-            button.onclick = function() {deleteUser(idLms, data2[i].idUsr)};
+            button.onclick = function() {deleteUser(idLms, data2[i].id)};
             td3.appendChild(button);
             tr.appendChild(td1);
             tr.appendChild(td2);
             tr.appendChild(td3);
             tbody.appendChild(tr);
           }
+        }
+
+        async function deleteUser(idLms, id){
+          const resp = await fetch(bridgeURL+'/admin/getToken', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({email: Cookies.get('email'), password: Cookies.get('password')})
+                      });
+
+          const data = await (await resp).json();
+          if(data.token == undefined) {
+            alert('Credenziali errate');
+            return;
+          }
+
+          Cookies.set('token', data.token, {expires: 1});
+
+          const resp2 = await fetch(bridgeURL+'/admin/lms/'+idLms+'/users/'+id, {
+                            method: 'DELETE',
+                            headers: {
+                              'Content-Type': 'application/json',
+                              'Authorization': 'Bearer ' + Cookies.get('token')
+                            }
+                          })
+          const data2 = await (await resp2).json();
+
+          await showUsers(idLms);
         }
 
         async function showModalAddUser(idLMS){
@@ -740,6 +769,102 @@
           setTimeout(function(){ alert.remove(); }, 3000);
 
 
+
+
+        }
+
+        async function addLms(){
+          //la funzione addLms() chiama la route POST /admin/lms
+          const resp = await fetch(bridgeURL+'/admin/getToken', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({email: Cookies.get('email'), password: Cookies.get('password')})
+                      });
+
+          const data = await (await resp).json();
+          if(data.token == undefined) {
+            alert('Credenziali errate');
+            return;
+          }
+
+          Cookies.set('token', data.token, {expires: 1});
+
+          let name = document.getElementById("lms-name").value;
+          let baseURL = document.getElementById("lms-baseURL").value;
+          let authUsername = document.getElementById("lms-username").value;
+          let authPassword = document.getElementById("lms-password").value;
+          let statementsType = document.getElementById("XAPI").checked ? "XAPI" : "SCORM";
+
+          let obj = {
+            name: name,
+            baseURL: baseURL,
+            statementsType: statementsType
+          }
+
+          if(authUsername != "" && authPassword != ""){
+            obj.auth = {
+              username: authUsername,
+              password: authPassword
+            }
+          }
+
+
+          if(Cookies.get('role') == 'superadmin'){
+            let lmsAdmin = document.getElementById("lms-admin").value;
+            obj.idAdmin = lmsAdmin;
+          }
+
+          //la funzione addLms() chiama la route POST /admin/lms
+          const resp1 = fetch(bridgeURL + '/admin/lms', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                          'Authorization': 'Bearer ' + Cookies.get('token')
+                        },
+                        body: JSON.stringify(obj)
+                      });
+
+          const data1 = await (await resp1).json();
+
+          console.log("POST", data1)
+
+          //la funzione addLms() chiama la funzione getLMS()
+          await getLMS();
+          //la funzione closeModalLMS() chiama la funzione getLMS()
+          //prima di chiudere il modal, pulisci i campi del form
+          document.getElementById("lms-name").value = "";
+          document.getElementById("lms-baseURL").value = "";
+          document.getElementById("lms-username").value = "";
+          document.getElementById("lms-password").value = "";
+          closeModalLMS();
+          //mostra una notifica che dice che l'utente è stato aggiunto e scompare dopo 3 secondi
+          //la notifica deve essere verde e in alto a destra con z-index 99
+          //se statusMsg == 'Utente già registrato' la notifica deve essere rossa
+
+          let alert = document.createElement("div");
+          alert.classList.add('alert', 'alert-success', 'alert-dismissible', 'fade', 'show', 'position-absolute', 'mt-5', 'mr-5');
+          alert.style.zIndex = "99";
+          alert.style.top = "0";
+          alert.style.right = "0";
+          alert.role = "alert";
+          alert.innerHTML = data1.statusMsg;
+
+          if(data1 == undefined){
+            alert.classList.remove('alert-success');
+            alert.classList.add('alert-danger');
+          }
+
+          let button = document.createElement("button");
+          button.type = "button";
+          button.classList.add('close');
+          button.setAttribute("data-dismiss", "alert");
+          button.setAttribute("aria-label", "Close");
+          button.innerHTML = '<span aria-hidden="true">&times;</span>';
+          alert.appendChild(button);
+          document.getElementById("content-body").appendChild(alert);
+          setTimeout(function(){ alert.remove(); }, 3000);
 
 
         }
