@@ -29,7 +29,7 @@ exports.Access = class Access extends Service {
       where: {
         ...query
       },
-      attributes: ['idUsr', 'idApp3D', 'idLms']
+      attributes: ['idUsr', 'idApp3D', 'idLms', 'id']
     });
 
     return _users;
@@ -53,7 +53,7 @@ exports.Access = class Access extends Service {
       where: {
         ...query
       },
-      attributes: ['idUsr', 'idApp3D', 'idLms']
+      attributes: ['idUsr', 'idApp3D', 'idLms', 'id']
     });
 
     return _users;
