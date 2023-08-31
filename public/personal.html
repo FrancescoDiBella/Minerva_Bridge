@@ -177,6 +177,10 @@
           margin-left: 3rem;
           margin-top: 0.3rem;
           margin-bottom: 0.5rem;
+          padding-right: 3px;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
         }
 
         .info-card-header-full{
@@ -375,7 +379,7 @@
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
-                    <button type="button" class="btn btn-primary">Aggiungi</button>
+                    <button type="button" class="btn btn-primary" onclick="addLms()">Aggiungi</button>
                   </div>
                 </div>
               </div>
@@ -538,6 +542,17 @@
           let cardContent = document.createElement("div");
           cardContent.classList.add('info-card-content-full');
           cardContent.innerHTML = "URL Base: " + lms.baseURL;
+          //crea un bottone per eliminare lms
+          let buttonL = document.createElement("button");
+          buttonL.classList.add('btn', 'btn-danger', 'btn-sm', 'float-right', 'mr-2', 'mt-1', 'mb-1', 'ml-3');
+          buttonL.innerHTML = 'Elimina LMS';
+          buttonL.onclick = function() {deleteLMS(lms.id)};
+
+          //creare bottone che permette di modificare lms
+          let buttonM = document.createElement("button");
+          buttonM.classList.add('btn', 'btn-warning', 'btn-sm', 'float-right', 'mr-2', 'mt-1', 'mb-1');
+          buttonM.innerHTML = 'Modifica LMS';
+          buttonM.onclick = function() {showModalModifyLMS(lms.id)};
 
           //mostra una tabella con intestazione idUsr, idApp3D, richiamando la funzione showUsers(lms.id)
           let table = document.createElement("table");
@@ -566,6 +581,8 @@
           button.onclick = function() {showModalAddUser(lms.id)};
           //aggiungi il decorator, l'header, il content e la tabella alla card
           card.appendChild(cardDecorator);
+          cardContent.appendChild(buttonM);
+          cardContent.appendChild(buttonL);
           card.appendChild(cardHeader);
           card.appendChild(cardContent);
           card.appendChild(table);
@@ -892,6 +909,59 @@
           $('#modal').modal('hide');
         }
 
+        async function deleteLMS(idLms){
+          //la funzione deleteLMS(idLms) chiama la route DELETE /admin/lms/:idLMS
+          //la funzione deleteLMS(idLms) chiama la funzione getLMS()
+          //la funzione addLms() chiama la route POST /admin/lms
+          const resp = await fetch(bridgeURL+'/admin/getToken', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({email: Cookies.get('email'), password: Cookies.get('password')})
+                      });
+
+          const data = await (await resp).json();
+          if(data.token == undefined) {
+            alert('Credenziali errate');
+            return;
+          }
+
+          //la funzione addLms() chiama la route POST /admin/lms
+          const resp1 = fetch(bridgeURL + '/admin/lms/'+idLms, {
+                        method: 'DELETE',
+                        headers: {
+                          'Content-Type': 'application/json',
+                          'Authorization': 'Bearer ' + Cookies.get('token')
+                        }
+                      });
+
+          const data1 = await (await resp1).json();
+
+          console.log("POST", data1)
+          //fai apparire una notifica che dice che l'LMS è stato eliminato e scompare dopo 3 secondi
+          //la notifica deve essere verde e in alto a destra con z-index 99
+
+          let alert = document.createElement("div");
+          alert.classList.add('alert', 'alert-success', 'alert-dismissible', 'fade', 'show', 'position-absolute', 'mt-5', 'mr-5');
+          alert.style.zIndex = "99";
+          alert.style.top = "0";
+          alert.style.right = "0";
+          alert.role = "alert";
+          alert.innerHTML = data1.statusMsg;
+
+          let button = document.createElement("button");
+          button.type = "button";
+          button.classList.add('close');
+          button.setAttribute("data-dismiss", "alert");
+          button.setAttribute("aria-label", "Close");
+          button.innerHTML = '<span aria-hidden="true">&times;</span>';
+          alert.appendChild(button);
+          document.getElementById("content-body").appendChild(alert);
+          setTimeout(function(){ alert.remove(); }, 3000);
+
+          await getLMS();
+        }
         //richiama la show lms quando la pagina è pronta
         $(document).ready(async function() {
            await getLMS();
