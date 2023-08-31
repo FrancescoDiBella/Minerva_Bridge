@@ -546,13 +546,13 @@
           let buttonL = document.createElement("button");
           buttonL.classList.add('btn', 'btn-danger', 'btn-sm', 'float-right', 'mr-2', 'mt-1', 'mb-1', 'ml-3');
           buttonL.innerHTML = 'Elimina LMS';
-          buttonL.onclick = function() {deleteLMS(lms.id)};
+          buttonL.onclick = function() {deleteLMS(lms)};
 
           //creare bottone che permette di modificare lms
           let buttonM = document.createElement("button");
           buttonM.classList.add('btn', 'btn-warning', 'btn-sm', 'float-right', 'mr-2', 'mt-1', 'mb-1');
           buttonM.innerHTML = 'Modifica LMS';
-          buttonM.onclick = function() {showModalModifyLMS(lms.id)};
+          buttonM.onclick = function() {showModalModifyLMS(lms)};
 
           //mostra una tabella con intestazione idUsr, idApp3D, richiamando la funzione showUsers(lms.id)
           let table = document.createElement("table");
@@ -578,7 +578,7 @@
           let button = document.createElement("button");
           button.classList.add('btn', 'btn-primary', 'btn-sm', 'float-right', 'mr-2', 'mt-1', 'mb-1');
           button.innerHTML = 'Aggiungi utente';
-          button.onclick = function() {showModalAddUser(lms.id)};
+          button.onclick = function() {showModalAddUser(lms)};
           //aggiungi il decorator, l'header, il content e la tabella alla card
           card.appendChild(cardDecorator);
           cardContent.appendChild(buttonM);
@@ -671,7 +671,7 @@
           await showUsers(idLms);
         }
 
-        async function showModalAddUser(idLMS){
+        async function showModalAddUser(lms){
           //MOSTRA UN MODAL PER AGGIUNGERE UN UTENTE; il modal ha un form con due campi: idUsr e idApp3D e apparirà davanti all'attuale pagina
           //il form ha un bottone per aggiungere l'utente
           //il bottone chiama la funzione addUser(idLMS, idUsr, idApp3D)
@@ -709,7 +709,7 @@
           '    </div>'+
           '    <div class="modal-footer">'+
           '      <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>'+
-          '      <button type="button" class="btn btn-primary" onclick="addUser('+idLMS+')">Aggiungi</button>'+
+          '      <button type="button" class="btn btn-primary" onclick="addUser('+lms+')">Aggiungi</button>'+
           '    </div>'+
           '  </div>'+
           '</div>';
@@ -717,7 +717,7 @@
           $('#modal').modal('show');
         }
 
-        async function addUser(idLms){
+        async function addUser(lms){
           //la funzione addUser(idLMS, idUsr, idApp3D) chiama la route POST /admin/lms/:idLMS/users
           //la funzione addUser(idLMS, idUsr, idApp3D) chiama la funzione showUsers(idLMS)
           let idUsr = document.getElementById("idUsr").value;
@@ -737,15 +737,27 @@
           }
 
           Cookies.set('token', data.token, {expires: 1});
-
+          let body = {};
           //la funzione addUser(idLMS, idUsr, idApp3D) chiama la route POST /admin/lms/:idLMS/users
-          const resp2 = await fetch(bridgeURL+'/admin/lms/'+idLms+'/users', {
+          if(Cookies.get('role') == 'superadmin'){
+            body = {
+              idUsr: idUsr,
+              idApp3D: idApp3D,
+              idAdmin: lms.idAdmin
+            }
+          }else{
+            body = {
+              idUsr: idUsr,
+              idApp3D: idApp3D
+            }
+          }
+          const resp2 = await fetch(bridgeURL+'/admin/lms/'+lms.id+'/users', {
                           method: 'POST',
                           headers: {
                             'Content-Type': 'application/json',
                             'Authorization': 'Bearer ' + Cookies.get('token')
                           },
-                          body: JSON.stringify({idUsr: idUsr, idApp3D: idApp3D})
+                          body: JSON.stringify(body)
                         })
 
           const data2 = await (await resp2).json();

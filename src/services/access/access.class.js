@@ -63,7 +63,6 @@ exports.Access = class Access extends Service {
     const {idUsr, idApp3D} = data;
     const {idLms} = params.route;
     var {idAdmin} = params;
-    const _idAdmin = data.idLms;
 
     const lmsModel = lms(this.app);
     const utentiModel = _utenti(this.app);
@@ -80,7 +79,7 @@ exports.Access = class Access extends Service {
     });
 
     if(_admin){
-      idAdmin = _idAdmin;
+      idAdmin = data.idAdmin;
     }
 
     //Check if user exists;
