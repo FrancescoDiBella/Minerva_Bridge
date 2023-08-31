@@ -145,7 +145,7 @@
     <div class="form-group not-visible">
         <div class="input-group">
           <span class="input-group-addon"><i class="fa fa-user"></i></span>
-          <input type="text" class="form-control" name="username" placeholder="Nome LMS" required="required">
+          <input type="text" class="form-control" name="username" placeholder="Username" required="required">
         </div>
     </div>
     <div class="form-group">
@@ -163,40 +163,6 @@
           <i class="fa fa-lock"></i>
         </span>
         <input type="password" class="form-control" name="confirm_password" placeholder="Conferma Password" required="required">
-      </div>
-    </div>
-
-    <div class="form-group not-visible">
-      <div class="input-group">
-        <span class="input-group-addon">
-          <i class="fa fa-link"></i>
-        </span>
-        <input type="url" class="form-control" name="baseURL" placeholder="URL base" required="required">
-      </div>
-    </div>
-
-    <div class="form-group not-visible">
-      <div class="input-group">
-        <span class="input-group-addon">
-        <i class="fa fa-cogs"></i>
-      </span>
-        <div class="form-control">
-          <input type="radio" name="statementsType" id="XAPI" value="XAPI" required="required" style="width: 30px; margin-top: 7px;" checked>
-          <label for="XAPI">XAPI</label>
-          <input type="radio" name="statementsType" id="SCORM" value="SCORM" required="required" style="width: 30px; margin-top: 7px;">
-          <label for="SCORM">SCORM</label>
-        </div>
-    </div>
-    </div>
-
-    <div class="form-group not-visible">
-      <div class="input-group">
-        <span class="input-group-addon"><i class="fa fa-external-link-square"></i></span>
-        <input type="text" class="form-control" name="authUsername" placeholder="AUTH Username" style="margin-right: 5px;">
-        <span class="input-group-addon">
-          <i class="fa fa-lock"></i>
-        </span>
-        <input type="text" class="form-control" name="authPassword" placeholder="AUTH Password">
       </div>
     </div>
 
@@ -268,29 +234,20 @@
       });
     }else{
       //fai una fetch post allo stesso indirizzo su cui si trova la pagina e passa come parametro la mail inserita dall'utente
-      const bridgeURL = window.location.protocol + "//" + window.location.host;
-      const baseURL = document.getElementsByName('baseURL')[0].value;
       const email = document.getElementsByName('email')[0].value;
-      const name = document.getElementsByName('username')[0].value;
+      const username = document.getElementsByName('username')[0].value;
       const password = document.getElementsByName('password')[0].value;
       const confirmPassword = document.getElementsByName('confirm_password')[0].value;
-      const statementsType = document.querySelector('input[name="statementsType"]:checked').value;
-      const authUsername = document.getElementsByName('authUsername')[0].value;
-      const authPassword = document.getElementsByName('authPassword')[0].value;
+
 
       if(password != confirmPassword){
         alert('Le password non coincidono');
         return;
       }
-      var data;
-      if(authPassword == "" || authUsername == "" || authPassword == undefined || authUsername == undefined || authPassword == null || authUsername == null || authPassword == " " || authUsername == " "
-      ){
-        data = {email: email, name: name, password: password, baseURL, statementsType}
-      }else{
-        data = {email: email, name: name, password: password, baseURL, statementsType, authPassword, authUsername}
-      }
+      var data = {email: email, username: username, password: password};
 
-      fetch(bridgeURL+'/e-modules/lms', {
+
+      fetch(bridgeURL+'/admin', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
