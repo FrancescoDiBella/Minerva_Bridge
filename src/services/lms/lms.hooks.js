@@ -6,6 +6,7 @@ const {
 const{hasHeader} = require('../../hasHeader');
 const { NotAuthenticated } = require('@feathersjs/errors');
 const jwt = require('jsonwebtoken');
+const admin = require('../../models/admin.model');
 
 module.exports = {
   before: {
@@ -52,9 +53,30 @@ module.exports = {
         try {
           const secret = context.app.get('authentication').secret;
           const payload = jwt.verify(token, secret);
-          context.data.idAdmin = payload.idAdmin;
-          console.log("payload", payload.idAdmin)
-          console.log("idADmin", context.data.idAdmin)
+
+          //controllo se admin è owner di lms in route params
+          const adminModel = admin(context.app);
+          const _admin = await adminModel.findOne({
+            where: {
+              id: payload.idAdmin,
+              role: 'superadmin'
+            }
+          });
+
+          if(!_admin){
+            context.data.idAdmin = payload.idAdmin;
+          }else{
+            const tmp_admin = await adminModel.findOne({
+              where: {
+                id: context.data.idAdmin
+              }
+            });
+
+            if(!tmp_admin){
+              throw new NotAuthenticated("Admin non trovato");
+            }
+          }
+
           return context;
         } catch (error) {
           // If the JWT is invalid, throw an error
