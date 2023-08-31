@@ -541,7 +541,7 @@
           //crea un content per la card
           let cardContent = document.createElement("div");
           cardContent.classList.add('info-card-content-full');
-          cardContent.innerHTML = "URL Base: " + lms.baseURL;
+          cardContent.innerHTML = "URL Base: " + lms.baseURL + ' <br> Tipo: ' + lms.statementsType + ' <br> idAdmin: ' + lms.idAdmin;
           //crea un bottone per eliminare lms
           let buttonL = document.createElement("button");
           buttonL.classList.add('btn', 'btn-danger', 'btn-sm', 'float-right', 'mr-2', 'mt-1', 'mb-1', 'ml-3');
