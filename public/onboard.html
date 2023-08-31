@@ -234,6 +234,7 @@
       });
     }else{
       //fai una fetch post allo stesso indirizzo su cui si trova la pagina e passa come parametro la mail inserita dall'utente
+      const bridgeURL = window.location.protocol + "//" + window.location.host;
       const email = document.getElementsByName('email')[0].value;
       const username = document.getElementsByName('username')[0].value;
       const password = document.getElementsByName('password')[0].value;
@@ -244,7 +245,7 @@
         alert('Le password non coincidono');
         return;
       }
-      var data = {email: email, username: username, password: password};
+      var data = {email, username, password}
 
 
       fetch(bridgeURL+'/admin', {
