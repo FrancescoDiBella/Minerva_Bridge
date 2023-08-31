@@ -1,8 +1,7 @@
 /* eslint-disable no-unused-vars */
 const { BadRequest, NotAcceptable } = require('@feathersjs/errors');
 const jwt = require('jsonwebtoken');
-const lms = require('../../models/_lms.model');
-
+const admin = require('../../models/admin.model');
 exports.LmsOnboarding = class LmsOnboarding {
   constructor (options, app) {
     this.options = options || {};
@@ -16,8 +15,8 @@ exports.LmsOnboarding = class LmsOnboarding {
 
     if(this.reg.test(email)){
       //controlla se esiste un lms con questa mail, se esiste ritorna un errore
-      const lmsModel = lms(this.app);
-      const user = await lmsModel.findOne({
+      const adminModel = admin(this.app);
+      const user = await adminModel.findOne({
         where: {
           email: email
         }
