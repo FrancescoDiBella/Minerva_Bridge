@@ -26,12 +26,12 @@ module.exports = (app) => {
       create: {
         summary: "Richiesta di un token JWT valido per l'autenticazione.",
         description:
-                      "Se si riceve indietro l’authCode precedentemente emesso, \
+                      "Se si riceve indietro l'authCode precedentemente emesso, \
                       si è sicuri che in questa specifica sessione, quella App3D è in uso \
-                      all’utente registrato e loggato su LMS. Si genera un token univoco \
+                      all'utente registrato e loggato su LMS. Si genera un token univoco \
                       che il modulo 3D userà per identificarsi in tutte le richieste future \
                       al modulo di interscambio, si invalida il vecchio authCode, non potrà \
-                      cioè più essere emesso e sarà legato all’IdUsr. Il token generato è un \
+                      cioè più essere emesso e sarà legato all'IdUsr. Il token generato è un \
                       JWT (JSON WEB TOKEN), con payload i body parameters inviati dal modulo 3d; \
                       tale token è autoreferenziale (sì può sempre verificare il payload), non \
                       ha bisogno di essere mantenuto in un db ed inoltre si può facilmente settare \
