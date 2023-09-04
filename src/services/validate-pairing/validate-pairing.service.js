@@ -143,7 +143,7 @@ module.exports = function (app) {
             description: "Auth Token mancante o non valido!",
           },
           404: {
-            description: "Non c’è nessun utente associato a tale idUsr",
+            description: "Non c'è nessun utente associato a tale idUsr",
           },
           409: {
             description: "L'utente ha già associato un AuthCode.",
