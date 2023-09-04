@@ -67,6 +67,7 @@ app.configure(
       },
     },
     defaults: {
+      // taken from here https://github.com/alt3/sequelize-to-json-schemas/issues/17
       schemasGenerator(service) {
         if (service.options && service.options.Model) {
           const modelSchema = app
