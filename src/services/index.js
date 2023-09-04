@@ -18,22 +18,29 @@ const admin = require("./admin/admin.service.js");
 const adminGetToken = require("./admin-get-token/admin-get-token.service.js");
 // eslint-disable-next-line no-unused-vars
 module.exports = function (app) {
+  // admin
+  app.configure(admin);
+  app.configure(adminGetToken);
   app.configure(lms);
   app.configure(access);
+
+  // 3d-modules
   app.configure(getAuthCode);
   app.configure(validatePairing);
   app.configure(saveDatas);
-  app.configure(jwtService);
-  app.configure(login);
-  app.configure(mails);
-  app.configure(verifyEmail);
-  app.configure(resetSecret);
   app.configure(getSaveData);
   app.configure(statements);
   app.configure(getToken);
   app.configure(eModulesGetAuthCode);
   app.configure(lmsOnboarding);
   app.configure(storeSaveDatas);
-  app.configure(admin);
-  app.configure(adminGetToken);
+
+  // authentication
+  app.configure(jwtService);
+  app.configure(login);
+  app.configure(resetSecret);
+
+  // mail
+  app.configure(mails);
+  app.configure(verifyEmail);
 };
