@@ -1,68 +1,76 @@
-const { Service } = require('feathers-sequelize');
-const lms = require('../../models/_lms.model');
-const _utenti = require('../../models/access.model');
-const auth = require('../../models/get-auth-code.model');
-const {BadRequest} = require('@feathersjs/errors');
-const {NotAuthenticated} = require('@feathersjs/errors');
-const admins = require('../../models/admin.model');
+const { Service } = require("feathers-sequelize");
+const lms = require("../../models/_lms.model");
+const _utenti = require("../../models/access.model");
+const auth = require("../../models/get-auth-code.model");
+const { BadRequest } = require("@feathersjs/errors");
+const { NotAuthenticated } = require("@feathersjs/errors");
+const admins = require("../../models/admin.model");
 
 exports.Access = class Access extends Service {
-  constructor(options, app){
+  constructor(options, app) {
     super(options);
     this.app = app;
   }
 
-  async find(params){
+  async find(params) {
     const utentiModel = _utenti(this.app);
-    const {idApp3D} = params.query;
-    var query = {
-      idLms: params.route.idLms
-    }
-
-    if(idApp3D != undefined && idApp3D != null
-      && idApp3D != '' && idApp3D != 'null'
-      && idApp3D != 'undefined'){
-      query.idApp3D = idApp3D;
-    }
-
-    const _users = await utentiModel.findAll({
-      where: {
-        ...query
-      },
-      attributes: ['idUsr', 'idApp3D', 'idLms', 'id']
-    });
-
-    return _users;
-  }
-
-  async get(id, params){
-    const utentiModel = _utenti(this.app);
-    const {idApp3D} = params.query;
+    const { idApp3D } = params.query;
     var query = {
       idLms: params.route.idLms,
-      idUsr: id
-    }
+    };
 
-    if(idApp3D != undefined && idApp3D != null
-      && idApp3D != '' && idApp3D != 'null'
-      && idApp3D != 'undefined'){
+    if (
+      idApp3D != undefined &&
+      idApp3D != null &&
+      idApp3D != "" &&
+      idApp3D != "null" &&
+      idApp3D != "undefined"
+    ) {
       query.idApp3D = idApp3D;
     }
 
     const _users = await utentiModel.findAll({
       where: {
-        ...query
+        ...query,
       },
-      attributes: ['idUsr', 'idApp3D', 'idLms', 'id']
+      attributes: ["idUsr", "idApp3D", "idLms", "id"],
     });
 
     return _users;
   }
 
-  async create(data, params){
-    const {idUsr, idApp3D} = data;
-    const {idLms} = params.route;
-    var {idAdmin} = params;
+  async get(id, params) {
+    const utentiModel = _utenti(this.app);
+    const { idApp3D } = params.query;
+    var query = {
+      idLms: params.route.idLms,
+      idUsr: id,
+    };
+
+    if (
+      idApp3D != undefined &&
+      idApp3D != null &&
+      idApp3D != "" &&
+      idApp3D != "null" &&
+      idApp3D != "undefined"
+    ) {
+      query.idApp3D = idApp3D;
+    }
+
+    const _users = await utentiModel.findAll({
+      where: {
+        ...query,
+      },
+      attributes: ["idUsr", "idApp3D", "idLms", "id"],
+    });
+
+    return _users;
+  }
+
+  async create(data, params) {
+    const { idUsr, idApp3D } = data;
+    const { idLms } = params.route;
+    var { idAdmin } = params;
 
     const lmsModel = lms(this.app);
     const utentiModel = _utenti(this.app);
@@ -74,11 +82,11 @@ exports.Access = class Access extends Service {
     const _admin = await adminsModel.findOne({
       where: {
         id: idAdmin,
-        role: 'superadmin'
-      }
+        role: "superadmin",
+      },
     });
 
-    if(_admin){
+    if (_admin) {
       idAdmin = data.idAdmin;
     }
 
@@ -86,49 +94,55 @@ exports.Access = class Access extends Service {
     const user = await lmsModel.findOne({
       where: {
         id: parseInt(idLms),
-        idAdmin: idAdmin
-      }
+        idAdmin: idAdmin,
+      },
     });
 
-    if(!user){
-      throw new BadRequest("Non esiste nessun LMS con tale idLms o tale LMS non è di proprietà dell'admin specificato.");
+    if (!user) {
+      throw new BadRequest(
+        "Non esiste nessun LMS con tale idLms o tale LMS non è di proprietà dell'admin specificato."
+      );
     }
 
     const _user = await utentiModel.findOne({
       where: {
-        idLms:parseInt(idLms),
+        idLms: parseInt(idLms),
         idUsr: idUsr,
-        idApp3D: idApp3D
-      }
+        idApp3D: idApp3D,
+      },
     });
 
-    if(_user){
+    if (_user) {
       const hasAuth = await authModel.findOne({
         where: {
-          idLms:idLms,
+          idLms: idLms,
           idUsr: idUsr,
-          idApp3D: idApp3D
-        }
+          idApp3D: idApp3D,
+        },
       });
 
-      if(hasAuth){
+      if (hasAuth) {
         await authModel.destroy({
           where: {
-            idLms:idLms,
+            idLms: idLms,
             idUsr: idUsr,
-            idApp3D: idApp3D
-          }});
+            idApp3D: idApp3D,
+          },
+        });
 
-        return {statusMsg:"Sessione utente resettata, è ora possibile associare un nuovo authCode."};
+        return {
+          statusMsg:
+            "Sessione utente resettata, è ora possibile associare un nuovo authCode.",
+        };
       }
-      return {statusMsg:"Utente già registrato."};
+      return { statusMsg: "Utente già registrato." };
     }
 
     await utentiModel.create({
       idUsr,
       idLms: parseInt(idLms),
-      idApp3D
-    })
-    return {statusMsg:"Utente registrato con successo"};
+      idApp3D,
+    });
+    return { statusMsg: "Utente registrato con successo" };
   }
 };

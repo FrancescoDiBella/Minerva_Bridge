@@ -1,16 +1,16 @@
-const _saveDatas = require('../../models/_store-save-datas.model');
-const _auth = require('../../models/get-auth-code.model');
-const {BadRequest} = require('@feathersjs/errors');
-const _utenti = require('../../models/access.model');
+const _saveDatas = require("../../models/_store-save-datas.model");
+const _auth = require("../../models/get-auth-code.model");
+const { BadRequest } = require("@feathersjs/errors");
+const _utenti = require("../../models/access.model");
 /* eslint-disable no-unused-vars */
 exports.GetSaveData = class GetSaveData {
-  constructor (options, app) {
+  constructor(options, app) {
     this.options = options || {};
     this.app = app;
   }
 
-  async find (params) {
-    const {idUsr, idLms, idApp3D, authCode} = params.clientData.payload;
+  async find(params) {
+    const { idUsr, idLms, idApp3D, authCode } = params.clientData.payload;
 
     const _saveDatasModel = _saveDatas(this.app);
     const _authModel = _auth(this.app);
@@ -21,11 +21,11 @@ exports.GetSaveData = class GetSaveData {
         idUsr,
         idLms,
         idApp3D,
-        authCode
-      }
+        authCode,
+      },
     });
 
-    if(!_Auth){
+    if (!_Auth) {
       throw new BadRequest("Errore, token errato o authCode non verificato");
     }
 
@@ -33,31 +33,33 @@ exports.GetSaveData = class GetSaveData {
       where: {
         idUsr,
         idLms,
-        idApp3D
-      }
+        idApp3D,
+      },
     });
 
-    if(!user){
+    if (!user) {
       throw new BadRequest("Errore, utente non trovato");
     }
 
     const _savedData = await _saveDatasModel.findOne({
       where: {
-        id_utenza: user.id
-      }
+        id_utenza: user.id,
+      },
     });
 
-    if(!_savedData){
-      throw new BadRequest("Errore, dati non trovati! Salvare i dati prima di poterli recuperare");
+    if (!_savedData) {
+      throw new BadRequest(
+        "Errore, dati non trovati! Salvare i dati prima di poterli recuperare"
+      );
     }
 
     return {
-      data: _savedData.data
+      data: _savedData.data,
     };
   }
 
-  async get (id, params) {
-    const {idUsr, idLms, idApp3D, authCode} = params.clientData.payload;
+  async get(id, params) {
+    const { idUsr, idLms, idApp3D, authCode } = params.clientData.payload;
 
     const _saveDatasModel = _saveDatas(this.app);
     const _authModel = _auth(this.app);
@@ -68,11 +70,11 @@ exports.GetSaveData = class GetSaveData {
         idUsr,
         idLms,
         idApp3D,
-        authCode
-      }
+        authCode,
+      },
     });
 
-    if(!_Auth){
+    if (!_Auth) {
       throw new BadRequest("Errore, token errato o authCode non verificato");
     }
 
@@ -80,42 +82,42 @@ exports.GetSaveData = class GetSaveData {
       where: {
         idUsr,
         idLms,
-        idApp3D
-      }
+        idApp3D,
+      },
     });
 
-    if(!user){
+    if (!user) {
       throw new BadRequest("Errore, utente non trovato");
     }
 
     const _savedData = await _saveDatasModel.findOne({
       where: {
-        id_utenza: user.id
-      }
+        id_utenza: user.id,
+      },
     });
 
     return {
-      data: _savedData.data
+      data: _savedData.data,
     };
   }
 
-  async create (data, params) {
+  async create(data, params) {
     if (Array.isArray(data)) {
-      return Promise.all(data.map(current => this.create(current, params)));
+      return Promise.all(data.map((current) => this.create(current, params)));
     }
 
     return data;
   }
 
-  async update (id, data, params) {
+  async update(id, data, params) {
     return data;
   }
 
-  async patch (id, data, params) {
+  async patch(id, data, params) {
     return data;
   }
 
-  async remove (id, params) {
+  async remove(id, params) {
     return { id };
   }
 };

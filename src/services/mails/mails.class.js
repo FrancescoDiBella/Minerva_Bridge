@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
-const nodemailer = require('nodemailer');
-const jwt = require('jsonwebtoken');
+const nodemailer = require("nodemailer");
+const jwt = require("jsonwebtoken");
 
-exports.Mails = class Mails{
-  constructor (options, app) {
+exports.Mails = class Mails {
+  constructor(options, app) {
     this.options = options || {};
     this.app = app;
     /*this.transporter = nodemailer.createTransport({
@@ -18,55 +18,58 @@ exports.Mails = class Mails{
     );*/
   }
 
-  async find (params) {
+  async find(params) {
     return [];
   }
 
-  async get (id, params) {
+  async get(id, params) {
     return {
-      id, text: `A new message with ID: ${id}!`
+      id,
+      text: `A new message with ID: ${id}!`,
     };
   }
 
-  async create (data, params) {
+  async create(data, params) {
     const email_to = data.to;
     const email_from = data.from;
     /*
 
     */
     const token = await this.createToken(email_to);
-    const url = this.app.get('verifierURL')+`token=${token}`;
+    const url = this.app.get("verifierURL") + `token=${token}`;
 
     const message = {
       from: email_from,
       to: email_to,
       subject: "MINERVA | Conferma email",
-      text:"",
-      html: `<h1> Gentile utente, conferma la tua mail tramite questo link: </h1> <br> <button href="${url}">Conferma la tua mail</button>`
-    }
+      text: "",
+      html: `<h1> Gentile utente, conferma la tua mail tramite questo link: </h1> <br> <button href="${url}">Conferma la tua mail</button>`,
+    };
 
-    return this.transporter.sendMail(message, function(error, info){
-      if(error){
+    return this.transporter.sendMail(message, function (error, info) {
+      if (error) {
         console.log(error);
-      }else{
-        console.log("email sent: " + info.response)
+      } else {
+        console.log("email sent: " + info.response);
       }
-    })
+    });
   }
 
-  async update (id, data, params) {
+  async update(id, data, params) {
     return data;
   }
 
-  async patch (id, data, params) {
+  async patch(id, data, params) {
     return data;
   }
 
-  async remove (id, params) {
+  async remove(id, params) {
     return { id };
   }
-  async createToken(email){
-    const token = jwt.sign({ email }, this.app.get('authentication').secret, { expiresIn: '1h' });
+  async createToken(email) {
+    const token = jwt.sign({ email }, this.app.get("authentication").secret, {
+      expiresIn: "1h",
+    });
     return token;
   }
 };

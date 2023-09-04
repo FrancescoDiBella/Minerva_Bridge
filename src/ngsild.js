@@ -1,6 +1,5 @@
-
-exports.ngsild = class NGSILD{
-  constructor (id, type, properties, relationships) {
+exports.ngsild = class NGSILD {
+  constructor(id, type, properties, relationships) {
     this.id = id;
     this.type = type;
     this.properties = properties;
@@ -9,19 +8,19 @@ exports.ngsild = class NGSILD{
   }
 
   // Generare entità NGSILD
-  generateEntity(){
+  generateEntity() {
     var entity = {
-      "id": this.id,
-      "type": this.type,
+      id: this.id,
+      type: this.type,
       //"@context": this.context
-    }
+    };
 
-    for(let i = 0; i < this.properties.length; i++){
+    for (let i = 0; i < this.properties.length; i++) {
       const prop = this.properties[i];
       entity[prop.name] = prop.value;
     }
 
-    for(let i = 0; i < this.relationships.length; i++){
+    for (let i = 0; i < this.relationships.length; i++) {
       const rel = this.relationships[i];
       entity[rel.name] = rel.value;
     }
@@ -48,4 +47,4 @@ exports.ngsild = class NGSILD{
 
     return entity;
   }
-}
+};

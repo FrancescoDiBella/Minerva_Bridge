@@ -1,7 +1,7 @@
-const jwt = require('jsonwebtoken');
-const internalOnly = require('../../internal-only');
-const { NotAuthenticated } = require('@feathersjs/errors')
-const {hasHeader} = require('../../hasHeader');
+const jwt = require("jsonwebtoken");
+const internalOnly = require("../../internal-only");
+const { NotAuthenticated } = require("@feathersjs/errors");
+const { hasHeader } = require("../../hasHeader");
 
 module.exports = {
   before: {
@@ -9,35 +9,34 @@ module.exports = {
     find: [internalOnly],
     get: [internalOnly],
     create: [
-      async context => {
+      async (context) => {
         const hasHeaderObj = new hasHeader();
         const { headers } = context.params;
         //console.log("DATA:", context.data)
         // Check if the `Authorization` header is present
         await hasHeaderObj.hasAuthorization(headers);
         // Extract the JWT from the `Authorization` header
-        const [, token] = headers.authorization.split(' ');
+        const [, token] = headers.authorization.split(" ");
 
         // Verify the JWT using the secret key
         try {
-          const secret = context.app.get('authentication').secret;
+          const secret = context.app.get("authentication").secret;
           const payload = jwt.verify(token, secret);
-          console.log("PAYLOAD:", payload)
+          console.log("PAYLOAD:", payload);
           const clientData = {
-            payload
-          }
+            payload,
+          };
           context.params.clientData = clientData;
           return context;
-
         } catch (error) {
           // If the JWT is invalid, throw an error
-          throw new NotAuthenticated('Token non valido!');
+          throw new NotAuthenticated("Token non valido!");
         }
-      }
+      },
     ],
     update: [internalOnly],
     patch: [internalOnly],
-    remove: [internalOnly]
+    remove: [internalOnly],
   },
 
   after: {
@@ -47,7 +46,7 @@ module.exports = {
     create: [],
     update: [],
     patch: [],
-    remove: []
+    remove: [],
   },
 
   error: {
@@ -57,6 +56,6 @@ module.exports = {
     create: [],
     update: [],
     patch: [],
-    remove: []
-  }
+    remove: [],
+  },
 };

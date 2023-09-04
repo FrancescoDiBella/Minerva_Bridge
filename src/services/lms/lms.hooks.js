@@ -1,12 +1,11 @@
-const { authenticate } = require('@feathersjs/authentication').hooks;
-const bcrypt = require('bcrypt');
-const {
-  hashPassword, protect
-} = require('@feathersjs/authentication-local').hooks;
-const{hasHeader} = require('../../hasHeader');
-const { NotAuthenticated } = require('@feathersjs/errors');
-const jwt = require('jsonwebtoken');
-const admin = require('../../models/admin.model');
+const { authenticate } = require("@feathersjs/authentication").hooks;
+const bcrypt = require("bcrypt");
+const { hashPassword, protect } =
+  require("@feathersjs/authentication-local").hooks;
+const { hasHeader } = require("../../hasHeader");
+const { NotAuthenticated } = require("@feathersjs/errors");
+const jwt = require("jsonwebtoken");
+const admin = require("../../models/admin.model");
 
 module.exports = {
   before: {
@@ -19,25 +18,24 @@ module.exports = {
         // Check if the `Authorization` header is present
         await hasHeaderObj.hasAuthorization(headers);
         // Extract the JWT from the `Authorization` header
-        const [, token] = headers.authorization.split(' ');
-        console.log(token)
+        const [, token] = headers.authorization.split(" ");
+        console.log(token);
 
         // Verify the JWT using the secret key
         try {
-          const secret = context.app.get('authentication').secret;
+          const secret = context.app.get("authentication").secret;
           const payload = jwt.verify(token, secret);
           context.params.idAdmin = payload.idAdmin;
-          console.log("payload", payload.idAdmin)
-          console.log("idADmin", context.params.idAdmin)
+          console.log("payload", payload.idAdmin);
+          console.log("idADmin", context.params.idAdmin);
           return context;
         } catch (error) {
           // If the JWT is invalid, throw an error
-          throw new NotAuthenticated('Token non valido!');
+          throw new NotAuthenticated("Token non valido!");
         }
-
-      }
+      },
     ],
-    get: [  ],
+    get: [],
     create: [
       async (context) => {
         const hasHeaderObj = new hasHeader();
@@ -46,12 +44,12 @@ module.exports = {
         // Check if the `Authorization` header is present
         await hasHeaderObj.hasAuthorization(headers);
         // Extract the JWT from the `Authorization` header
-        const [, token] = headers.authorization.split(' ');
-        console.log(token)
+        const [, token] = headers.authorization.split(" ");
+        console.log(token);
 
         // Verify the JWT using the secret key
         try {
-          const secret = context.app.get('authentication').secret;
+          const secret = context.app.get("authentication").secret;
           const payload = jwt.verify(token, secret);
 
           //controllo se admin è owner di lms in route params
@@ -59,20 +57,20 @@ module.exports = {
           const _admin = await adminModel.findOne({
             where: {
               id: payload.idAdmin,
-              role: 'superadmin'
-            }
+              role: "superadmin",
+            },
           });
 
-          if(!_admin){
+          if (!_admin) {
             context.data.idAdmin = payload.idAdmin;
-          }else{
+          } else {
             const tmp_admin = await adminModel.findOne({
               where: {
-                id: context.data.idAdmin
-              }
+                id: context.data.idAdmin,
+              },
             });
 
-            if(!tmp_admin){
+            if (!tmp_admin) {
               throw new NotAuthenticated("Admin non trovato");
             }
           }
@@ -80,38 +78,39 @@ module.exports = {
           return context;
         } catch (error) {
           // If the JWT is invalid, throw an error
-          throw new NotAuthenticated('Token non valido!');
+          throw new NotAuthenticated("Token non valido!");
         }
-
-      }
+      },
     ],
-    update: [  ],
+    update: [],
     patch: [
       async (context) => {
         const hasHeaderObj = new hasHeader();
         const { headers } = context.params;
-        console.log("DATA:", context.data)
+        console.log("DATA:", context.data);
         // Check if the `Authorization` header is present
         await hasHeaderObj.hasAuthorization(headers);
         // Extract the JWT from the `Authorization` header
-        const [, token] = headers.authorization.split(' ');
-        console.log(token)
+        const [, token] = headers.authorization.split(" ");
+        console.log(token);
 
         // Verify the JWT using the secret key
         try {
-          const secret = context.app.get('authentication').secret;
+          const secret = context.app.get("authentication").secret;
           const payload = jwt.verify(token, secret);
           //controllo se admin è owner di lms in route params
-          const lmsModel = context.app.service('/admin/lms').Model;
+          const lmsModel = context.app.service("/admin/lms").Model;
           const _lms = await lmsModel.findOne({
             where: {
               id: context.id,
-              idAdmin: payload.idAdmin
-            }
+              idAdmin: payload.idAdmin,
+            },
           });
 
-          if(!_lms){
-            throw new NotAuthenticated("Non sei autorizzato a modificare questo lms");
+          if (!_lms) {
+            throw new NotAuthenticated(
+              "Non sei autorizzato a modificare questo lms"
+            );
           }
 
           //eliminare dal context.data eventuale se presente campo secret e idAdmin
@@ -121,26 +120,25 @@ module.exports = {
         } catch (error) {
           // If the JWT is invalid, throw an error
           console.log(error);
-          throw new NotAuthenticated('Token non valido!');
+          throw new NotAuthenticated("Token non valido!");
         }
-
-      }
+      },
     ],
-    remove: [ ]
+    remove: [],
   },
 
   after: {
     all: [
       // Make sure the password field is never sent to the client
       // Always must be the last hook
-      protect('password')
+      protect("password"),
     ],
     find: [],
     get: [],
     create: [],
     update: [],
     patch: [],
-    remove: []
+    remove: [],
   },
 
   error: {
@@ -150,6 +148,6 @@ module.exports = {
     create: [],
     update: [],
     patch: [],
-    remove: []
-  }
+    remove: [],
+  },
 };
