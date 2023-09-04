@@ -18,6 +18,26 @@ module.exports = function (app) {
           Se l’admin che richiede il token è il superadmin allora tale token permette di richiamare ad esempio: \
           GET /admin (lista di tutti gli utenti admin) \
           Insieme al token vengono restituiti tempo emissione e tempo per la scadenza, il token è valido per un minuto.",
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  email: {
+                    type: "string",
+                    example: "test@test.com",
+                  },
+                  password: {
+                    type: "string",
+                    example: "test",
+                  },
+                },
+              },
+            },
+          },
+        },
         responses: {
           201: {
             description: "Token di autenticazione valido per un minuto.",
@@ -49,6 +69,10 @@ module.exports = function (app) {
           },
         },
       },
+      get: false,
+      update: false,
+      patch: false,
+      remove: false,
     },
   };
 
