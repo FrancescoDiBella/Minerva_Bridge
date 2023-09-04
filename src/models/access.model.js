@@ -22,11 +22,12 @@ module.exports = function (app) {
       },
     },
     {
-      unique: {
-        fields: ["idUsr", "idLms", "idApp3D"],
-      },
-    },
-    {
+      indexes: [
+        {
+          unique: true,
+          fields: ["idUsr", "idLms", "idApp3D"],
+        }
+      ],
       hooks: {
         beforeCount(options) {
           options.raw = true;

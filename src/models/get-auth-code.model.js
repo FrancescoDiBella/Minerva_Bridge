@@ -44,11 +44,12 @@ module.exports = function (app) {
       },
     },
     {
-      unique: {
-        fields: ["idApp3D", "authCode"],
-      },
-    },
-    {
+      indexes: [
+        {
+          unique: true,
+          fields: ["idApp3D", "authCode"],
+        },
+      ],
       hooks: {
         beforeCount(options) {
           options.raw = true;
