@@ -19,6 +19,7 @@ const channels = require("./channels");
 const authentication = require("./authentication");
 
 const sequelize = require("./sequelize");
+const sequelizeToJsonSchemas = require("./sequelize-to-json-schemas");
 
 const app = express(feathers());
 
@@ -41,6 +42,11 @@ app.use("/", express.static(app.get("public")));
 // Set up Plugins and providers
 app.configure(express.rest());
 app.configure(socketio());
+app.configure(sequelizeToJsonSchemas);
+
+app.configure(sequelize);
+// Configure other middleware (see `middleware/index.js`)
+
 app.configure(
   swagger({
     specs: {
@@ -56,8 +62,32 @@ app.configure(
             type: "http",
             scheme: "bearer",
             bearerFormat: "JWT",
-          }
+          },
         },
+      },
+    },
+    defaults: {
+      schemasGenerator(service) {
+        if (service.options && service.options.Model) {
+          const modelSchema = app
+            .get("jsonSchemaManager")
+            .generate(
+              service.options.Model,
+              app.get("openApi3Strategy"),
+              service.options.Model.options.jsonSchema
+            );
+
+          return {
+            [service.options.Model.name]: modelSchema,
+            [`${service.options.Model.name}_list`]: {
+              title: `${service.options.Model.name} list`,
+              type: "array",
+              items: {
+                $ref: `#/components/schemas/${service.options.Model.name}`,
+              },
+            },
+          };
+        }
       },
     },
     ignore: {
@@ -67,8 +97,6 @@ app.configure(
   })
 );
 
-app.configure(sequelize);
-// Configure other middleware (see `middleware/index.js`)
 app.configure(middleware);
 app.configure(authentication);
 // Set up our services (see `services/index.js`)

@@ -37,6 +37,7 @@
     "ignore": []
   },
   "dependencies": {
+    "@alt3/sequelize-to-json-schemas": "^0.3.56",
     "@feathersjs/authentication": "^4.5.15",
     "@feathersjs/authentication-jwt": "^2.0.10",
     "@feathersjs/authentication-local": "^4.5.15",
