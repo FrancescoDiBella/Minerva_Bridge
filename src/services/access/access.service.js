@@ -31,7 +31,7 @@ module.exports = function (app) {
           },
         ],
         responses: {
-          201: {
+          200: {
             description: "Utenti restituiti con successo.",
             content: {
               "application/json": {
