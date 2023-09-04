@@ -2,7 +2,7 @@ const { Service } = require("feathers-sequelize");
 const lms = require("../../models/_lms.model");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
-const { BadRequest } = require("@feathersjs/errors");
+const { BadRequest, Conflict } = require("@feathersjs/errors");
 const admins = require("../../models/admin.model");
 
 exports.Lms = class Lms extends Service {
@@ -94,7 +94,9 @@ exports.Lms = class Lms extends Service {
         createdAt: created_at,
       };
     } catch (e) {
-      console.log(e);
+      if(e.name == "SequelizeUniqueConstraintError") {
+        throw new Conflict("Un LMS con questo nome è già esistente");
+      }
       throw new BadRequest(
         "Errore nella creazione utente LMS, ricontrollare i dati."
       );

@@ -38,6 +38,12 @@ module.exports = function (app) {
       },
     },
     {
+      indexes: [
+        {
+          unique: true,
+          fields: ["name", "idAdmin"],
+        },
+      ],
       hooks: {
         beforeCount(options) {
           options.raw = true;
