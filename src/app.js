@@ -102,6 +102,14 @@ app.configure(middleware);
 app.configure(authentication);
 // Set up our services (see `services/index.js`)
 app.configure(services);
+// sort app.docs paths alphabetically to avoid having /admin after /admin/lms (which happens because /admin/lms is defined before /admin as it would be unreachable otherwise)
+app.docs.paths = Object.keys(app.docs.paths)
+  .sort()
+  .reduce((acc, key) => {
+    acc[key] = app.docs.paths[key];
+    return acc;
+  }, {});
+
 // Set up event channels (see channels.js)
 app.configure(channels);
 
