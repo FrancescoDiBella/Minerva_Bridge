@@ -49,7 +49,7 @@ module.exports = function (app) {
   lms.sync({ alter: true });
   // eslint-disable-next-line no-unused-vars
   lms.associate = function (models) {
-    console.log(models);
+    // console.log(models);
     lms.hasMany(models.utenti, { foreignKey: "idLms" });
     lms.belongsTo(models.admins, { foreignKey: "idAdmin" });
   };
