@@ -19,6 +19,7 @@ module.exports = function (app) {
       email: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique: true
       },
       verified: {
         type: DataTypes.BOOLEAN,

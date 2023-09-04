@@ -85,6 +85,9 @@ module.exports = function (app) {
             description:
               "Errore nella creazione utente admin, ricontrollare i dati.",
           },
+          409: {
+            description: "Utente già registrato.",
+          }
         },
       },
       get: false,

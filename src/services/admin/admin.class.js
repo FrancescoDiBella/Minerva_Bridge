@@ -1,6 +1,10 @@
 const { Service } = require("feathers-sequelize");
 const admins = require("../../models/admin.model");
-const { BadRequest, NotAuthenticated } = require("@feathersjs/errors");
+const {
+  BadRequest,
+  NotAuthenticated,
+  Conflict,
+} = require("@feathersjs/errors");
 const bcrypt = require("bcrypt");
 
 exports.Admin = class Admin extends Service {
@@ -65,6 +69,10 @@ exports.Admin = class Admin extends Service {
         createdAt: created_at,
       };
     } catch (e) {
+      if (e.name === "SequelizeUniqueConstraintError") {
+        throw new Conflict("Utente già registrato.");
+      }
+
       throw new BadRequest(
         "Errore nella creazione utente admin, ricontrollare i dati."
       );
