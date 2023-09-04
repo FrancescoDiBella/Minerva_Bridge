@@ -6,8 +6,8 @@ module.exports = function (app) {
   const options = {
     paginate: app.get("paginate"),
   };
-  const AdminGetTokenService = new AdminGetToken(options, app);
-  AdminGetTokenService.docs = {
+  const adminGetTokenService = new AdminGetToken(options, app);
+  adminGetTokenService.docs = {
     operations: {
       find: false,
       create: {
@@ -77,7 +77,7 @@ module.exports = function (app) {
   };
 
   // Initialize our service with any options it requires
-  app.use("/admin/getToken", AdminGetTokenService);
+  app.use("/admin/getToken", adminGetTokenService);
 
   // Get our initialized service so that we can register hooks
   const service = app.service("admin/getToken");

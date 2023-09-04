@@ -7,9 +7,9 @@ module.exports = function (app) {
     paginate: app.get("paginate"),
   };
 
-  const ValidatePairingService = new ValidatePairing(options, app);
+  const validatePairingService = new ValidatePairing(options, app);
 
-  ValidatePairingService.docs = {
+  validatePairingService.docs = {
     summary: "Valida il pairing tra app3D ed un LMS.",
     description: "Valida il pairing tra app3D ed un LMS.",
     operations: {
@@ -162,7 +162,7 @@ module.exports = function (app) {
   };
 
   // Initialize our service with any options it requires
-  app.use("/admin/lms/:idLms/validatePairing", ValidatePairingService);
+  app.use("/admin/lms/:idLms/validatePairing", validatePairingService);
 
   // Get our initialized service so that we can register hooks
   const service = app.service("admin/lms/:idLms/validatePairing");
