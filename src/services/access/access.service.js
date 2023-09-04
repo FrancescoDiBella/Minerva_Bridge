@@ -64,9 +64,9 @@ module.exports = function (app) {
                       di rendere sicura la successiva chiamata getAuthToken. \
                       Autenticazione tramite token da ottenere tramite la precedente \
                       chiamata di /admin/getToken. Se la coppia idUsr e idApp3D è già \
-                      presente il bridge elimina l\'associazione avvenuta tramite validatePairing \
+                      presente il bridge elimina l'associazione avvenuta tramite validatePairing \
                       con un authCode emesso in precedenza e predispone una nuova emissione e \
-                      validazione per la coppia idUsr e idApp3D. Restituisce lo status dell\'operazione.",
+                      validazione per la coppia idUsr e idApp3D. Restituisce lo status dell'operazione.",
         parameters: [
           {
             in: "path",

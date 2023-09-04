@@ -21,9 +21,9 @@ module.exports = function (app) {
         summary: "Genera un codice di autenticazione utente per app 3D.",
         description:
           "A fronte di un idApp3D valido (si veda chiamata admin/lms/:idLms/user), \
-                      viene generato un authCode univoco, una stringa randomica per l\'app3D  \
+                      viene generato un authCode univoco, una stringa randomica per l'app3D  \
                       (tale authCode rimane pendente fin quando non viene validato), dopo un certo \
-                      periodo di tempo se l\'authCode non è stato redento esso viene invalidato. Viene \
+                      periodo di tempo se l'authCode non è stato redento esso viene invalidato. Viene \
                       restituito tale authCode. Il bridge mantiene in tabella una associazione fra idApp3D \
                       e authCode generato, attendendo che venga redento/utilizzato.",
         bodyRequest: {
