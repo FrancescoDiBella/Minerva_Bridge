@@ -9,8 +9,21 @@ module.exports = function (app) {
     paginate: app.get("paginate"),
   };
 
+  const storeSaveDatasService = new StoreSaveDatas(options, app);
+
+  storeSaveDatasService.docs = {
+    operations: {
+      find: false,
+      get: false,
+      create: false,
+      update: false,
+      patch: false,
+      remove: false,
+    },
+  };
+
   // Initialize our service with any options it requires
-  app.use("/3d-modules/storeSaveData", new StoreSaveDatas(options, app));
+  app.use("/3d-modules/storeSaveData", storeSaveDatasService);
 
   // Get our initialized service so that we can register hooks
   const service = app.service("3d-modules/storeSaveData");
