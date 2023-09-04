@@ -14,7 +14,32 @@ module.exports = function (app) {
     summary: "Gestione degli LMS.",
     description: "Gestione degli LMS.",
     operations: {
-      find: false,
+      find: {
+        summary: "Restituisce tutti gli LMS di un dato admin.",
+        description:
+          "Richiamata da admin per ottenere tutti gli LMS registrati.",
+        parameters: [],
+        responses: {
+          200: {
+            description: "Lista di LMS posseduti dall'admin.",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/lms_list",
+                },
+              },
+            },
+          },
+          401: {
+            description: "Token mancante o non valido!",
+          },
+        },
+        security: [
+          {
+            bearerAuth: [],
+          },
+        ],
+      },
       create: {
         summary: "Registra un nuovo LMS.",
         description:
@@ -92,12 +117,12 @@ module.exports = function (app) {
           },
           409: {
             description: "LMS già esistente!",
-          }
+          },
         },
         security: [
           {
             bearerAuth: [],
-          }
+          },
         ],
       },
       get: false,
