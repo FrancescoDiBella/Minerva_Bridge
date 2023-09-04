@@ -11,6 +11,12 @@ module.exports = function (app) {
 
   const adminService = new Admin(options, app);
   adminService.docs = {
+    overwriteTagSpec: [
+      {
+        name: "admin",
+        description: "Gestione degli utenti admin.",
+      },
+    ],
     summary: "Gestione degli utenti admin.",
     description: "Gestione degli utenti admin.",
     operations: {
