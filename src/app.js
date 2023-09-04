@@ -44,10 +44,20 @@ app.configure(socketio());
 app.configure(
   swagger({
     specs: {
+      openapi: "3.0.0",
       info: {
         title: "Minerva Bridge",
         description: "",
         version: "1.0.0",
+      },
+      components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: "http",
+            scheme: "bearer",
+            bearerFormat: "JWT",
+          }
+        },
       },
     },
     ignore: {
