@@ -14,6 +14,7 @@ module.exports = function (app) {
       find: {
         summary: "Recupero di dati dell'esperienza 3D.",
         description: "Si restituiscono i dati di salvataggio relativi all'utente rappresentato dal token nell'header, i dati restituiti sono in formato base64.",
+        parameters: [],
         responses: {
           200: {
             description: "Dati recuperati con successo.",

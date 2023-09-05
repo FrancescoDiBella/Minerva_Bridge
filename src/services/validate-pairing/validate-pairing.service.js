@@ -94,7 +94,7 @@ module.exports = function (app) {
             },
           },
         ],
-        bodyRequest: {
+        requestBody: {
           required: true,
           content: {
             "application/json": {

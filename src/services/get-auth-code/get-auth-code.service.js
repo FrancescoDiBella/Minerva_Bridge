@@ -9,9 +9,9 @@ module.exports = function (app) {
     paginate: app.get("paginate"),
   };
 
-  const GetAuthCodeService = new GetAuthCode(options, app);
+  const getAuthCodeService = new GetAuthCode(options, app);
 
-  GetAuthCodeService.docs = {
+  getAuthCodeService.docs = {
     summary: "Genera un codice di autenticazione utente per app 3D.",
     description: "Genera un codice di autenticazione utente per app 3D.",
     operations: {
@@ -26,7 +26,7 @@ module.exports = function (app) {
                       periodo di tempo se l'authCode non è stato redento esso viene invalidato. Viene \
                       restituito tale authCode. Il bridge mantiene in tabella una associazione fra idApp3D \
                       e authCode generato, attendendo che venga redento/utilizzato.",
-        bodyRequest: {
+        requestBody: {
           required: true,
           content: {
             "application/json": {
@@ -75,7 +75,7 @@ module.exports = function (app) {
   };
 
   // Initialize our service with any options it requires
-  app.use("/3d-modules/getAuthCode", GetAuthCodeService);
+  app.use("/3d-modules/getAuthCode", getAuthCodeService);
 
   // Get our initialized service so that we can register hooks
   const service = app.service("3d-modules/getAuthCode");
