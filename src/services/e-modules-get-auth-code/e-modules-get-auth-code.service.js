@@ -69,7 +69,12 @@ module.exports = function (app) {
           404: {
             description: "Non esiste nessun LMS con tale idLms, l'LMS non è associato all'Admin, non c'è nessun utente associato all'App3D o non esiste nessun App3D con tale id.",
           }
-        }
+        },
+        security: [
+          {
+            bearerAuth: [],
+          },
+        ],
       },
     },
   };
