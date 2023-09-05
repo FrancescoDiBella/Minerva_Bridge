@@ -27,6 +27,21 @@ module.exports = {
           const secret = context.app.get("authentication").secret;
           const payload = jwt.verify(token, secret);
           context.params.idAdmin = payload.idAdmin.toString();
+          //check if idAdmin is superadmin
+          const adminModel = admin(context.app);
+          const _admin = await adminModel.findOne({
+            where: {
+              id: context.params.idAdmin,
+              role: "superadmin",
+            },
+          });
+
+          if(!_admin){
+            if(context.params.route.idAdmin != context.params.idAdmin){
+              throw new NotAuthenticated("Non hai i permessi per creare un utente per questo LMS");
+            }
+          }
+
           context.data = data;
           return context;
         } catch (error) {
