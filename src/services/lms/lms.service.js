@@ -43,10 +43,10 @@ module.exports = function (app) {
       create: {
         summary: "Registra un nuovo LMS.",
         description:
-          "Richiamata da admin per creare nuovi LMS. \
-                      I parameters authUsername e authPassword sono opzionali, \
-                      essi sono le credenziali per poter invocare la chiamata di \
-                      salvataggio di XAPI/SCORM a baseURL.",
+"Richiamata da admin per creare nuovi LMS. \
+I parameters __authUsername__ e authPassword sono opzionali, \
+essi sono le credenziali per poter invocare la chiamata di \
+salvataggio di XAPI/SCORM a __baseURL.__",
         requestBody: {
           required: true,
           content: {

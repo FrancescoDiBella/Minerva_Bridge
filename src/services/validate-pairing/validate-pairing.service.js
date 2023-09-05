@@ -74,16 +74,17 @@ module.exports = function (app) {
         summary: "Validazione authCode",
         description:
           "Questa chiamata da LMS verso bridge scatta nel momento in cui l'utente \
-                      loggato su LMS digita l'authCode ricevuto sull'Oculus dal bridge. Si riceve \
-                      dal modulo di e-learning un authCode, si controlla se è stato emesso e se l'idApp3D \
-                      è quello corrispondente al momento della generazione dello stesso. In caso affermativo \
-                      il sistema segnerà come validato l'authCode, così da permettere la creazione di un Token, \
-                      il quale potrà poi essere emesso. \
-                      Il token (che rappresenta idUSR + idLMS + authCode + idApp3D), verrà fornito quando richiesto \
-                      tramite l'endpoint /3d-modules/getToken. \
-                      Vengono passati nel body della richiesta un token (opzionale) che verrà usato per autenticarsi \
-                      nelle chiamate di commit verso la piattaforma di e-learning e un postfix da concatenare al baseURL \
-                      del punto 1), questo rende più dinamico e sicuro il processo di salvataggio sulla piattaforma di e-learning.",
+  loggato su LMS digita l'authCode ricevuto sull'Oculus dal bridge. Si riceve \
+  dal modulo di e-learning un authCode, si controlla se è stato emesso e se l'idApp3D \
+  è quello corrispondente al momento della generazione dello stesso. In caso affermativo \
+  il sistema segnerà come validato l'authCode, così da permettere la creazione di un Token, \
+  il quale potrà poi essere emesso.\n\n \
+  Il token (che rappresenta idUSR + idLMS + authCode + idApp3D), verrà fornito quando richiesto \
+  tramite l'endpoint __POST /3d-modules/getToken__.\n\n \
+  Vengono passati nel body della richiesta un __token (opzionale)__ che verrà usato per __autenticarsi \
+  nelle chiamate di commit__ verso la piattaforma di e-learning e un __postfix__ da __concatenare al baseURL__ \
+  del punto fornito durante la chiamata a __POST /admin/lms__, questo rende più dinamico e sicuro il \
+  processo di salvataggio sulla piattaforma di e-learning.",
         parameters: [
           {
             in: "path",

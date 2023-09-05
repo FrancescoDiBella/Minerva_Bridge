@@ -53,7 +53,13 @@ app.configure(
       openapi: "3.0.0",
       info: {
         title: "Minerva Bridge",
-        description: "",
+        description: 
+"##### Risorse utili\n \
+* Link GitHub a LRSQL: [https://github.com/yetanalytics/lrsql](https://github.com/yetanalytics/lrsql)\n\n\
+Di seguito verranno elencati gli end point del \
+Bridge Minerva corredati da descrizione, parametri, \
+esempi, messaggi d'errore e immagini esplicative (semplificate) \
+del workflow per realizzare una certa operazione complessiva.",
         version: "1.0.0",
       },
       components: {

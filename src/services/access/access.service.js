@@ -58,15 +58,15 @@ module.exports = function (app) {
       create: {
         summary: "Registra un nuovo utente di un LMS.",
         description:
-          "Usata da LMS per preparare la sessione di gioco \
-                      per uno specifico utente e per una specifica App3D \
-                      (sul proprio LMS evidentemente). Questo ha lo scopo \
-                      di rendere sicura la successiva chiamata getAuthToken. \
-                      Autenticazione tramite token da ottenere tramite la precedente \
-                      chiamata di /admin/getToken. Se la coppia idUsr e idApp3D è già \
-                      presente il bridge elimina l'associazione avvenuta tramite validatePairing \
-                      con un authCode emesso in precedenza e predispone una nuova emissione e \
-                      validazione per la coppia idUsr e idApp3D. Restituisce lo status dell'operazione.",
+"Usata da LMS per preparare la sessione di gioco \
+per uno specifico utente e per una specifica App3D \
+(sul proprio LMS evidentemente). Questo ha lo scopo \
+di rendere sicura la successiva chiamata getAuthToken. \
+Autenticazione tramite token da ottenere tramite la precedente \
+chiamata di __POST /admin/getToken__. Se la coppia __idUsr__ e __idApp3D è già \
+presente__ il bridge elimina l'associazione avvenuta tramite __validatePairing__ \
+con un authCode emesso in precedenza e predispone una nuova emissione e \
+validazione per la coppia __idUsr__ e __idApp3D__. Restituisce lo status dell'operazione.",
         parameters: [
           {
             in: "path",

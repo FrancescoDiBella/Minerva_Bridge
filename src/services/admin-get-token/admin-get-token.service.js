@@ -13,11 +13,13 @@ module.exports = function (app) {
       create: {
         summary: "Genera un token di autenticazione per un utente admin.",
         description:
-          "Endpoint che permette di ottenere un token valido per le richieste successive alla registrazione dell'admin quali: \
-          POST /admin/lms/:id/user \
-          Se l'admin che richiede il token è il superadmin allora tale token permette di richiamare ad esempio: \
-          GET /admin (lista di tutti gli utenti admin) \
-          Insieme al token vengono restituiti tempo emissione e tempo per la scadenza, il token è valido per un minuto.",
+"Endpoint che permette di ottenere un token valido per le \
+richieste successive alla registrazione dell'admin quali:\n\n\
+* __POST /admin/lms/:id/user__\n\n__PS: Se l'admin che richiede \
+il token è il superadmin allora tale token permette di richiamare \
+ad esempio:__\n\n* __GET /admin (lista di tutti gli utenti admin)__\n\n\
+Insieme al token vengono restituiti tempo emissione e tempo per la \
+scadenza, il token è valido per un minuto.",
         requestBody: {
           required: true,
           content: {

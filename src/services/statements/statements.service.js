@@ -16,17 +16,32 @@ module.exports = function (app) {
       create: {
         summary: "Creazione di un nuovo statement.",
         description:
-          "Si ricevono i dati da standardizzare secondo SCORM e/o XAPI, \
-          si esegue quindi la routine di conversione dei dati e si invia \
-          all'LMS corrispondente tramite il baseURL fornito in fase di registrazione, \
-          il postfix fornito durante la validatePairing e autenticazione \
-          tramite username e password o token. \
-          Si restituisce l'esito dell'operazione e gli id degli statements. \
-          Se il tipo di statements supportato dall'LMS è lo SCORM allora verranno \
-          standardizzati e inviati sotto forma di SCORM solo gli oggetti dell'array \
-          il cui “identifier” equivale a “defaultplayer”. \
-          Se il tipo di statements supportato dall'LMS è XAPI ogni oggetto dell'array \
-          verrà standardizzato in uno statement XAPI.",
+"Si ricevono i dati da standardizzare secondo SCORM e/o XAPI, \
+si esegue quindi la routine di conversione dei dati e si invia \
+all'LMS corrispondente tramite il __baseURL__ fornito in fase di __registrazione__, \
+il __postfix__ fornito durante la __validatePairing__ e autenticazione \
+tramite __username e password o token__.\n\n \
+Si restituisce l'esito dell'operazione e gli __id__ degli statements.\n\n \
+__Se il tipo di statements supportato dall'LMS è lo SCORM allora verranno \
+standardizzati e inviati sotto forma di SCORM solo gli oggetti dell'array \
+il cui “identifier” equivale a “defaultplayer”.__\n\n \
+__Se il tipo di statements supportato dall'LMS è XAPI ogni oggetto dell'array \
+verrà standardizzato in uno statement XAPI.__\
+Tabella mapping dei parameter da usare negli oggetti all’interno dell’array:\n\n \
+\
+| Parameter        | SCORM.core                      |\n \
+| ---------------- | ------------------------------- |\n \
+| score            |	cmi.core.score.raw             |\n \
+| masteryscore     |	adlcp:masteryscore             |\n \
+| mastery_score    |	cmi.student_data.mastery_score |\n \
+| launch_data      |	cmi.launch_data                |\n \
+| suspend_data     |	cmi.suspend_data               |\n \
+| lesson_location  |	cmi.core.lesson_location       |\n \
+| progress         |	cmi.core.lesson_status         |\n \
+| entry            |	cmi.core.entry                 |\n \
+| exit             |	cmi.core.exit                  |\n \
+| time             |	cmi.core.total_time            |\n \
+| session_time     |	cmi.core.session_time          |\n\n",
         requestBody: {
           required: true,
           content: {
