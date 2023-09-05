@@ -18,6 +18,22 @@ module.exports = function (app) {
         description: "Restituisce un messaggio positivo se è stato richiesto un token dal modulo 3D. Restituisce un errore 404 in caso contrario.",
         parameters: [
           {
+            in: "path",
+            name: "idAdmin",
+            schema: {
+              type: "integer",
+              example: 1,
+            },
+          },
+          {
+            in: "path",
+            name: "idLms",
+            schema: {
+              type: "integer",
+              example: 1,
+            },
+          },
+          {
             required: true,
             in: "path",
             name: "idUsr",
@@ -86,6 +102,14 @@ module.exports = function (app) {
   del punto fornito durante la chiamata a __POST /admin/lms__, questo rende più dinamico e sicuro il \
   processo di salvataggio sulla piattaforma di e-learning.",
         parameters: [
+          {
+            in: "path",
+            name: "idAdmin",
+            schema: {
+              type: "integer",
+              example: 1,
+            },
+          },
           {
             in: "path",
             name: "idLms",
@@ -163,10 +187,10 @@ module.exports = function (app) {
   };
 
   // Initialize our service with any options it requires
-  app.use("/admin/lms/:idLms/validatePairing", validatePairingService);
+  app.use("/admin/:idAdmin/lms/:idLms/validatePairing", validatePairingService);
 
   // Get our initialized service so that we can register hooks
-  const service = app.service("admin/lms/:idLms/validatePairing");
+  const service = app.service("admin/:idAdmin/lms/:idLms/validatePairing");
 
   service.hooks(hooks);
 };

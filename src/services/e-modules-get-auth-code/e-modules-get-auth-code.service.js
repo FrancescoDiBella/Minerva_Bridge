@@ -20,6 +20,14 @@ module.exports = function (app) {
         parameters: [
           {
             in: "path",
+            name: "idAdmin",
+            schema: {
+              type: "integer",
+              example: 1,
+            },
+          },
+          {
+            in: "path",
             name: "idLms",
             schema: {
               type: "integer",
@@ -80,10 +88,10 @@ module.exports = function (app) {
   };
 
   // Initialize our service with any options it requires
-  app.use("/admin/lms/:idLms/getAuthCode", EModulesGetAuthCodeService);
+  app.use("/admin/:idAdmin/lms/:idLms/getAuthCode", EModulesGetAuthCodeService);
 
   // Get our initialized service so that we can register hooks
-  const service = app.service("admin/lms/:idLms/getAuthCode");
+  const service = app.service("admin/:idAdmin/lms/:idLms/getAuthCode");
 
   service.hooks(hooks);
 };

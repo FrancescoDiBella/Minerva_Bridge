@@ -70,6 +70,14 @@ validazione per la coppia __idUsr__ e __idApp3D__. Restituisce lo status dell'op
         parameters: [
           {
             in: "path",
+            name: "idAdmin",
+            schema: {
+              type: "integer",
+              example: 1,
+            },
+          },
+          {
+            in: "path",
             name: "idLms",
             schema: {
               type: "integer",
@@ -135,10 +143,10 @@ validazione per la coppia __idUsr__ e __idApp3D__. Restituisce lo status dell'op
   };
 
   // Initialize our service with any options it requires
-  app.use("/admin/lms/:idLms/users", accessService);
+  app.use("/admin/:idAdmin/lms/:idLms/users", accessService);
 
   // Get our initialized service so that we can register hooks
-  const service = app.service("/admin/lms/:idLms/users");
+  const service = app.service("/admin/:idAdmin/lms/:idLms/users");
 
   service.hooks(hooks);
 };
