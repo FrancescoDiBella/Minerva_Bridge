@@ -27,7 +27,7 @@ standardizzati e inviati sotto forma di SCORM solo gli oggetti dell'array \
 il cui “identifier” equivale a “defaultplayer”.__\n\n \
 __Se il tipo di statements supportato dall'LMS è XAPI ogni oggetto dell'array \
 verrà standardizzato in uno statement XAPI.__\
-Tabella mapping dei parameter da usare negli oggetti all’interno dell’array:\n\n \
+Tabella mapping dei parameter da usare negli oggetti all'interno dell'array:\n\n \
 \
 | Parameter        | SCORM.core                      |\n \
 | ---------------- | ------------------------------- |\n \
