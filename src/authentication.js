@@ -26,16 +26,16 @@ module.exports = (app) => {
       create: {
         summary: "Richiesta di un token JWT valido per l'autenticazione.",
         description:
-                      "Se si riceve indietro l'authCode precedentemente emesso, \
-                      si è sicuri che in questa specifica sessione, quella App3D è in uso \
-                      all'utente registrato e loggato su LMS. Si genera un token univoco \
-                      che il modulo 3D userà per identificarsi in tutte le richieste future \
-                      al modulo di interscambio, si invalida il vecchio authCode, non potrà \
-                      cioè più essere emesso e sarà legato all'IdUsr. Il token generato è un \
-                      JWT (JSON WEB TOKEN), con payload i body parameters inviati dal modulo 3d; \
-                      tale token è autoreferenziale (sì può sempre verificare il payload), non \
-                      ha bisogno di essere mantenuto in un db ed inoltre si può facilmente settare \
-                      la durata dello stesso.",
+"Se si riceve indietro l'authCode precedentemente emesso, \
+si è sicuri che in questa specifica sessione, quella App3D è in uso \
+all'utente registrato e loggato su LMS. Si genera un token univoco \
+che il modulo 3D userà per identificarsi in tutte le richieste future \
+al modulo di interscambio, si invalida il vecchio authCode, non potrà \
+cioè più essere emesso e sarà legato all'IdUsr. Il token generato è un \
+JWT (JSON WEB TOKEN), con payload i body parameters inviati dal modulo 3d; \
+tale token è autoreferenziale (sì può sempre verificare il payload), non \
+ha bisogno di essere mantenuto in un db ed inoltre si può facilmente settare \
+la durata dello stesso.",
         requestBody: {
           required: true,
           content: {
@@ -76,7 +76,7 @@ module.exports = (app) => {
           400: {
             description: "Non è stato fornito l'idApp3D, l'authCode oppure i dati forniti non sono validi!",
           },
-          424: {
+          403: {
             description: "L'authCode non è stato validato attraverso la piattaforma di e-learning!",
           }
         },
