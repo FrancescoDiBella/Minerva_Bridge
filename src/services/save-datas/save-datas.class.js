@@ -1,33 +1,34 @@
 /* eslint-disable no-unused-vars */
 exports.SaveDatas = class SaveDatas {
-  constructor (options, app) {
+  constructor(options, app) {
     this.options = options || {};
     this.app = app;
   }
 
-  async find (params) {
+  async find(params) {
     return [];
   }
 
-  async get (id, params) {
+  async get(id, params) {
     return {
-      id, text: `A new message with ID: ${id}!`
+      id,
+      text: `A new message with ID: ${id}!`,
     };
   }
 
-  async create (data, params) {
+  async create(data, params) {
     //console.log(data)
   }
 
-  async update (id, data, params) {
+  async update(id, data, params) {
     return data;
   }
 
-  async patch (id, data, params) {
+  async patch(id, data, params) {
     return data;
   }
 
-  async remove (id, params) {
+  async remove(id, params) {
     return { id };
   }
 };

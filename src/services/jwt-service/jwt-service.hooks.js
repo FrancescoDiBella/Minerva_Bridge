@@ -1,5 +1,4 @@
-const internalOnly = require('../../internal-only');
-
+const internalOnly = require("../../internal-only");
 
 module.exports = {
   before: {
@@ -9,7 +8,7 @@ module.exports = {
     create: [],
     update: [internalOnly],
     patch: [internalOnly],
-    remove: [internalOnly]
+    remove: [internalOnly],
   },
 
   after: {
@@ -19,7 +18,7 @@ module.exports = {
     create: [],
     update: [],
     patch: [],
-    remove: []
+    remove: [],
   },
 
   error: {
@@ -29,6 +28,6 @@ module.exports = {
     create: [],
     update: [],
     patch: [],
-    remove: []
-  }
+    remove: [],
+  },
 };
