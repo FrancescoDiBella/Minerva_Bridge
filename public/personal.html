@@ -267,7 +267,7 @@
             <!-- Sidebar -->
             <div class="col-2 sidebar">
               <!-- Contenuto della sidebar -->
-              <a class="side-item" href="#" onclick="getLMS()">
+              <a class="side-item" id="side-getLMS" href="#">
                 <i class="fa-solid fa-sitemap fa-xl" ></i>
               </a>
               <a class="side-item" href="#">
@@ -379,7 +379,7 @@
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
-                    <button type="button" class="btn btn-primary" onclick="addLms()">Aggiungi</button>
+                    <button type="button" class="btn btn-primary" id="lmsAdd-btn">Aggiungi</button>
                   </div>
                 </div>
               </div>
@@ -410,7 +410,7 @@
             return Cookies.get('role');
         }
 
-        async function getLMS(){
+        async function getLMS(idAdmin){
             fetch(bridgeURL+'/admin/getToken', {
               method: 'POST',
               headers: {
@@ -426,7 +426,7 @@
               }
               Cookies.set('token', data.token, {expires: 1});
 
-              fetch(bridgeURL+'/admin/lms', {
+              fetch(bridgeURL+'/admin/'+idAdmin+'/lms', {
                 method: 'GET',
                 headers: {
                   'Content-Type': 'application/json',
@@ -523,7 +523,7 @@
           let backButton = document.createElement("button");
           backButton.classList.add('btn', 'btn-secondary', 'ml-5', 'mt-2', 'button');
           backButton.innerHTML = 'Torna indietro';
-          backButton.onclick = function() {getLMS()};
+          backButton.onclick = function() {getLMS(lms.idAdmin)};
           contentHeader.appendChild(backButton);
           contentBody.innerHTML = "";
           //crea una card che sta dentro il content-body
@@ -546,7 +546,7 @@
           let buttonL = document.createElement("button");
           buttonL.classList.add('btn', 'btn-danger', 'btn-sm', 'float-right', 'mr-2', 'mt-1', 'mb-1', 'ml-3');
           buttonL.innerHTML = 'Elimina LMS';
-          buttonL.onclick = function() {deleteLMS(lms.id)};
+          buttonL.onclick = function() {deleteLMS(lms.idAdmin, lms.id)};
 
           //creare bottone che permette di modificare lms
           let buttonM = document.createElement("button");
@@ -590,11 +590,11 @@
           //aggiungi la card al content-body
           contentBody.appendChild(card);
           //richiama la funzione showUsers(lms.id)
-          await showUsers(lms.id);
+          await showUsers(lms.idAdmin, lms.id);
         }
 
         // Show the users for the selected LMS
-        async function showUsers(idLms){
+        async function showUsers(idAdmin, idLms){
           const resp = await fetch(bridgeURL+'/admin/getToken', {
                         method: 'POST',
                         headers: {
@@ -611,7 +611,7 @@
 
           Cookies.set('token', data.token, {expires: 1});
 
-          const resp2 = await fetch(bridgeURL+'/admin/lms/'+idLms+'/users', {
+          const resp2 = await fetch(bridgeURL+'/admin/'+idAdmin+'/lms/'+idLms+'/users', {
                             method: 'GET',
                             headers: {
                               'Content-Type': 'application/json',
@@ -633,7 +633,7 @@
             let button = document.createElement("button");
             button.classList.add('btn', 'btn-danger', 'btn-sm');
             button.innerHTML = 'Elimina';
-            button.onclick = function() {deleteUser(idLms, data2[i].id)};
+            button.onclick = function() {deleteUser(idAdmin, idLms, data2[i].id)};
             td3.appendChild(button);
             tr.appendChild(td1);
             tr.appendChild(td2);
@@ -642,7 +642,7 @@
           }
         }
 
-        async function deleteUser(idLms, id){
+        async function deleteUser(idAdmin, idLms, id){
           const resp = await fetch(bridgeURL+'/admin/getToken', {
                         method: 'POST',
                         headers: {
@@ -659,7 +659,7 @@
 
           Cookies.set('token', data.token, {expires: 1});
 
-          const resp2 = await fetch(bridgeURL+'/admin/lms/'+idLms+'/users/'+id, {
+          const resp2 = await fetch(bridgeURL+'/admin/'+idAdmin+'/lms/'+idLms+'/users/'+id, {
                             method: 'DELETE',
                             headers: {
                               'Content-Type': 'application/json',
@@ -751,7 +751,7 @@
               idApp3D: idApp3D
             }
           }
-          const resp2 = await fetch(bridgeURL+'/admin/lms/'+idLms+'/users', {
+          const resp2 = await fetch(bridgeURL+'/admin/'+idAdmin+'/lms/'+idLms+'/users', {
                           method: 'POST',
                           headers: {
                             'Content-Type': 'application/json',
@@ -796,13 +796,9 @@
           alert.appendChild(button);
           document.getElementById("content-body").appendChild(alert);
           setTimeout(function(){ alert.remove(); }, 3000);
-
-
-
-
         }
 
-        async function addLms(){
+        async function addLms(idAdmin){
           //la funzione addLms() chiama la route POST /admin/lms
           const resp = await fetch(bridgeURL+'/admin/getToken', {
                         method: 'POST',
@@ -846,7 +842,7 @@
           }
 
           //la funzione addLms() chiama la route POST /admin/lms
-          const resp1 = fetch(bridgeURL + '/admin/lms', {
+          const resp1 = fetch(bridgeURL + '/admin/'+idAdmin+'/lms', {
                         method: 'POST',
                         headers: {
                           'Content-Type': 'application/json',
@@ -860,7 +856,7 @@
           console.log("POST", data1)
 
           //la funzione addLms() chiama la funzione getLMS()
-          await getLMS();
+          await getLMS(idAdmin);
           //la funzione closeModalLMS() chiama la funzione getLMS()
           //prima di chiudere il modal, pulisci i campi del form
           document.getElementById("lms-name").value = "";
@@ -909,6 +905,7 @@
 
           //fai visualizare il modal
           $('#lms-modal').modal('show');
+          document.getElementById("lmsAdd-btn").onclick = function() {addLms(Cookies.get('idAdmin'))};
         }
 
         function closeModalLMS(){
@@ -921,7 +918,7 @@
           $('#modal').modal('hide');
         }
 
-        async function deleteLMS(idLms){
+        async function deleteLMS(idAdmin, idLms){
           //la funzione deleteLMS(idLms) chiama la route DELETE /admin/lms/:idLMS
           //la funzione deleteLMS(idLms) chiama la funzione getLMS()
           //la funzione addLms() chiama la route POST /admin/lms
@@ -940,7 +937,7 @@
           }
 
           //la funzione addLms() chiama la route POST /admin/lms
-          const resp1 = fetch(bridgeURL + '/admin/lms/'+idLms, {
+          const resp1 = fetch(bridgeURL + '/admin/'+idAdmin+'/lms/'+idLms, {
                         method: 'DELETE',
                         headers: {
                           'Content-Type': 'application/json',
@@ -972,11 +969,12 @@
           document.getElementById("content-body").appendChild(alert);
           setTimeout(function(){ alert.remove(); }, 3000);
 
-          await getLMS();
+          await getLMS(idAdmin);
         }
         //richiama la show lms quando la pagina è pronta
         $(document).ready(async function() {
-           await getLMS();
+          document.getElementById("side-getLMS").onclick = async function() {getLMS(Cookies.get('idAdmin'))};
+           await getLMS(Cookies.get('idAdmin'));
         });
 
     </script>
