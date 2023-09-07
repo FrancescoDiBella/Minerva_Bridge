@@ -18,7 +18,16 @@ module.exports = function (app) {
         summary: "Restituisce tutti gli LMS di un dato admin.",
         description:
           "Richiamata da admin per ottenere tutti gli LMS registrati.",
-        parameters: [],
+        parameters: [
+          {
+            in: "path",
+            name: "idAdmin",
+            schema: {
+              type: "integer",
+              example: 1,
+            },
+          }
+        ],
         responses: {
           200: {
             description: "Lista di LMS posseduti dall'admin.",
@@ -47,6 +56,16 @@ module.exports = function (app) {
 I parameters __authUsername__ e authPassword sono opzionali, \
 essi sono le credenziali per poter invocare la chiamata di \
 salvataggio di XAPI/SCORM a __baseURL.__",
+        parameters: [
+          {
+            in: "path",
+            name: "idAdmin",
+            schema: {
+              type: "integer",
+              example: 1,
+            },
+          }
+        ],
         requestBody: {
           required: true,
           content: {
@@ -133,10 +152,10 @@ salvataggio di XAPI/SCORM a __baseURL.__",
   };
 
   // Initialize our service with any options it requires
-  app.use("/admin/lms", lmsService);
+  app.use("/admin/:idAdmin/lms", lmsService);
 
   // Get our initialized service so that we can register hooks
-  const service = app.service("/admin/lms");
+  const service = app.service("/admin/:idAdmin/lms");
 
   service.hooks(hooks);
 };

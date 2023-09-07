@@ -26,8 +26,22 @@ module.exports = {
           const secret = context.app.get("authentication").secret;
           const payload = jwt.verify(token, secret);
           context.params.idAdmin = payload.idAdmin;
-          console.log("payload", payload.idAdmin);
-          console.log("idADmin", context.params.idAdmin);
+          //check if idAdmin is superadmin
+          const adminModel = admin(context.app);
+          const _admin = await adminModel.findOne({
+            where: {
+              id: context.params.idAdmin,
+              role: "superadmin",
+            },
+          });
+
+          if (!_admin) {
+            if(context.params.route.idAdmin != context.params.idAdmin){
+              throw new NotAuthenticated(
+                "Non sei autorizzato a visualizzare gli admin"
+              );
+            }
+          }
           return context;
         } catch (error) {
           // If the JWT is invalid, throw an error
@@ -62,6 +76,11 @@ module.exports = {
           });
 
           if (!_admin) {
+            if(context.params.route.idAdmin != payload.idAdmin){
+              throw new NotAuthenticated(
+                "Non hai i permessi per creare un utente per questo LMS"
+              );
+            }
             context.data.idAdmin = payload.idAdmin;
           } else {
             const tmp_admin = await adminModel.findOne({
@@ -100,10 +119,27 @@ module.exports = {
           const payload = jwt.verify(token, secret);
           //controllo se admin è owner di lms in route params
           const lmsModel = context.app.service("/admin/lms").Model;
+          //controllare se admin è super admin
+          const adminModel = admin(context.app);
+          const _admin = await adminModel.findOne({
+            where: {
+              id: payload.idAdmin,
+              role: "superadmin",
+            },
+          });
+
+          if (!_admin) {
+            if(context.params.route.idAdmin != payload.idAdmin){
+              throw new NotAuthenticated(
+                "Non hai i permessi per modificare questo lms"
+              );
+            }
+          }
+
           const _lms = await lmsModel.findOne({
             where: {
               id: context.id,
-              idAdmin: payload.idAdmin,
+              idAdmin: context.params.route.idAdmin,
             },
           });
 

@@ -60,6 +60,14 @@ scadenza, il token è valido per un minuto.",
                       type: "integer",
                       example: 1693816419,
                     },
+                    idAdmin: {
+                      type: "integer",
+                      example: 1,
+                    },
+                    role: {
+                      type: "string",
+                      example: "admin",
+                    }
                   },
                 },
               },

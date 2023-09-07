@@ -191,7 +191,7 @@ https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js">
       body: JSON.stringify({email: email.value, password: password.value})
     })
     .then(response => response.json())
-    .then(async data => {
+    .then(data => {
       if(data.token == undefined) {
         alert('Credenziali errate');
         return;
@@ -199,20 +199,9 @@ https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js">
       Cookies.set('token', data.token, {expires: 1});
       Cookies.set('email', email.value, {expires: 1});
       Cookies.set('password', password.value, {expires: 1});
-
-      fetch(bridgeURL+'/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({email: email.value, password: password.value})
-      })
-      .then(response => response.json())
-      .then(_data =>{
-        console.log(_data);
-        Cookies.set('role', _data.role, {expires: 1});
-        window.location.href = '/personal.html';
-      })
+      Cookies.set('role', data.role, {expires: 1});
+      Cookies.set('idAdmin', data.idAdmin, {expires: 1});
+      window.location.href = '/personal.html';
     })
   });
 

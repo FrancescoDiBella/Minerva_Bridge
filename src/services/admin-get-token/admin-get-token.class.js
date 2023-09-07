@@ -51,7 +51,7 @@ exports.AdminGetToken = class AdminGetToken {
       const token = jwt.sign(userData, secret_, options);
       const { iat, exp } = jwt.decode(token);
       // Return the JWT to the client
-      return { token, iat, exp };
+      return { token, iat, exp, idAdmin: _admin.id, role: _admin.role};
     } else {
       throw new BadRequest("Password errata, riprovare");
     }

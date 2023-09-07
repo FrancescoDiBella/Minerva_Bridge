@@ -20,13 +20,13 @@ const adminGetToken = require("./admin-get-token/admin-get-token.service.js");
 module.exports = function (app) {
   // admin
   app.configure(adminGetToken);
+  app.configure(admin);
   app.configure(lms);
   app.configure(access);
   app.configure(validatePairing);
   app.configure(getAuthCode);
   app.configure(eModulesGetAuthCode);
   app.configure(getToken);
-  app.configure(admin);
 
   // 3d-modules
   app.configure(saveDatas);
