@@ -19,8 +19,8 @@ const adminGetToken = require("./admin-get-token/admin-get-token.service.js");
 // eslint-disable-next-line no-unused-vars
 module.exports = function (app) {
   // admin
-  app.configure(adminGetToken);
   app.configure(admin);
+  app.configure(adminGetToken);
   app.configure(lms);
   app.configure(access);
   app.configure(validatePairing);
