@@ -16,7 +16,8 @@ exports.Lms = class Lms extends Service {
     //controlla se idAdmin è superadmin
     const adminsModel = admins(this.app);
     const idAdmin = params.idAdmin;
-    console.log(idAdmin);
+    const query = params.query;
+    console.log(query);
 
     const _admin = await adminsModel.findOne({
       where: {
@@ -26,17 +27,24 @@ exports.Lms = class Lms extends Service {
     });
 
     let _lms;
-    if (!_admin) {
-      _lms = await lmsModel.findAll({
-        where: {
-          idAdmin,
-        },
-      });
-    } else {
-      _lms = await lmsModel.findAll({});
-    }
+    try{
+      if (!_admin) {
+        _lms = await lmsModel.findAll({
+          where: {
+            idAdmin,
+            ...query,
+          },
+        });
+      } else {
+        _lms = await lmsModel.findAll({
+          ...query,
+        });
+      }
 
-    return _lms;
+      return _lms;
+    }catch(e){
+      return [];
+    }
   }
 
   async create(data, params) {
