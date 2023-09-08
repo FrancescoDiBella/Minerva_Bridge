@@ -10,8 +10,103 @@ const _lms = require("../../models/_lms.model");
 module.exports = {
   before: {
     all: [],
-    find: [],
-    get: [],
+    find: [
+      async (context) => {
+        const hasHeaderObj = new hasHeader();
+        const { headers } = context.params;
+        //console.log("DATA:", context.data)
+        const data = context.data;
+        // Check if the `Authorization` header is present
+        await hasHeaderObj.hasAuthorization(headers);
+        // Extract the JWT from the `Authorization` header
+        const [, token] = headers.authorization.split(" ");
+
+        // Verify the JWT using the secret key
+        try {
+          //given the url of the serive /admin/lms/:idLms/users i want to console.log the idLms passed
+
+          const secret = context.app.get("authentication").secret;
+          const payload = jwt.verify(token, secret);
+          const idAdmin = payload.idAdmin;
+          const idLms = context.params.route.idLms;
+          const adminModel = admin(context.app);
+          const _admin = await adminModel.findOne({
+            where: {
+              id: idAdmin,
+            },
+          });
+
+          if (_admin.role == "admin") {
+            const lmsModel = _lms(context.app);
+            const lms = await lmsModel.findOne({
+              where: {
+                id: idLms,
+                idAdmin,
+              },
+            });
+
+            if (!lms) {
+              throw new BadRequest(
+                "Non hai i permessi per visualizzare gli utenti di questo LMS"
+              );
+            }
+          }
+
+          return context;
+        } catch (error) {
+          // If the JWT is invalid, throw an error
+          console.log(error);
+          throw new NotAuthenticated("Token non valido!");
+        }
+    }],
+    get: [
+      async (context) => {
+        const hasHeaderObj = new hasHeader();
+        const { headers } = context.params;
+        //console.log("DATA:", context.data)
+        const data = context.data;
+        // Check if the `Authorization` header is present
+        await hasHeaderObj.hasAuthorization(headers);
+        // Extract the JWT from the `Authorization` header
+        const [, token] = headers.authorization.split(" ");
+
+        // Verify the JWT using the secret key
+        try {
+          //given the url of the serive /admin/lms/:idLms/users i want to console.log the idLms passed
+          const secret = context.app.get("authentication").secret;
+          const payload = jwt.verify(token, secret);
+          const idAdmin = payload.idAdmin;
+          const idLms = context.params.route.idLms;
+          const adminModel = admin(context.app);
+          const _admin = await adminModel.findOne({
+            where: {
+              id: idAdmin,
+            },
+          });
+
+          if (_admin.role == "admin") {
+            const lmsModel = _lms(context.app);
+            const lms = await lmsModel.findOne({
+              where: {
+                id: idLms,
+                idAdmin,
+              },
+            });
+
+            if (!lms) {
+              throw new BadRequest(
+                "Non hai i permessi per visualizzare gli utenti di questo LMS"
+              );
+            }
+          }
+
+          return context;
+        } catch (error) {
+          // If the JWT is invalid, throw an error
+          console.log(error);
+          throw new NotAuthenticated("Token non valido!");
+        }
+    }],
     create: [
       async (context) => {
         const hasHeaderObj = new hasHeader();
@@ -91,7 +186,7 @@ module.exports = {
 
             if (!lms) {
               throw new BadRequest(
-                "Non hai i permessi per eliminare questo LMS"
+                "Non hai i permessi per eliminare questo utente"
               );
             }
           }
