@@ -82,16 +82,8 @@ module.exports = {
               );
             }
             context.data.idAdmin = payload.idAdmin;
-          } else {
-            const tmp_admin = await adminModel.findOne({
-              where: {
-                id: context.data.idAdmin,
-              },
-            });
-
-            if (!tmp_admin) {
-              throw new NotAuthenticated("Admin non trovato");
-            }
+          }else{
+            context.data.idAdmin = context.params.route.idAdmin;
           }
 
           return context;
