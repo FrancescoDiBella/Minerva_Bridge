@@ -37,7 +37,9 @@ exports.Lms = class Lms extends Service {
         });
       } else {
         _lms = await lmsModel.findAll({
-          ...query,
+          where:{
+            ...query,
+          }
         });
       }
 
