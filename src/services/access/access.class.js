@@ -32,8 +32,7 @@ exports.Access = class Access extends Service {
     const _users = await utentiModel.findAll({
       where: {
         ...query,
-      },
-      attributes: ["idUsr", "idApp3D", "idLms", "id"],
+      }
     });
 
     return _users;
@@ -60,8 +59,7 @@ exports.Access = class Access extends Service {
     const _users = await utentiModel.findAll({
       where: {
         ...query,
-      },
-      attributes: ["idUsr", "idApp3D", "idLms", "id"],
+      }
     });
 
     return _users;
