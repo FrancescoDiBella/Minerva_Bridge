@@ -5,6 +5,7 @@ const { NotAuthenticated } = require("@feathersjs/errors");
 const { hasHeader } = require("../../hasHeader");
 const utenti = require("../../models/access.model");
 const admin = require("../../models/admin.model");
+const _lms = require("../../models/_lms.model");
 
 module.exports = {
   before: {
@@ -72,8 +73,6 @@ module.exports = {
           const payload = jwt.verify(token, secret);
           const idAdmin = payload.idAdmin;
           const idLms = context.params.route.idLms;
-
-          const lmsModel = context.app.service("/admin/lms").Model;
           const adminModel = admin(context.app);
           const _admin = await adminModel.findOne({
             where: {
@@ -82,6 +81,7 @@ module.exports = {
           });
 
           if (_admin.role == "admin") {
+            const lmsModel = _lms(context.app);
             const lms = await lmsModel.findOne({
               where: {
                 id: idLms,
@@ -93,20 +93,6 @@ module.exports = {
               throw new BadRequest(
                 "Non hai i permessi per eliminare questo LMS"
               );
-            }
-          }
-
-          if (context.id != undefined) {
-            const userModel = utenti(context.app);
-            const users = await userModel.findOne({
-              where: {
-                idLms,
-                id: context.id,
-              },
-            });
-
-            if (!users) {
-              throw new BadRequest("Non esiste nessun utente con tale id");
             }
           }
 
