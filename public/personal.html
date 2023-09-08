@@ -579,6 +579,7 @@
           button.classList.add('btn', 'btn-primary', 'btn-sm', 'float-right', 'mr-2', 'mt-1', 'mb-1');
           button.innerHTML = 'Aggiungi utente';
           button.onclick = function() {showModalAddUser(lms.id, lms.idAdmin)};
+          console.log("ID", lms.id);
           //aggiungi il decorator, l'header, il content e la tabella alla card
           card.appendChild(cardDecorator);
           cardContent.appendChild(buttonM);
@@ -668,7 +669,7 @@
                           })
           const data2 = await (await resp2).json();
 
-          await showUsers(idLms);
+          await showUsers(idAdmin, idLms);
         }
 
         async function showModalAddUser(idLms, idAdmin){
@@ -714,12 +715,15 @@
           '  </div>'+
           '</div>';
           document.body.appendChild(modal);
+          console.log("ID MODAL", idLms)
           $('#modal').modal('show');
         }
 
         async function addUser(idLms, idAdmin){
           //la funzione addUser(idLMS, idUsr, idApp3D) chiama la route POST /admin/lms/:idLMS/users
           //la funzione addUser(idLMS, idUsr, idApp3D) chiama la funzione showUsers(idLMS)
+          console.log("ID addUSR", idLms)
+          console.log("ID addUSR", idAdmin)
           let idUsr = document.getElementById("idUsr").value;
           let idApp3D = document.getElementById("idApp3D").value;
           const resp = await fetch(bridgeURL+'/admin/getToken', {
@@ -764,7 +768,7 @@
           console.log("POST", data2)
 
           //la funzione addUser(idLMS, idUsr, idApp3D) chiama la funzione showUsers(idLMS)
-          await showUsers(idLms);
+          await showUsers(idAdmin, idLms);
           //la funzione closeModal() chiama la funzione showUsers(idLMS)
           //prima di chiudere il modal, pulisci i campi del form
           document.getElementById("idUsr").value = "";
