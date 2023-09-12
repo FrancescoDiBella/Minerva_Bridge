@@ -78,9 +78,8 @@ exports.ValidatePairing = class ValidatePairing {
   async create(data, params) {
     const { idUsr, idApp3D, authCode, token, postfix } = data;
     const { idLms } = params.route;
-    const { idAdmin } = params;
-    console.log("idLms: ", idLms);
-    console.log("idAdmin: ", idAdmin);
+    const { idAdmin } = params.route;
+
     const getAuthModel = getAuth(this.app);
     const utentiModel = utenti(this.app);
     const lmsModel = lms(this.app);
