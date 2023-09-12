@@ -41,6 +41,8 @@ module.exports = function (app) {
     }
   );
 
+  admin.sync({ alter: true });
+
   // eslint-disable-next-line no-unused-vars
   admin.associate = function (models) {
     admin.hasMany(models.lms, { foreignKey: "idAdmin" });
