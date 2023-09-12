@@ -3,6 +3,8 @@ const jwt = require("jsonwebtoken");
 const { BadRequest } = require("@feathersjs/errors");
 const { NotAuthenticated } = require("@feathersjs/errors");
 const { hasHeader } = require("../../hasHeader");
+const lms = require("../../models/_lms.model");
+const admin = require("../../models/admin.model");
 
 module.exports = {
   before: {
@@ -23,7 +25,37 @@ module.exports = {
         try {
           const secret = context.app.get("authentication").secret;
           const payload = jwt.verify(token, secret);
-          data.idAdmin = payload.idAdmin.toString();
+
+          //check if idAdmin is superadmin
+          const adminModel = admin(context.app);
+          const _admin = await adminModel.findOne({
+            where: {
+              id: context.params.route.idAdmin,
+              role: "superadmin",
+            },
+          });
+
+          if(!_admin){
+            const lmsModel = lms(context.app);
+
+            const _lms = await lmsModel.findOne({
+              where: {
+                id: context.params.route.idLms,
+                idAdmin: context.params.route.idAdmin,
+              },
+            });
+
+            if(!_lms){
+              throw new NotAuthenticated(
+                "Non sei autorizzato a richiedere un authCode"
+              );
+            }
+
+            data.idAdmin = payload.idAdmin.toString();
+          }else{
+            data.idAdmin = context.params.route.idAdmin;
+          }
+
           context.data = data;
           return context;
         } catch (error) {

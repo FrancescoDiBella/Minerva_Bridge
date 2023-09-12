@@ -2,6 +2,7 @@ const getAuth = require("../../models/get-auth-code.model");
 const utenti = require("../../models/access.model");
 const crypto = require("crypto");
 const { BadRequest } = require("@feathersjs/errors");
+const _lms = require("../../models/_lms.model");
 
 exports.EModulesGetAuthCode = class EModulesGetAuthCode {
   constructor(options, app) {
@@ -11,7 +12,7 @@ exports.EModulesGetAuthCode = class EModulesGetAuthCode {
 
   async create(data, params) {
     const { idApp3D, idAdmin } = data;
-    const { idLms } = params;
+    const { idLms } = params.route;
     if (
       idApp3D == null ||
       idApp3D == undefined ||
@@ -22,7 +23,10 @@ exports.EModulesGetAuthCode = class EModulesGetAuthCode {
     }
 
     //check if exists lms under the admin
-    const lmsModel = lms(this.app);
+    const lmsModel = _lms(this.app);
+    console.log(idLms);
+    console.log(data)
+
     const lms = await lmsModel.findOne({
       where: {
         id: idLms,
