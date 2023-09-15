@@ -39,7 +39,8 @@ exports.Lms = class Lms extends Service {
         _lms = await lmsModel.findAll({
           where:{
             ...query,
-          }
+          },
+          attributes: ["id", "name", "baseURL", "statementsType", "idAdmin", "authUsername", "authPassword", "createdAt", "updatedAt"],
         });
       }
 
