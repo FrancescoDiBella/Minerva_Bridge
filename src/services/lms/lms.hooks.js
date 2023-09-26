@@ -4,6 +4,7 @@ const { hashPassword, protect } =
   require("@feathersjs/authentication-local").hooks;
 const { hasHeader } = require("../../hasHeader");
 const { NotAuthenticated } = require("@feathersjs/errors");
+const { PermissionsVerify } = require("../../permissionsVerify");
 const jwt = require("jsonwebtoken");
 const admin = require("../../models/admin.model");
 
@@ -13,6 +14,7 @@ module.exports = {
     find: [
       async (context) => {
         const hasHeaderObj = new hasHeader();
+        const permissions = new PermissionsVerify(context.app);
         const { headers } = context.params;
         //console.log("DATA:", context.data)
         // Check if the `Authorization` header is present
@@ -26,23 +28,16 @@ module.exports = {
           const secret = context.app.get("authentication").secret;
           const payload = jwt.verify(token, secret);
           context.params.idAdmin = payload.idAdmin;
-          //check if idAdmin is superadmin
-          const adminModel = admin(context.app);
-          const _admin = await adminModel.findOne({
-            where: {
-              id: context.params.idAdmin,
-              role: "superadmin",
-            },
-          });
-
-          if (!_admin) {
-            if(context.params.route.idAdmin != context.params.idAdmin){
-              throw new NotAuthenticated(
-                "Non sei autorizzato a visualizzare gli admin"
-              );
-            }
+          const isAdmin = await permissions.isLmsAdmin(
+                                  payload.idAdmin,
+                                  context.params.route.idLms,
+                                  context.params.route.idAdmin);
+          if(isAdmin)
+          {
+            return context;
           }
-          return context;
+
+            throw new NotAuthenticated("Non hai i permessi richiesti");
         } catch (error) {
           // If the JWT is invalid, throw an error
           throw new NotAuthenticated("Token non valido!");

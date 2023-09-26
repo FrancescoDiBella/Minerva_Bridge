@@ -17,7 +17,6 @@ exports.Lms = class Lms extends Service {
     const adminsModel = admins(this.app);
     const idAdmin = params.idAdmin;
     const query = params.query;
-    console.log(query);
 
     const _admin = await adminsModel.findOne({
       where: {
