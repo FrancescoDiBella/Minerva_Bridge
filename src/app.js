@@ -21,6 +21,17 @@ const authentication = require("./authentication");
 const sequelize = require("./sequelize");
 const sequelizeToJsonSchemas = require("./sequelize-to-json-schemas");
 
+function addJsonHeader(req, res, next) {
+  // Verifica se l'header "Content-Type" è già presente nella richiesta
+  if (!req.headers['content-type']) {
+    // Se non è presente, aggiungi l'header "Content-Type: application/json"
+    req.headers['content-type'] = 'application/json';
+  }
+
+  // Passa la richiesta al middleware successivo
+  next();
+}
+
 const app = express(feathers());
 
 // Load app configuration
@@ -33,6 +44,7 @@ app.use(
 );
 app.use(cors());
 app.use(compress());
+app.use(addJsonHeader);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(favicon(path.join(app.get("public"), "favicon.ico")));
