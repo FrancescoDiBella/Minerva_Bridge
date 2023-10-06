@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>canvas { rotate: 180deg; }
+
+        .big{
+            width: 200px;
+            font-size: 30px;
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" style="border: 1px solid red;"></canvas>
+    <span class="big">Raggio</span>
+    <input type="range" id="radius" min="0" max="800" value="200" class="big" onchange="drawFacade()">
+    <span class="big">Percentuale punti nell'area: </span><span class="big" id="percent"></span>
+
+    <!-- crea uno slider per selezionare un range di tempo -->
+
+
+
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/core-js/2.1.4/core.min.js"></script>
+    <script crossorigin="anonymous" src="//unpkg.com/@feathersjs/client@^4.5.0/dist/feathers.js"></script>
+    <script crossorigin="anonymous" src="//unpkg.com/socket.io-client@^2.3.0/dist/socket.io.js"></script>
+
+    <script>
+        // Socket.io is exposed as the `io` global.
+        var socket = io('http://localhost:3030');
+        // @feathersjs/client is exposed as the `feathers` global.
+        var app = feathers();
+        var _positions = new Array();
+
+        app.configure(feathers.socketio(socket));
+
+        socket.on('connect', () => console.log('Connected to server.'));
+
+        socket.on("test-ngsild created", async (data) => {
+            console.log("POS ROSSO", data);
+            try{
+              if(data.type != undefined) {
+                return;
+              }
+            }catch(e){
+              console.log(e);
+              return;
+            }
+
+            let pos = data;
+            pos.position[0] = (pos.position[0] *70 )+ 700
+            pos.position[2] = (pos.position[2] *70 )+ 700
+            console.log(pos.position)
+            pushPos(pos);
+            await draw(_positions);
+        });
+
+        socket.on("test-ngsild obj-pos", async (data) => {
+            //disegna un cerchio colore verde di raggio 50 usando data.position[0] e data.position[2]
+            console.log("OBJ VERDE", data);
+            await drawGreenCircle(data.position);
+        });
+
+        function pushPos(pos){
+          _positions.push(pos);
+        }
+
+        function getLength(){
+          return _positions.length;
+        }
+
+        socket.emit('find', 'position', {}, (error, data) => {
+          console.log('Found all messages', data);
+        });
+        // feathers.errors is an object with all of the custom error types.
+
+
+        //crea una canvas con un background di una immagine di cui conosco il path
+        var canvas = document.getElementById("canvas"),
+        ctx = canvas.getContext("2d");
+
+        canvas.width = 1500;
+        canvas.height = 1500;
+
+
+        var background = new Image();
+        background.src = "map.png";
+
+        // Make sure the image is loaded first otherwise nothing will draw.
+        background.onload = async function(){
+            //setta il background della canvas della dimensione della canvas
+            const first = await fetch('https://broker.minerva.sferainnovazione.com/ngsi-ld/v1/entities/urn:ngsi-ld:Scene:002');
+            const data2 = await first.json();
+            console.log(data2);
+
+            //setta width e height della canvas usando i dati del json moltiplicati per 70
+            canvas.width = data2.width.value * 70;
+            canvas.height = data2.length.value * 70;
+
+
+            ctx.drawImage(background,0,0, canvas.width, canvas.height);
+
+            //disegna un path con le coordinate che gli passo
+            //prendi le coordinate dal json
+            //nell'array position itera sugli oggetti e prendi l'array "value" questo contiene le coordinate
+            //pusha le coordinate nell'array coordinates
+            for (let i = 0; i < positions.length; i++) {
+                //le coordinate provengono da una scena grande 10x10
+                //trasforma le coordinate in modo che siano centrate e che la scena sia grande 1000x1000
+                positions[i][0] = (positions[i][0] *70 )+ canvas.width/2;
+                positions[i][2] = (positions[i][2] *70) + canvas.height/2;
+            }
+
+            //sposta in un altro array le coppie di coordinate diverse da (750, 750) tranne la prima
+            //questo perchè la prima coppia di coordinate è (0,0) e non voglio che venga visualizzata
+            let coordinates = [];
+            let n = positions.length - 1;
+            for (let i = 0; i <= n; i++) {
+                coordinates.push(positions.pop());
+                console.log(positions[i]);
+            }
+
+            console.log(coordinates);
+
+            //l'array coordinates contiene vettori [x, y] che rappresentano le coordinate
+            //disegna il percorso che l'oggetto ha fatto
+
+            ctx.beginPath();
+
+            //disegna un pallino color vinaccio per ogni coppia di coordinate
+            //l'ultimo pallino è verde
+
+            for (let i = 0; i < coordinates.length-2; i++) {
+                ctx.moveTo(coordinates[i][0], coordinates[i][2]);
+                ctx.lineTo(coordinates[i+1][0], coordinates[i+1][2]);
+                ctx.strokeStyle = "red";
+                ctx.lineWidth = 5;
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.arc(coordinates[i][0], coordinates[i][2], 10, 0, 2 * Math.PI);
+                ctx.fillStyle = "purple";
+                ctx.fill();
+            }
+
+            ctx.beginPath();
+            ctx.arc(coordinates[coordinates.length - 2][0], coordinates[coordinates.length - 2][2], 20, 0, 2 * Math.PI);
+            ctx.fillStyle = "blue";
+            ctx.fill();
+
+            //disegna un cerchio vuoto, circonferenza verde di raggio 110
+            //fai console.log delle coordinate dei punti che sono dentro il cerchio
+            //se la distanza tra il punto e il centro del cerchio è minore del raggio del cerchio allora il punto è dentro il cerchio
+            //il centro del cerchio è l'ultima coppia di coordinate
+            //il raggio del cerchio è 200
+            let radius = 500;
+            //leggi il valore del raggio da un input range
+            radius = document.getElementById("radius").value;
+            ctx.beginPath();
+            ctx.arc(coordinates[coordinates.length - 1][0], coordinates[coordinates.length - 1][2], radius, 0, 2 * Math.PI);
+            ctx.strokeStyle = "green";
+            ctx.lineWidth = 5;
+            ctx.stroke();
+
+
+
+            for (let i = 0; i < coordinates.length; i++) {
+                let distance = Math.sqrt(Math.pow(coordinates[i][0] - coordinates[coordinates.length - 1][0], 2) + Math.pow(coordinates[i][2] - coordinates[coordinates.length - 1][2], 2));
+                if (distance < radius) {
+                    console.log(coordinates[i]);
+                }
+            }
+
+        }
+
+        async function drawFacade(){
+          await draw(_positions);
+        }
+
+        async function  draw(positions){
+            //setta il background della canvas della dimensione della canvas
+            const first = await fetch('https://broker.minerva.sferainnovazione.com/ngsi-ld/v1/entities/urn:ngsi-ld:Scene:002');
+            const data2 = await first.json();
+
+            //setta width e height della canvas usando i dati del json moltiplicati per 70
+            canvas.width = data2.width.value * 70;
+            canvas.height = data2.length.value * 70;
+
+
+            ctx.drawImage(background,0,0, canvas.width, canvas.height);
+
+            //prendi le coordinate dal json
+            //nell'array position itera sugli oggetti e prendi l'array "value" questo contiene le coordinate
+            //pusha le coordinate nell'array coordinates
+            /*
+            for (let i = 0; i < positions.length; i++) {
+                //le coordinate provengono da una scena grande 10x10
+                //trasforma le coordinate in modo che siano centrate e che la scena sia grande 1000x1000
+                positions[i][0] = (positions[i][0] *70 )+ canvas.width/2;
+                positions[i][2] = (positions[i][2] *70) + canvas.height/2;
+                console.log(positions[i]);
+            }
+            */
+
+            //sposta in un altro array le coppie di coordinate diverse da (750, 750) tranne la prima
+            //questo perchè la prima coppia di coordinate è (0,0) e non voglio che venga visualizzata
+            /*
+            let coordinates = [];
+            let n = positions.length - 1;
+            for (let i = 0; i <= n; i++) {
+                coordinates.push(positions.pop());
+            }
+
+            console.log(coordinates);
+            */
+            //l'array coordinates contiene vettori [x, y] che rappresentano le coordinate
+            //disegna il percorso che l'oggetto ha fatto
+
+            ctx.beginPath();
+
+            //disegna un pallino color vinaccio per ogni coppia di coordinate
+            //l'ultimo pallino è verde
+
+            for (let i = 0; i < positions.length -1; i++) {
+                let date = new Date(positions[i].timestamp);
+                let date1 = new Date("2023-09-29T10:17:00.00Z");
+
+                if(date > date1){
+                  ctx.moveTo(positions[i].position[0], positions[i].position[2]);
+                  ctx.lineTo(positions[i+1].position[0], positions[i+1].position[2]);
+                  ctx.strokeStyle = "red";
+                  ctx.lineWidth = 5;
+                  ctx.stroke();
+
+                  ctx.beginPath();
+                  ctx.arc(positions[i].position[0], positions[i].position[2], 10, 0, 2 * Math.PI);
+                  ctx.fillStyle = "purple";
+                  ctx.fill();
+                }
+
+            }
+
+            ctx.beginPath();
+            ctx.arc(positions[positions.length - 2].position[0], positions[positions.length - 2].position[2], 20, 0, 2 * Math.PI);
+            ctx.fillStyle = "blue";
+            ctx.fill();
+
+            //disegna un cerchio vuoto, circonferenza verde di raggio 110
+            //fai console.log delle coordinate dei punti che sono dentro il cerchio
+            //se la distanza tra il punto e il centro del cerchio è minore del raggio del cerchio allora il punto è dentro il cerchio
+            //il centro del cerchio è l'ultima coppia di coordinate
+            //il raggio del cerchio è 200
+
+
+            let radius = 500;
+            //leggi il valore del raggio da un input range
+            radius = document.getElementById("radius").value;
+            ctx.beginPath();
+            ctx.arc(positions[0].position[0], positions[0].position[2], radius, 0, 2 * Math.PI);
+            ctx.strokeStyle = "green";
+            ctx.lineWidth = 5;
+            ctx.stroke();
+
+
+            //stampa la percentuale di punti che sono dentro il cerchio
+            let count = 0;
+
+            for (let i = 0; i < positions.length; i++) {
+                let distance = Math.sqrt(Math.pow(positions[i].position[0] - positions[0].position[0], 2) + Math.pow(positions[i].position[2] - positions[0].position[2], 2));
+                if (distance < radius) {
+                    count++;
+                }
+            }
+
+            document.getElementById("percent").innerHTML = Math.round((count/positions.length)*100) + "%";
+
+        }
+
+
+        function drawGreenCircle(pos){
+          //disegna un cerchio pieno colore verde di raggio 50 usando data.position[0] e data.position[2]
+          ctx.beginPath();
+          console.log("POSIZIONI", pos)
+          ctx.arc((pos[0] *70 )+ 700, (pos[2] *70 )+ 700, 50, 0, 2 * Math.PI);
+          ctx.fillStyle = "green";
+          ctx.fill();
+        }
+    </script>
+</body>
+</html>

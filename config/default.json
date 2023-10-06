@@ -40,5 +40,5 @@
     "pass" : ""
   },
   "verifierURL":"http://localhost:3030/verify-email?",
-  "brokerURL": "https://orion.ngsild.sferainnovazione.com/"
+  "brokerURL": "https://broker.minerva.sferainnovazione.com/"
 }
