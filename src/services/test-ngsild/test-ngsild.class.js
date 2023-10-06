@@ -21,7 +21,7 @@ exports.TestNgsild = class TestNgsild {
     //console.log("DATA:", data);
     let array = [data.data[0].position.value[0], data.data[0].position.value[1], data.data[0].position.value[2]]
     if(data.subscriptionId != "urn:ngsi-ld:Subscription:SferaVerdeSub001"){
-      return {position: array, timestamp: data.data[0].position.observedAt};
+      return {id: data.data[0].id, position: array, timestamp: data.data[0].position.observedAt};
     }else{
       // Remove the default "created" event
       this.emit('obj-pos', {type: "obj",position: array, timestamp: data.data[0].position.observedAt});

@@ -6,22 +6,58 @@
     <title>Document</title>
     <style>canvas { rotate: 180deg; }
 
-        .big{
-            width: 200px;
-            font-size: 30px;
-            height: 100px;
-        }
+      .big{
+          width: 200px;
+          font-size: 30px;
+          height: 100px;
+      }
+
+      .content {
+        width: 50%;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .container {
+        display: flex;
+      }
+
+      #canvas{
+        position: relative;
+      }
+
+      .secondary-canvas {
+        position: absolute;
+        top: 1px;
+        left: 1px;
+        background-color: transparent;
+      }
     </style>
 </head>
 <body>
-    <canvas id="canvas" style="border: 1px solid red;"></canvas>
-    <span class="big">Raggio</span>
-    <input type="range" id="radius" min="0" max="800" value="200" class="big" onchange="drawFacade()">
-    <span class="big">Percentuale punti nell'area: </span><span class="big" id="percent"></span>
 
-    <!-- crea uno slider per selezionare un range di tempo -->
+    <div class="container">
+      <canvas id="canvas" style="border: 1px solid red;"></canvas>
+      <canvas class="secondary-canvas" id="player1-canvas"></canvas>
+      <canvas class="secondary-canvas" id="player2-canvas"></canvas>
+      <canvas class="secondary-canvas" id="objects-canvas"></canvas>
+      <canvas class="secondary-canvas" id="circles-canvas" style="z-index: 99;"></canvas>
+      <div class="content">
+        <span class="big">Raggio</span>
+        <input type="range" id="radius" min="0" max="800" value="200" class="big" onchange="drawFacade()">
+        <span class="big">Percentuale punti nell'area: </span><span class="big" id="percent"></span>
+        <!-- Make a selector -->
+        <select name="player" class="big" id="player">
+          <option value="player1">Player 1</option>
+          <option value="player2">Player 2</option>
+          <option value="everyone">Tutti</option>
+        </select>
 
 
+      </div>
+    </div>
 
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/core-js/2.1.4/core.min.js"></script>
     <script crossorigin="anonymous" src="//unpkg.com/@feathersjs/client@^4.5.0/dist/feathers.js"></script>
@@ -33,6 +69,51 @@
         // @feathersjs/client is exposed as the `feathers` global.
         var app = feathers();
         var _positions = new Array();
+        var _positions_2 = new Array(); //array di posizioni del secondo player
+
+        //crea una canvas con un background di una immagine di cui conosco il path
+        var canvas = document.getElementById("canvas"),
+        ctx = canvas.getContext("2d");
+
+        var p1canvas = document.getElementById("player1-canvas"),
+        p1_ctx = p1canvas.getContext("2d");
+
+        var p2canvas = document.getElementById("player2-canvas"),
+        p2_ctx = p2canvas.getContext("2d");
+
+        var objs_canvas = document.getElementById("objects-canvas"),
+        objs_ctx = objs_canvas.getContext("2d");
+
+        var circles_canvas = document.getElementById("circles-canvas"),
+        circles_ctx = circles_canvas.getContext("2d");
+
+        //seleziona il player
+        document.getElementById("player").addEventListener("change", function(){
+          console.log("changed");
+          let player = document.getElementById("player").value;
+          if(player == "player1"){
+            //nascondi la canvas del secondo player
+            document.getElementById("player2-canvas").setAttribute("hidden", "hidden")
+            //rendi visibile la canvas del primo player
+            document.getElementById("player1-canvas").removeAttribute("hidden")
+            console.log("p1");
+
+          }else if(player == "player2"){
+            //nascondi la canvas del primo player
+            document.getElementById("player1-canvas").setAttribute("hidden", "hidden")
+            //rendi visibile la canvas del secondo player
+            document.getElementById("player2-canvas").removeAttribute("hidden")
+            console.log("p2");
+
+          }else{
+            //rendi visibile la canvas del primo player
+            document.getElementById("player1-canvas").removeAttribute("hidden")
+            //rendi visibile la canvas del secondo player
+            document.getElementById("player2-canvas").removeAttribute("hidden")
+            console.log("every1");
+          }
+        });
+
         var center = {x: 0, y: 0};
 
         app.configure(feathers.socketio(socket));
@@ -53,9 +134,14 @@
             let pos = data;
             pos.position[0] = (pos.position[0] *70 )+ 700
             pos.position[2] = (pos.position[2] *70 )+ 700
-            console.log(pos.position)
-            pushPos(pos);
-            await draw(_positions);
+            console.log(pos)
+            if(pos.id == "urn:ngsi-ld:Player:001"){
+              _positions.push(pos);
+              await draw(p1_ctx, _positions, "red", "purple");
+            }else{
+              _positions_2.push(pos);
+              await draw(p2_ctx, _positions_2, "blue", "yellow");
+            }
         });
 
         socket.on("test-ngsild obj-pos", async (data) => {
@@ -78,13 +164,13 @@
         // feathers.errors is an object with all of the custom error types.
 
 
-        //crea una canvas con un background di una immagine di cui conosco il path
-        var canvas = document.getElementById("canvas"),
-        ctx = canvas.getContext("2d");
+
 
         canvas.width = 1500;
         canvas.height = 1500;
 
+        center.x = canvas.width/2;
+        center.y = canvas.height/2;
 
         var background = new Image();
         background.src = "map.png";
@@ -100,6 +186,17 @@
             canvas.width = data2.width.value * 70;
             canvas.height = data2.length.value * 70;
 
+            p1canvas.width = data2.width.value * 70;
+            p1canvas.height = data2.length.value * 70;
+
+            p2canvas.width = data2.width.value * 70;
+            p2canvas.height = data2.length.value * 70;
+
+            objs_canvas.width = data2.width.value * 70;
+            objs_canvas.height = data2.length.value * 70;
+
+            circles_canvas.width = data2.width.value * 70;
+            circles_canvas.height = data2.length.value * 70;
 
             ctx.drawImage(background,0,0, canvas.width, canvas.height);
 
@@ -177,20 +274,21 @@
         }
 
         async function drawFacade(){
-          await draw(_positions);
+          await draw(p1_ctx,_positions, "red", "purple");
+          await draw(p2_ctx,_positions_2, "blue", "yellow");
         }
 
-        async function  draw(positions){
+        async function  draw(_ctx, positions, rail_color, point_color){
             //setta il background della canvas della dimensione della canvas
             const first = await fetch('https://broker.minerva.sferainnovazione.com/ngsi-ld/v1/entities/urn:ngsi-ld:Scene:002');
             const data2 = await first.json();
 
             //setta width e height della canvas usando i dati del json moltiplicati per 70
-            canvas.width = data2.width.value * 70;
-            canvas.height = data2.length.value * 70;
+            //canvas.width = data2.width.value * 70;
+            //canvas.height = data2.length.value * 70;
 
 
-            ctx.drawImage(background,0,0, canvas.width, canvas.height);
+            //ctx.drawImage(background,0,0, canvas.width, canvas.height);
 
             //prendi le coordinate dal json
             //nell'array position itera sugli oggetti e prendi l'array "value" questo contiene le coordinate
@@ -223,7 +321,7 @@
 
             //disegna un pallino color vinaccio per ogni coppia di coordinate
             //l'ultimo pallino è verde
-
+            /*
             for (let i = 0; i < positions.length -1; i++) {
                 let date = new Date(positions[i].timestamp);
                 let date1 = new Date("2023-09-29T10:17:00.00Z");
@@ -242,55 +340,40 @@
                 }
 
             }
+            */
+            //disegna la linea dalla posizione positions[positions.length - 2] alla posizione positions[positions.length - 1], cioè dall'ultima posizione alla penultima senza ridisegnare tutto il percorso
+            _ctx.moveTo(positions[positions.length - 2].position[0], positions[positions.length - 2].position[2]);
+            _ctx.lineTo(positions[positions.length - 1].position[0], positions[positions.length - 1].position[2]);
+            _ctx.strokeStyle = rail_color;
+            _ctx.lineWidth = 5;
+            _ctx.stroke();
 
-            ctx.beginPath();
-            ctx.arc(positions[positions.length - 2].position[0], positions[positions.length - 2].position[2], 20, 0, 2 * Math.PI);
-            ctx.fillStyle = "blue";
-            ctx.fill();
+
+            _ctx.beginPath();
+            _ctx.arc(positions[positions.length - 2].position[0], positions[positions.length - 2].position[2], 10, 0, 2 * Math.PI);
+            _ctx.fillStyle = point_color;
+            _ctx.fill();
 
             //disegna un cerchio vuoto, circonferenza verde di raggio 110
             //fai console.log delle coordinate dei punti che sono dentro il cerchio
             //se la distanza tra il punto e il centro del cerchio è minore del raggio del cerchio allora il punto è dentro il cerchio
             //il centro del cerchio è l'ultima coppia di coordinate
             //il raggio del cerchio è 200
-
-
-            let radius = 500;
-            //leggi il valore del raggio da un input range
-            radius = document.getElementById("radius").value;
-            ctx.beginPath();
-            ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI);
-            ctx.strokeStyle = "green";
-            ctx.lineWidth = 5;
-            ctx.stroke();
-
-
-            //stampa la percentuale di punti che sono dentro il cerchio
-            let count = 0;
-
-            for (let i = 0; i < positions.length; i++) {
-                let distance = Math.sqrt(Math.pow(positions[i].position[0] - positions[0].position[0], 2) + Math.pow(positions[i].position[2] - positions[0].position[2], 2));
-                if (distance < radius) {
-                    count++;
-                }
-            }
-
-            document.getElementById("percent").innerHTML = Math.round((count/positions.length)*100) + "%";
-
+            drawPercentegeCircle(positions);
         }
-
 
         function drawGreenCircle(pos){
           //disegna un cerchio pieno colore verde di raggio 50 usando data.position[0] e data.position[2]
-          ctx.beginPath();
-          console.log("POSIZIONI", pos)
-          ctx.arc((pos[0] *70 )+ 700, (pos[2] *70 )+ 700, 50, 0, 2 * Math.PI);
-          ctx.fillStyle = "green";
-          ctx.fill();
+          objs_ctx.clearRect(0, 0, objs_canvas.width, objs_canvas.height);
+
+          objs_ctx.beginPath();
+          objs_ctx.arc((pos[0] *70 )+ 700, (pos[2] *70 )+ 700, 50, 0, 2 * Math.PI);
+          objs_ctx.fillStyle = "green";
+          objs_ctx.fill();
         }
 
         //aggiunge un evento al click del mouse sulla canvas
-        canvas.addEventListener('click', function(event) {
+        circles_canvas.addEventListener('click', function(event) {
             //prendi le coordinate del click del mouse e ruotale di 180 gradi
             let x = event.clientX;
             let y = event.clientY;
@@ -301,7 +384,35 @@
 
             center.x = x;
             center.y = y;
-        }, false);
+
+            drawPercentegeCircle(_positions);
+          }, false);
+
+        function drawPercentegeCircle(positions){
+          circles_ctx.clearRect(0, 0, circles_canvas.width, circles_canvas.height);
+          let radius = 500;
+
+          //leggi il valore del raggio da un input range
+          radius = document.getElementById("radius").value;
+          circles_ctx.beginPath();
+          circles_ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI);
+          circles_ctx.strokeStyle = "green";
+          circles_ctx.lineWidth = 5;
+          circles_ctx.stroke();
+
+
+          //stampa la percentuale di punti che sono dentro il cerchio
+          let count = 0;
+
+          for (let i = 0; i < positions.length; i++) {
+              let distance = Math.sqrt(Math.pow(positions[i].position[0] - center.x, 2) + Math.pow(positions[i].position[2] - center.y, 2));
+              if (distance < radius) {
+                  count++;
+              }
+          }
+
+          document.getElementById("percent").innerHTML = Math.round((count/positions.length)*100) + "%";
+        }
     </script>
 </body>
 </html>
