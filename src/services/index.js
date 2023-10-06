@@ -17,11 +17,12 @@ const storeSaveDatas = require("./store-save-datas/store-save-datas.service.js")
 const admin = require("./admin/admin.service.js");
 const adminGetToken = require("./admin-get-token/admin-get-token.service.js");
 const testNgsild = require('./test-ngsild/test-ngsild.service.js');
+const position = require('./position/position.service.js');
 // eslint-disable-next-line no-unused-vars
 module.exports = function (app) {
   //ngsild
   app.configure(testNgsild);
-
+  app.configure(position);
   // admin
   app.configure(admin);
   app.configure(adminGetToken);

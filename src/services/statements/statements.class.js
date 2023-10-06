@@ -119,12 +119,12 @@ exports.Statements = class Statements {
         authCode
       );
       const ngsiRes = await this.sendNGSILD(ngsi);
-      console.log(ngsiRes);
+      //console.log(ngsiRes);
       return res;
     } else if (statementType == "SCORM") {
       //routine per SCORM
       const scorm = await this.generateSCORMData(save_data, idUsr);
-      console.log(scorm);
+      //console.log(scorm);
       //se è stato generato un oggetto SCORM
       //invia i dati SCORM
       if (scorm != null) {
@@ -279,7 +279,7 @@ exports.Statements = class Statements {
             "X-Experience-API-Version": "1.0.2",
           },
         });
-        console.log(response.data);
+        //console.log(response.data);
         return { statusMsg: "Statements salvati correttamente!" };
       } else {
         const response = await axios.post(baseURL + postfix, statements, {
@@ -289,7 +289,7 @@ exports.Statements = class Statements {
             Authorization: "Bearer " + authToken,
           },
         });
-        console.log(response.data);
+        //console.log(response.data);
         return { statusMsg: "Statements salvati correttamente!" };
       }
     } catch (err) {
@@ -438,22 +438,18 @@ exports.Statements = class Statements {
             //inserisci il valore corretto
             //es. "passed" -> "completed"
 
-            console.log("PRIMA ", scorm.data[j].value);
             if (value) {
               scorm.data[j].value = "completed";
             } else {
               scorm.data[j].value = "incomplete";
             }
-            console.log("DOPO ", scorm.data[j].value);
           } else {
-            console.log("PRIMA ", scorm.data[j].value);
             scorm.data[j].value = value;
-            console.log("DOPO ", scorm.data[j].value);
           }
         }
       }
 
-      console.log(scorm);
+      //console.log(scorm);
     }
 
     //se ci sono più di due errori accettabili
@@ -479,7 +475,7 @@ exports.Statements = class Statements {
             "Content-Type": "application/json",
           },
         });
-        console.log(response.data, response.status);
+        //console.log(response.data, response.status);
         if (response.status == 200 || response.status == 201) {
           return { statusMsg: "Statements salvati correttamente!" };
         } else {
@@ -575,14 +571,14 @@ exports.Statements = class Statements {
         objs[i].realtionships
       );
       ngsildObjs[j] = ngsi.generateEntity();
-      console.log(ngsildObjs[i]);
+      //console.log(ngsildObjs[i]);
     }
     return ngsildObjs;
   }
 
   async sendNGSILD(ngsildObjs) {
     const baseURL = this.app.get("brokerURL");
-    console.log(ngsildObjs);
+    //console.log(ngsildObjs);
     try {
       const resp = await axios.post(
         baseURL + "ngsi-ld/v1/entityOperations/upsert",
@@ -594,10 +590,10 @@ exports.Statements = class Statements {
         }
       );
 
-      console.log(resp.data);
+      //console.log("NGSILD RESP", resp.data);
       return resp;
     } catch (e) {
-      console.log(e);
+      //console.log("ERRORE NGSILD", e);
       return { error: e };
     }
   }
