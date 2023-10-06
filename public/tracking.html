@@ -33,6 +33,7 @@
         // @feathersjs/client is exposed as the `feathers` global.
         var app = feathers();
         var _positions = new Array();
+        var center = {x: 0, y: 0};
 
         app.configure(feathers.socketio(socket));
 
@@ -258,7 +259,7 @@
             //leggi il valore del raggio da un input range
             radius = document.getElementById("radius").value;
             ctx.beginPath();
-            ctx.arc(positions[0].position[0], positions[0].position[2], radius, 0, 2 * Math.PI);
+            ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI);
             ctx.strokeStyle = "green";
             ctx.lineWidth = 5;
             ctx.stroke();
@@ -287,6 +288,20 @@
           ctx.fillStyle = "green";
           ctx.fill();
         }
+
+        //aggiunge un evento al click del mouse sulla canvas
+        canvas.addEventListener('click', function(event) {
+            //prendi le coordinate del click del mouse e ruotale di 180 gradi
+            let x = event.clientX;
+            let y = event.clientY;
+            console.log(x, y);
+            //ruota le coordinate di 180 gradi
+            x = canvas.width - x;
+            y = canvas.height - y;
+
+            center.x = x;
+            center.y = y;
+        }, false);
     </script>
 </body>
 </html>
