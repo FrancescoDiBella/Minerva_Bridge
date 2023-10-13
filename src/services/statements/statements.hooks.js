@@ -22,7 +22,6 @@ module.exports = {
         try {
           const secret = context.app.get("authentication").secret;
           const payload = jwt.verify(token, secret);
-          console.log("PAYLOAD:", payload);
           const clientData = {
             payload,
           };
