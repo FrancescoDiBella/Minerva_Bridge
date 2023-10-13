@@ -530,7 +530,7 @@ exports.Statements = class Statements {
           idApp3D +
           ":" +
           identifiers[i],
-        type: "3DObject",
+        type:  "3DObject" ,
         properties: [],
         realtionships: [],
         //context: ["https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.6.jsonld"]
@@ -539,13 +539,21 @@ exports.Statements = class Statements {
 
     for (let i = 0; i < array.length; i++) {
       const { identifier, parameter, object, value, timestamp } = array[i];
-
+      let _type = undefined;
       if (value != undefined) {
+        //override type if it is specified
+        if(parameter == "_type"){
+          _type = value;
+          objs[identifier].type = _type;
+          continue;
+        }
+
         objs[identifier].properties.push({
           name: parameter,
           value: {
             type: "Property",
             value: value,
+            observedAt: timestamp,
           },
         });
       } else {
