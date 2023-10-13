@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tracking</title>
+    <title>Player tracking</title>
     <style>canvas { rotate: 180deg; }
 
       .big{
@@ -74,6 +74,15 @@
       <canvas class="secondary-canvas" id="player2-canvas"></canvas>
       <canvas class="secondary-canvas" id="objects-canvas"></canvas>
       <canvas class="secondary-canvas" id="circles-canvas" style="z-index: 99;"></canvas>
+
+      <!--
+      <canvas id="canvas" style="border: 1px solid red;"></canvas>
+      <canvas class="secondary-canvas" id="player1-canvas"></canvas>
+      <canvas class="secondary-canvas" id="player2-canvas"></canvas>
+      <canvas class="secondary-canvas" id="objects-canvas"></canvas>
+      <canvas class="secondary-canvas" id="circles-canvas" style="z-index: 99;"></canvas>
+      -->
+
       <div class="content">
         <span class="big">Raggio</span>
         <input type="range" id="radius" min="0" max="800" value="200" class="big" onchange="drawFacade()">
@@ -97,10 +106,6 @@
     <script crossorigin="anonymous" src="//unpkg.com/socket.io-client@^2.3.0/dist/socket.io.js"></script>
 
     <script>
-        //TODO: Trasportare questa pagina nella pagina persona: Si potrà vedere una comparativa tra utenti o visualizzazione di un singolo utente
-        //visualizzare con quali oggetti 3d il giocatore ha interagito e dare delle label a questi oggetti con timestamp e altri metadati se disponibili, inoltre si potrà vedere il percorso che il giocatore ha fatto
-        //aggiungere la possibilità di scegliere un oggetto 3d, il raggio e quindi vedere i punti della trayettoria che sono dentro il cerchio, dunque avere un notifier di prossimità per l'oggetto 3d selezionato rispetto al player.
-
         // Socket.io is exposed as the `io` global.
         var socket = io('http://localhost:3030');
         // @feathersjs/client is exposed as the `feathers` global.
@@ -158,7 +163,7 @@
         socket.on('connect', () => console.log('Connected to server.'));
 
         socket.on("test-ngsild created", async (data) => {
-            console.log("POSIZIONE ", data);
+            console.log("POS ROSSO", data);
             try{
               if(data.type != undefined) {
                 return;
@@ -171,10 +176,25 @@
             pos.position[0] = (pos.position[0] *70 )+ 700
             pos.position[2] = (pos.position[2] *70 )+ 700
             console.log(pos)
-            if(pos.id == "minerva:2:12396:ABCD:player"){
+            if(pos.id == "urn:ngsi-ld:Player:001"){
               _positions.push(pos);
               //add a row to the pos-table
-              console.log("ARRAY POS", _positions);
+              /*
+                let row = document.createElement("tr");
+                let x = document.createElement("td");
+                let y = document.createElement("td");
+                let z = document.createElement("td");
+                let timestamp = document.createElement("td");
+                x.innerHTML = pos.position[0];
+                y.innerHTML = pos.position[1];
+                z.innerHTML = pos.position[2];
+                timestamp.innerHTML = pos.timestamp;
+                row.appendChild(x);
+                row.appendChild(y);
+                row.appendChild(z);
+                row.appendChild(timestamp);
+                document.getElementById("pos-table").appendChild(row);
+              */
               await draw(p1_ctx, _positions, null,  "red", "purple");
             }else{
               _positions_2.push(pos);
@@ -325,8 +345,8 @@
              * Richiamare un endpoint del backend e non del broker
              * Recuperare le stesse informazioni
             */
-            //const first = await fetch('https://broker.minerva.sferainnovazione.com/ngsi-ld/v1/entities/urn:ngsi-ld:Scene:002');
-            //const data2 = await first.json();
+            const first = await fetch('https://broker.minerva.sferainnovazione.com/ngsi-ld/v1/entities/urn:ngsi-ld:Scene:002');
+            const data2 = await first.json();
 
             //setta width e height della canvas usando i dati del json moltiplicati per 70
             //canvas.width = data2.width.value * 70;
@@ -387,7 +407,7 @@
             }
             */
             //disegna la linea dalla posizione positions[positions.length - 2] alla posizione positions[positions.length - 1], cioè dall'ultima posizione alla penultima senza ridisegnare tutto il percorso
-            /*
+
             console.log("POS", positions[positions.length - 2])
 
             console.log("TIMESTAMP", positions[positions.length - 2].timestamp)
@@ -397,8 +417,8 @@
             date_time = date + "T" + time + ":00.00Z";
             let _date = new Date(positions[positions.length - 2].timestamp);
             let _date_time = new Date(date_time);
-            */
-            //if(_date_time <= _date || date == '' || time == ''){
+
+            if(_date_time <= _date || date == '' || time == ''){
               _ctx.moveTo(positions[positions.length - 2].position[0], positions[positions.length - 2].position[2]);
               _ctx.lineTo(positions[positions.length - 1].position[0], positions[positions.length - 1].position[2]);
               _ctx.strokeStyle = rail_color;
@@ -410,7 +430,7 @@
               _ctx.arc(positions[positions.length - 2].position[0], positions[positions.length - 2].position[2], 10, 0, 2 * Math.PI);
               _ctx.fillStyle = point_color;
               _ctx.fill();
-            //}
+            }
 
 
 
