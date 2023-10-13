@@ -18,13 +18,14 @@ exports.TestNgsild = class TestNgsild {
   }
 
   async create (data, params) {
-    //console.log("DATA:", data);
+    console.log("NOTIFICATION RECEIVED");
     let array = [data.data[0].position.value[0], data.data[0].position.value[1], data.data[0].position.value[2]]
-    if(data.subscriptionId != "urn:ngsi-ld:Subscription:SferaVerdeSub001"){
+    if(data.subscriptionId != "urn:ngsi-ld:Subscription:SferaVerdeSub:001"){
       return {id: data.data[0].id, position: array, timestamp: data.data[0].position.observedAt};
     }else{
       // Remove the default "created" event
       this.emit('obj-pos', {type: "obj",position: array, timestamp: data.data[0].position.observedAt});
+      return {type: "obj",position: array, timestamp: data.data[0].position.observedAt};
     }
   }
 
