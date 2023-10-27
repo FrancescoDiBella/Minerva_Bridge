@@ -40,5 +40,8 @@
     "pass" : ""
   },
   "verifierURL":"http://localhost:3030/verify-email?",
-  "brokerURL": "https://broker.minerva.sferainnovazione.com/"
+  "brokerURL": "https://broker.minerva.sferainnovazione.com/",
+  "entitiesEndpoint": "ngsi-ld/v1/entities",
+  "temporalEndpoint": "ngsi-ld/v1/temporal/entities",
+  "ngsildLink": "<https://uri.etsi.org/ngsi-ld/primer/store-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json"
 }
