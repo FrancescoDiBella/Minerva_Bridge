@@ -3,36 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Player tracking</title>
-    <style>canvas { rotate: 180deg; }
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+    <title>Tracking</title>
+    <style>
+      body, html {
+          background-color: #b9d0d3;
+          font-family: 'Roboto', sans-serif;
+        }
 
-      .big{
-          width: 200px;
-          font-size: 30px;
-          height: 100px;
-      }
 
-      .content {
-        width: 50%;
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
+        body {
+          transform: scale(0.55); /* Applica uno zoom out del 75% */
+          transform-origin: 0 0; /* Specifica il punto di origine per la trasformazione */
+          max-width: 2500px;
+          min-width: 1800px;
+          max-height: 1800px;
+          overflow-y: scroll;
+        }
+      canvas {
+        rotate: 180deg;
+        border: 1px solid red;
       }
 
       .container {
         display: flex;
+        position: relative;
       }
 
       #canvas{
         position: relative;
       }
 
+      .player-canvas{
+      }
+
+      .player-canvas-block{
+        display: block;
+        position: relative;
+      }
+
+      .sub-container{
+        position: relative;
+      }
+
       .secondary-canvas {
         position: absolute;
-        top: 1px;
-        left: 1px;
         background-color: transparent;
+        top: 0;
+        left: 0;
       }
 
       .table-cont{
@@ -41,94 +59,195 @@
       }
 
       .content {
-        flex: 1; /* Fai espandere il div content per riempire lo spazio rimanente */
-        padding: 10px; /* Aggiungi spazio interno al div content */
+        padding: 20px;
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: flex-start;
+        align-items: flex-start;
+        background-color: #f5f5f5;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
       }
 
-      .big {
-        margin-bottom: 10px; /* Aggiungi spazio tra gli elementi con classe "big" */
-      }
+.input-group {
+  margin-bottom: 20px;
+}
 
-      #percent {
-        margin-left: 5px; /* Aggiungi spazio tra l'elemento con id "percent" e il precedente */
-      }
+.input-group label {
+  font-size: 16px;
+  display: block;
+  margin-bottom: 5px;
+}
 
-      #player {
-        margin-top: 10px; /* Aggiungi spazio sopra al selettore "player" */
-      }
+input[type="range"],
+select,
+input[type="time"],
+input[type="date"] {
+  font-size: 16px;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  margin-bottom: 10px;
+}
 
-      #time,
-      #date {
-        margin-top: 10px; /* Aggiungi spazio sopra ai campi di input "time" e "date" */
-      }
+button {
+  background-color: #007bff;
+  color: white;
+  font-size: 16px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.big{
+  font-size: 22px;
+}
+
+
+/* CSS per il bottone switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #007bff;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #007bff;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Stile del bottone switch quando è "acceso" */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+#container-canvas{
+  flex: 1;
+  width: 1400px;
+  height: 1400px;
+}
     </style>
 </head>
 <body>
 
-    <div class="container">
-      <canvas id="canvas" style="border: 1px solid red;"></canvas>
-      <canvas class="secondary-canvas" id="player1-canvas"></canvas>
-      <canvas class="secondary-canvas" id="player2-canvas"></canvas>
-      <canvas class="secondary-canvas" id="objects-canvas"></canvas>
-      <canvas class="secondary-canvas" id="circles-canvas" style="z-index: 99;"></canvas>
-
-      <!--
-      <canvas id="canvas" style="border: 1px solid red;"></canvas>
-      <canvas class="secondary-canvas" id="player1-canvas"></canvas>
-      <canvas class="secondary-canvas" id="player2-canvas"></canvas>
-      <canvas class="secondary-canvas" id="objects-canvas"></canvas>
-      <canvas class="secondary-canvas" id="circles-canvas" style="z-index: 99;"></canvas>
-      -->
-
-      <div class="content">
-        <span class="big">Raggio</span>
-        <input type="range" id="radius" min="0" max="800" value="200" class="big" onchange="drawFacade()">
-        <span class="big">Percentuale punti nell'area: </span><span class="big" id="percent"></span>
-        <!-- Make a selector -->
-        <select name="player" class="big" id="player">
-          <option value="player1">Player 1</option>
-          <option value="player2">Player 2</option>
-          <option value="everyone">Tutti</option>
-        </select>
-        <span class="big">Tempo</span>
-        <input type="time" id="time" class="big">
-        <input type="date" id="date" class="big">
-        <button onclick="drawFacadeWithFilters()">Filtra</button>
-        <!--TODO: Tabell per le posizioni-->
+    <div class="container" id="container">
+      <div id="container-canvas">
       </div>
+      <div class="content">
+        <div class="input-group">
+          <label for="radius" ><b class="big">Raggio:</b></label>
+          <input type="range" id="radius" min="0" max="800" value="200" class="big" onchange="drawFacade()">
+        </div>
+
+        <div class="input-group">
+          <label for="percent" class="big"><b class="big">Percentuale punti nell'area:</b></label>
+          <span class="big" id="percent"></span>
+        </div>
+
+        <div class="input-group">
+          <label for="player" class="big"><b class="big">Giocatore:</b></label>
+          <select name="player" class="big" id="player">
+            <option value="player1">Player 1</option>
+            <option value="player2">Player 2</option>
+            <option value="everyone">Tutti</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="toggleFunction" class="big"><b class="big">Visuale comparata:</b></label>
+          <label class="switch">
+            <input type="checkbox" id="toggleFunction" checked>
+            <span class="slider round"></span>
+          </label>
+        </div>
+
+        <div>_____________________________________</div>
+        <div class="input-group">
+          <label for="time" class="big"><b class="big">Tempo:</b></label>
+          <input type="time" id="time" class="big">
+        </div>
+
+        <div class="input-group">
+          <label for="date" class="big"><b class="big">Data:</b></label>
+          <input type="date" id="date" class="big">
+        </div>
+
+        <button class="big" onclick="drawFacadeWithFilters()">Filtra</button>
+      </div>
+
     </div>
 
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/core-js/2.1.4/core.min.js"></script>
     <script crossorigin="anonymous" src="//unpkg.com/@feathersjs/client@^4.5.0/dist/feathers.js"></script>
     <script crossorigin="anonymous" src="//unpkg.com/socket.io-client@^2.3.0/dist/socket.io.js"></script>
 
-    <script>
+    <script type="module">
+        import { TrackingCanvas } from './js/track-canvas.js';
+        console.log(TrackingCanvas)
         // Socket.io is exposed as the `io` global.
         var socket = io('http://localhost:3030');
         // @feathersjs/client is exposed as the `feathers` global.
         var app = feathers();
         var _positions = new Array();
         var _positions_2 = new Array(); //array di posizioni del secondo player
-
+        var playersPositions = {}; //array di array di posizioni di tutti i player
         //crea una canvas con un background di una immagine di cui conosco il path
-        var canvas = document.getElementById("canvas"),
-        ctx = canvas.getContext("2d");
 
-        var p1canvas = document.getElementById("player1-canvas"),
-        p1_ctx = p1canvas.getContext("2d");
-
-        var p2canvas = document.getElementById("player2-canvas"),
-        p2_ctx = p2canvas.getContext("2d");
-
-        var objs_canvas = document.getElementById("objects-canvas"),
-        objs_ctx = objs_canvas.getContext("2d");
-
-        var circles_canvas = document.getElementById("circles-canvas"),
-        circles_ctx = circles_canvas.getContext("2d");
-
+        const container = document.getElementById("container-canvas");
         //seleziona il player
         document.getElementById("player").addEventListener("change", function(){
           console.log("changed");
@@ -136,22 +255,28 @@
           if(player == "player1"){
             //nascondi la canvas del secondo player
             document.getElementById("player2-canvas").setAttribute("hidden", "hidden")
+            document.getElementById("player2-lines-canvas").setAttribute("hidden", "hidden")
             //rendi visibile la canvas del primo player
             document.getElementById("player1-canvas").removeAttribute("hidden")
+            document.getElementById("player1-lines-canvas").removeAttribute("hidden")
             console.log("p1");
 
           }else if(player == "player2"){
             //nascondi la canvas del primo player
             document.getElementById("player1-canvas").setAttribute("hidden", "hidden")
+            document.getElementById("player1-lines-canvas").setAttribute("hidden", "hidden")
             //rendi visibile la canvas del secondo player
             document.getElementById("player2-canvas").removeAttribute("hidden")
+            document.getElementById("player2-lines-canvas").removeAttribute("hidden")
             console.log("p2");
 
           }else{
             //rendi visibile la canvas del primo player
             document.getElementById("player1-canvas").removeAttribute("hidden")
+            document.getElementById("player1-lines-canvas").removeAttribute("hidden")
             //rendi visibile la canvas del secondo player
             document.getElementById("player2-canvas").removeAttribute("hidden")
+            document.getElementById("player2-lines-canvas").removeAttribute("hidden")
             console.log("every1");
           }
         });
@@ -159,11 +284,11 @@
         var center = {x: 0, y: 0};
 
         app.configure(feathers.socketio(socket));
+        const entitiesService = app.service('entity');
 
         socket.on('connect', () => console.log('Connected to server.'));
 
         socket.on("test-ngsild created", async (data) => {
-            console.log("POS ROSSO", data);
             try{
               if(data.type != undefined) {
                 return;
@@ -175,37 +300,20 @@
             let pos = data;
             pos.position[0] = (pos.position[0] *70 )+ 700
             pos.position[2] = (pos.position[2] *70 )+ 700
-            console.log(pos)
-            if(pos.id == "urn:ngsi-ld:Player:001"){
+            if(pos.id == "minerva:2:12396:ABCD:player"){
               _positions.push(pos);
               //add a row to the pos-table
-              /*
-                let row = document.createElement("tr");
-                let x = document.createElement("td");
-                let y = document.createElement("td");
-                let z = document.createElement("td");
-                let timestamp = document.createElement("td");
-                x.innerHTML = pos.position[0];
-                y.innerHTML = pos.position[1];
-                z.innerHTML = pos.position[2];
-                timestamp.innerHTML = pos.timestamp;
-                row.appendChild(x);
-                row.appendChild(y);
-                row.appendChild(z);
-                row.appendChild(timestamp);
-                document.getElementById("pos-table").appendChild(row);
-              */
-              await draw(p1_ctx, _positions, null,  "red", "purple");
+              await draw(p1canvas, p1LinesCanvas, _positions, null,  "red", "purple");
             }else{
               _positions_2.push(pos);
-              await draw(p2_ctx, _positions_2, null, "blue", "yellow");
+              await draw(p2canvas, p2LinesCanvas, _positions_2, null, "blue", "yellow");
             }
         });
 
         socket.on("test-ngsild obj-pos", async (data) => {
             //disegna un cerchio colore verde di raggio 50 usando data.position[0] e data.position[2]
             console.log("OBJ VERDE", data);
-            await drawGreenCircle(data.position);
+            //await drawGreenCircle(data.position);
         });
 
         function pushPos(pos){
@@ -216,117 +324,16 @@
           return _positions.length;
         }
 
-        socket.emit('find', 'position', {}, (error, data) => {
-          console.log('Found all messages', data);
-        });
-        // feathers.errors is an object with all of the custom error types.
+        //canvas.width = 1500;
+        //canvas.height = 1500;
 
-        canvas.width = 1500;
-        canvas.height = 1500;
 
-        center.x = canvas.width/2;
-        center.y = canvas.height/2;
 
         var background = new Image();
         background.src = "map.png";
 
-        // Make sure the image is loaded first otherwise nothing will draw.
-        background.onload = async function(){
-            //setta il background della canvas della dimensione della canvas
-            const first = await fetch('https://broker.minerva.sferainnovazione.com/ngsi-ld/v1/entities/urn:ngsi-ld:Scene:002');
-            const data2 = await first.json();
-            console.log(data2);
-
-            //setta width e height della canvas usando i dati del json moltiplicati per 70
-            canvas.width = data2.width.value * 70;
-            canvas.height = data2.length.value * 70;
-
-            p1canvas.width = data2.width.value * 70;
-            p1canvas.height = data2.length.value * 70;
-
-            p2canvas.width = data2.width.value * 70;
-            p2canvas.height = data2.length.value * 70;
-
-            objs_canvas.width = data2.width.value * 70;
-            objs_canvas.height = data2.length.value * 70;
-
-            circles_canvas.width = data2.width.value * 70;
-            circles_canvas.height = data2.length.value * 70;
-
-            ctx.drawImage(background,0,0, canvas.width, canvas.height);
-
-            //disegna un path con le coordinate che gli passo
-            //prendi le coordinate dal json
-            //nell'array position itera sugli oggetti e prendi l'array "value" questo contiene le coordinate
-            //pusha le coordinate nell'array coordinates
-            for (let i = 0; i < positions.length; i++) {
-                //le coordinate provengono da una scena grande 10x10
-                //trasforma le coordinate in modo che siano centrate e che la scena sia grande 1000x1000
-                positions[i][0] = (positions[i][0] *70 )+ canvas.width/2;
-                positions[i][2] = (positions[i][2] *70) + canvas.height/2;
-            }
-
-            //sposta in un altro array le coppie di coordinate diverse da (750, 750) tranne la prima
-            //questo perchè la prima coppia di coordinate è (0,0) e non voglio che venga visualizzata
-            let coordinates = [];
-            let n = positions.length - 1;
-            for (let i = 0; i <= n; i++) {
-                coordinates.push(positions.pop());
-                console.log(positions[i]);
-            }
-
-            console.log(coordinates);
-
-            //l'array coordinates contiene vettori [x, y] che rappresentano le coordinate
-            //disegna il percorso che l'oggetto ha fatto
-
-            ctx.beginPath();
-
-            //disegna un pallino color vinaccio per ogni coppia di coordinate
-            //l'ultimo pallino è verde
-
-            for (let i = 0; i < coordinates.length-2; i++) {
-                ctx.moveTo(coordinates[i][0], coordinates[i][2]);
-                ctx.lineTo(coordinates[i+1][0], coordinates[i+1][2]);
-                ctx.strokeStyle = "red";
-                ctx.lineWidth = 5;
-                ctx.stroke();
-
-                ctx.beginPath();
-                ctx.arc(coordinates[i][0], coordinates[i][2], 10, 0, 2 * Math.PI);
-                ctx.fillStyle = "purple";
-                ctx.fill();
-            }
-
-            ctx.beginPath();
-            ctx.arc(coordinates[coordinates.length - 2][0], coordinates[coordinates.length - 2][2], 20, 0, 2 * Math.PI);
-            ctx.fillStyle = "blue";
-            ctx.fill();
-
-            //disegna un cerchio vuoto, circonferenza verde di raggio 110
-            //fai console.log delle coordinate dei punti che sono dentro il cerchio
-            //se la distanza tra il punto e il centro del cerchio è minore del raggio del cerchio allora il punto è dentro il cerchio
-            //il centro del cerchio è l'ultima coppia di coordinate
-            //il raggio del cerchio è 200
-            let radius = 500;
-            //leggi il valore del raggio da un input range
-            radius = document.getElementById("radius").value;
-            ctx.beginPath();
-            ctx.arc(coordinates[coordinates.length - 1][0], coordinates[coordinates.length - 1][2], radius, 0, 2 * Math.PI);
-            ctx.strokeStyle = "green";
-            ctx.lineWidth = 5;
-            ctx.stroke();
-
-
-
-            for (let i = 0; i < coordinates.length; i++) {
-                let distance = Math.sqrt(Math.pow(coordinates[i][0] - coordinates[coordinates.length - 1][0], 2) + Math.pow(coordinates[i][2] - coordinates[coordinates.length - 1][2], 2));
-                if (distance < radius) {
-                    console.log(coordinates[i]);
-                }
-            }
-
-        }
+        var idAdmin, idApp3D, idLms;
+        var array_users = [];
 
         async function drawFacade(){
           await draw(p1_ctx,_positions, null, "red", "purple");
@@ -338,161 +345,138 @@
           await draw(p2_ctx,_positions_2, null,  "blue", "yellow");
         }
 
-        async function  draw(_ctx, positions, date_time, rail_color, point_color){
-            //setta il background della canvas della dimensione della canvas
-            //prendere informazioni, come width e height, dall'entità ngsi-ld Scene
-            /*
-             * Richiamare un endpoint del backend e non del broker
-             * Recuperare le stesse informazioni
-            */
-            const first = await fetch('https://broker.minerva.sferainnovazione.com/ngsi-ld/v1/entities/urn:ngsi-ld:Scene:002');
-            const data2 = await first.json();
+        function toggleVisual(){
+          let _canvas = document.getElementsByClassName("player-canvas");
 
-            //setta width e height della canvas usando i dati del json moltiplicati per 70
-            //canvas.width = data2.width.value * 70;
-            //canvas.height = data2.length.value * 70;
-
-
-            //ctx.drawImage(background,0,0, canvas.width, canvas.height);
-
-            //prendi le coordinate dal json
-            //nell'array position itera sugli oggetti e prendi l'array "value" questo contiene le coordinate
-            //pusha le coordinate nell'array coordinates
-            /*
-            for (let i = 0; i < positions.length; i++) {
-                //le coordinate provengono da una scena grande 10x10
-                //trasforma le coordinate in modo che siano centrate e che la scena sia grande 1000x1000
-                positions[i][0] = (positions[i][0] *70 )+ canvas.width/2;
-                positions[i][2] = (positions[i][2] *70) + canvas.height/2;
-                console.log(positions[i]);
-            }
-            */
-
-            //sposta in un altro array le coppie di coordinate diverse da (750, 750) tranne la prima
-            //questo perchè la prima coppia di coordinate è (0,0) e non voglio che venga visualizzata
-            /*
-            let coordinates = [];
-            let n = positions.length - 1;
-            for (let i = 0; i <= n; i++) {
-                coordinates.push(positions.pop());
-            }
-
-            console.log(coordinates);
-            */
-            //l'array coordinates contiene vettori [x, y] che rappresentano le coordinate
-            //disegna il percorso che l'oggetto ha fatto
-
-            ctx.beginPath();
-
-            //disegna un pallino color vinaccio per ogni coppia di coordinate
-            //l'ultimo pallino è verde
-            /*
-            for (let i = 0; i < positions.length -1; i++) {
-                let date = new Date(positions[i].timestamp);
-                let date1 = new Date("2023-09-29T10:17:00.00Z");
-
-                if(date > date1){
-                  ctx.moveTo(positions[i].position[0], positions[i].position[2]);
-                  ctx.lineTo(positions[i+1].position[0], positions[i+1].position[2]);
-                  ctx.strokeStyle = "red";
-                  ctx.lineWidth = 5;
-                  ctx.stroke();
-
-                  ctx.beginPath();
-                  ctx.arc(positions[i].position[0], positions[i].position[2], 10, 0, 2 * Math.PI);
-                  ctx.fillStyle = "purple";
-                  ctx.fill();
-                }
-
-            }
-            */
-            //disegna la linea dalla posizione positions[positions.length - 2] alla posizione positions[positions.length - 1], cioè dall'ultima posizione alla penultima senza ridisegnare tutto il percorso
-
-            console.log("POS", positions[positions.length - 2])
-
-            console.log("TIMESTAMP", positions[positions.length - 2].timestamp)
-            let date = document.getElementById("date").value;
-            let time = document.getElementById("time").value;
-
-            date_time = date + "T" + time + ":00.00Z";
-            let _date = new Date(positions[positions.length - 2].timestamp);
-            let _date_time = new Date(date_time);
-
-            if(_date_time <= _date || date == '' || time == ''){
-              _ctx.moveTo(positions[positions.length - 2].position[0], positions[positions.length - 2].position[2]);
-              _ctx.lineTo(positions[positions.length - 1].position[0], positions[positions.length - 1].position[2]);
-              _ctx.strokeStyle = rail_color;
-              _ctx.lineWidth = 5;
-              _ctx.stroke();
-
-
-              _ctx.beginPath();
-              _ctx.arc(positions[positions.length - 2].position[0], positions[positions.length - 2].position[2], 10, 0, 2 * Math.PI);
-              _ctx.fillStyle = point_color;
-              _ctx.fill();
-            }
-
-
-
-            //disegna un cerchio vuoto, circonferenza verde di raggio 110
-            //fai console.log delle coordinate dei punti che sono dentro il cerchio
-            //se la distanza tra il punto e il centro del cerchio è minore del raggio del cerchio allora il punto è dentro il cerchio
-            //il centro del cerchio è l'ultima coppia di coordinate
-            //il raggio del cerchio è 200
-            drawPercentegeCircle(positions);
+          Array.from(_canvas).forEach((canvas) => {
+            canvas.classList.toggle("secondary-canvas");
+            canvas.classList.toggle("player-canvas-block");
+          });
         }
 
-        function drawGreenCircle(pos){
-          //disegna un cerchio pieno colore verde di raggio 50 usando data.position[0] e data.position[2]
-          objs_ctx.clearRect(0, 0, objs_canvas.width, objs_canvas.height);
-
-          objs_ctx.beginPath();
-          objs_ctx.arc((pos[0] *70 )+ 700, (pos[2] *70 )+ 700, 50, 0, 2 * Math.PI);
-          objs_ctx.fillStyle = "green";
-          objs_ctx.fill();
-        }
-
-        //aggiunge un evento al click del mouse sulla canvas
-        circles_canvas.addEventListener('click', function(event) {
-            //prendi le coordinate del click del mouse e ruotale di 180 gradi
-            let x = event.clientX;
-            let y = event.clientY;
-            console.log(x, y);
-            //ruota le coordinate di 180 gradi
-            x = canvas.width - x;
-            y = canvas.height - y;
-
-            center.x = x;
-            center.y = y;
-
-            drawPercentegeCircle(_positions);
-          }, false);
-
-        function drawPercentegeCircle(positions){
-          circles_ctx.clearRect(0, 0, circles_canvas.width, circles_canvas.height);
-          let radius = 500;
-
-          //leggi il valore del raggio da un input range
-          radius = document.getElementById("radius").value;
-          circles_ctx.beginPath();
-          circles_ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI);
-          circles_ctx.strokeStyle = "green";
-          circles_ctx.lineWidth = 5;
-          circles_ctx.stroke();
-
-
-          //stampa la percentuale di punti che sono dentro il cerchio
-          let count = 0;
-
-          for (let i = 0; i < positions.length; i++) {
-              let distance = Math.sqrt(Math.pow(positions[i].position[0] - center.x, 2) + Math.pow(positions[i].position[2] - center.y, 2));
-              if (distance < radius) {
-                  count++;
-              }
+        async function  draw(pointsCanvas, linesCanvas, positions, date_time, rail_color, point_color){
+          console.log("draw", positions);
+          const point1 = {
+            x: positions[positions.length - 2].position[0],
+            y: positions[positions.length - 2].position[2]
           }
 
-          document.getElementById("percent").innerHTML = Math.round((count/positions.length)*100) + "%";
+          const point2 = {
+            x: positions[positions.length - 1].position[0],
+            y: positions[positions.length - 1].position[2]
+          }
+
+          pointsCanvas.drawPoints([point1, point2], {color: point_color, radius: 10});
+          linesCanvas.drawLines([point1, point2], {lineColor: rail_color, lineWidth: 4});
         }
+
+        async function drawAllPoints(pointsCanvas, linesCanvas, positions, rail_color, point_color){
+          let points =[];
+
+          positions.forEach((pos) => {
+            points.push({x: pos.position[0], y: pos.position[2]});
+          });
+
+          pointsCanvas.drawPoints(points, {color: point_color, radius: 10});
+          linesCanvas.drawLines(points, {lineColor: rail_color, lineWidth: 4});
+
+          //elimina l'array points
+          points = [];
+        }
+
+        async function manipulateDataPositions(idUsr, data, pointsColor, linesColor, p1canvas, p1LinesCanvas){
+          let pos = [];
+
+          for(let i = 0; i < data.position.length; i++){
+            pos.push({position: []});
+            pos[i].position[0] = (data.position[i].value[0] *70 )+ 700;
+            pos[i].position[2] = (data.position[i].value[2] *70 )+ 700;
+            playersPositions[idUsr].push(pos[i]);
+          }
+          await drawAllPoints(p1canvas, p1LinesCanvas, playersPositions[idUsr], linesColor, pointsColor);
+        }
+
+        //quando la pagina è caricata
+        window.onload = async function(){
+          //carica i dati dal local storage
+          let srt = localStorage.getItem("tracking");
+          const tracking_list = JSON.parse(srt);
+          console.log(tracking_list);
+          idAdmin = tracking_list[0].idAdmin;
+          idLms = tracking_list[0].idLms;
+          idApp3D = tracking_list[0].idApp3D;
+
+          let compare = document.getElementById("toggleFunction");
+          compare.addEventListener("click", toggleVisual);
+
+          tracking_list.forEach((track) => {
+            array_users.push(track.idUsr);
+          });
+
+          //crea una nuova subscription per ogni idUsr+idApp3D e salva i dati in un array
+          //Q1: richiamare API bridge o contattare direttamente il broker?
+          //A1.1: Per la fase prototype contattare direttamente il broker
+          //A1.2: Per la fase finale contattare il bridge (molto probabilmente, più sicuro e veloce)
+
+          //richiesta al broker
+          //const sub_resp = await fetch('https://broker.minerva.sferainnovazione.com/ngsi-ld/v1/entities/urn:ngsi-ld:Scene:002');
+          //ricreare la richiesta fatta sopra ma questa volta al bridge
+
+          entitiesService.get('minerva:'+idLms+':'+array_users[0]+':'+idApp3D+':player')
+          .then((data) => {
+            console.log(data);
+            let sceneId = data.isContainedIn.object;
+
+            entitiesService.get(sceneId)
+            .then((data)=>{
+              console.log(data);
+              //setta width e height della canvas usando i dati del json moltiplicati per 70
+              center.x = data.length.value/2;
+              center.y = data.height.value/2;
+              let width = (data.length.value * 70);
+              let height = (data.height.value * 70);
+              //fetchare i punti di tutti gli utenti nella userlist e visualizzarli con draw
+              array_users.forEach((user)=>{
+                //creare una nuova coppia di canvas per ogni utente
+                //aggiungere le due canvas al container
+                //crea un div con id "container-canvas-p-1"
+                const container_player = document.createElement("div");
+                container_player.id = "container-canvas-player-"+user;
+                container_player.classList.add("sub-container");
+
+                var pCanvas = new TrackingCanvas(width, height, "player-"+user+"-canvas", {zIndex: 4, classList:["player-canvas"]});
+                var pLinesCanvas = new TrackingCanvas(width, height, "player-"+user+"-lines-canvas", {zIndex: 2, classList:[]});
+
+                pCanvas.render(container_player);
+                pLinesCanvas.render(container_player);
+
+                container.appendChild(container_player);
+                //passare le canvas e i colori a manipulateDataPositions
+                entitiesService.get('minerva:'+idLms+':'+user+':'+idApp3D+':player', {query:{temporal:true}})
+                .then((data) => {
+                  console.log(data);
+                  playersPositions[user] = [];
+                  //genera un colore random per i punti e per le linee che siano in contrasto
+                  let pointsColor = '#'+Math.floor(Math.random()*16777215).toString(16);
+                  let linesColor = '#'+Math.floor(Math.random()*16777215).toString(16);
+
+                  manipulateDataPositions(user, data, pointsColor, linesColor, pCanvas, pLinesCanvas);
+                })
+                .catch((error)=>{
+                  console.log(error);
+                });
+              })
+
+            })
+            .catch((error)=>{
+              console.log(error);
+            });
+          })
+          .catch((error)=>{
+            console.log(error);
+          });
+        }
+
     </script>
 </body>
 </html>

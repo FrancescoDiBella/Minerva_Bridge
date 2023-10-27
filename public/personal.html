@@ -12,7 +12,13 @@
          body, html {
           background-color: #b9d0d3;
           font-family: 'Roboto', sans-serif;
+          height: 100%;
         }
+
+        body{
+          overflow-y: scroll;
+        }
+
         .navbar {
             background-color: #f9f5f6;
         }
@@ -273,7 +279,7 @@
               <a class="side-item" href="#">
                 <i class="fa-solid fa-users fa-xl"></i>
               </a>
-              <a class="side-item" href="#">
+              <a class="side-item" id="side-tracking" href="#">
                 <i class="fa-solid fa-chart-line fa-xl"></i>
               </a>
               <a class="side-item" href="#">
@@ -588,6 +594,14 @@
           card.appendChild(cardContent);
           card.appendChild(table);
           card.appendChild(button);
+
+          //aggiungi button per fare clear del localStorage per il tracking
+          let buttonClear = document.createElement("button");
+          buttonClear.classList.add('btn', 'btn-danger', 'btn-sm', 'float-right', 'mr-2', 'mt-1', 'mb-1');
+          buttonClear.innerHTML = 'Clear Tracking';
+          buttonClear.onclick = function() {localStorage.setItem("tracking", JSON.stringify([]))};
+          card.appendChild(buttonClear);
+
           //aggiungi la card al content-body
           contentBody.appendChild(card);
           //richiama la funzione showUsers(lms.id)
@@ -636,11 +650,58 @@
             button.innerHTML = 'Elimina';
             button.onclick = function() {deleteUser(idAdmin, idLms, data2[i].id)};
             td3.appendChild(button);
+
+            let trackButton = document.createElement("button");
+            trackButton.classList.add('btn', 'btn-primary', 'btn-sm', 'ml-2');
+            trackButton.innerHTML = 'Tracking';
+            trackButton.onclick = function() {addTracking(idAdmin, idLms, data2[i].idUsr, data2[i].idApp3D)};
+            td3.appendChild(trackButton);
+
             tr.appendChild(td1);
             tr.appendChild(td2);
             tr.appendChild(td3);
             tbody.appendChild(tr);
           }
+        }
+
+        async function addTracking(idAdmin, idLms, idUsr, idApp3D){
+          //setta un coockie con l'idUsr e l'idApp3D all'interno dell'oggetto tracking dentro un array di oggetti
+          //chiamato tracking_list che è dentro il coockie tracking
+          //il coockie tracking ha un campo idAdmin e un campo idLms
+          let tracking = JSON.parse(localStorage.getItem("tracking"));
+          console.log("TRACKING", tracking)
+          //controlla se la quadrupla è già presente nel coockie
+          if(tracking != undefined){
+            let found = false;
+            for(let i = 0; i < tracking.length; i++){
+              if(tracking[i].idUsr == idUsr && tracking[i].idApp3D == idApp3D
+                  && tracking[i].idAdmin == idAdmin && tracking[i].idLms == idLms){
+                found = true;
+                break;
+              }
+            }
+            if(!found){
+              //controlla che l'idApp3D della quadrupla che voglio inserire sia uguale a quella di un'altra quadrupla
+              //se è la prima ad essere inserita allora non eseguire il controllo
+              if(tracking.length > 0){
+                let found2 = false;
+                for(let i = 0; i < tracking.length; i++){
+                  if(tracking[i].idApp3D == idApp3D && tracking[i].idAdmin == idAdmin && tracking[i].idLms == idLms){
+                    found2 = true;
+                    break;
+                  }
+                }
+                if(!found2){
+                  alert("Non puoi inserire un utente con un idApp3D diverso da quelli già inseriti");
+                  return;
+                }
+              }
+
+              tracking.push({idUsr: idUsr, idApp3D: idApp3D, idAdmin: idAdmin, idLms: idLms});
+              localStorage.setItem("tracking", JSON.stringify(tracking));
+            }
+          }
+
         }
 
         async function deleteUser(idAdmin, idLms, id){
@@ -975,11 +1036,55 @@
 
           await getLMS(idAdmin);
         }
+
         //richiama la show lms quando la pagina è pronta
         $(document).ready(async function() {
           document.getElementById("side-getLMS").onclick = async function() {getLMS(Cookies.get('idAdmin'))};
+          document.getElementById("side-tracking").onclick = showTracking;
+          localStorage.setItem("tracking", JSON.stringify([]));
            await getLMS(Cookies.get('idAdmin'));
         });
+
+        async function showTracking(){
+          //genera un iframe con src = bridgeURL + '/playerTrack.html'
+          //l'iframe deve essere in una card
+          //la card deve essere nel content-body
+          //la card deve avere un bottone per tornare indietro
+          //il bottone chiama la funzione getLMS()
+          let contentBody = document.getElementById("content-body");
+          let maincard = document.getElementById("main-card");
+          let contentHeader = document.getElementById("content-header");
+          contentHeader.innerHTML = "";
+          contentBody.innerHTML = "";
+          contentBody.style.height = '100%';
+          contentBody.style.width = '100%';
+          maincard.style.height = '100%';
+          maincard.style.width = '100%';
+          //aggiungi una card per aggiungere un lms
+          let iframe = document.createElement("iframe");
+
+          iframe.src = bridgeURL + '/playerTrack.html';
+          iframe.style.width = '100%';
+          iframe.style.height = '100%';
+          iframe.style.border = 'none';
+          iframe.style.margin = '2px';
+          iframe.style.padding = '2px';
+
+          contentBody.appendChild(iframe);
+
+          //aggiungi un bottone per tornare indietro
+          let backButton = document.createElement("button");
+          backButton.classList.add('btn', 'btn-secondary', 'ml-5', 'mt-2', 'button');
+          backButton.innerHTML = 'Torna indietro';
+          backButton.onclick = function() {
+            maincard.style.height = 'auto';
+            maincard.style.width = 'auto';
+            contentBody.style.height = 'auto';
+            contentBody.style.width = 'auto';
+            getLMS(Cookies.get('idAdmin'));
+          };
+          document.getElementById("content-header").appendChild(backButton);
+        }
 
     </script>
 </body>
