@@ -127,6 +127,8 @@ exports.Statements = class Statements {
       //console.log(scorm);
       //se è stato generato un oggetto SCORM
       //invia i dati SCORM
+      const ngsiRes = await this.sendNGSILD(ngsi);
+
       if (scorm != null) {
         const resp = await this.sendSCORMData(
           scorm,
