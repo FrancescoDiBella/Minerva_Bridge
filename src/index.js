@@ -3,7 +3,6 @@ const logger = require("./logger");
 const app = require("./app");
 const port = app.get("port");
 const server = app.listen(port);
-console.log("SOCKETIO", app.io);
 
 process.on("unhandledRejection", (reason, p) =>
   logger.error("Unhandled Rejection at: Promise ", p, reason)
