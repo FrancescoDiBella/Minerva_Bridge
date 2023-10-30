@@ -602,6 +602,13 @@
           buttonClear.onclick = function() {localStorage.setItem("tracking", JSON.stringify([]))};
           card.appendChild(buttonClear);
 
+          //aggiungi button per fare clear del localStorage per il tracking
+          let trackingButton = document.createElement("button");
+          trackingButton.classList.add("btn", "btn-primary", "btn-sm", "float-right", "mr-2", "mt-1", "mb-1");
+          trackingButton.innerHTML = 'Mostra Tracking';
+          trackingButton.onclick = async function() {await showTracking();};
+          card.appendChild(trackingButton);
+
           //aggiungi la card al content-body
           contentBody.appendChild(card);
           //richiama la funzione showUsers(lms.id)
