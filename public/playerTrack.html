@@ -239,13 +239,9 @@ input:checked + .slider:before {
         import { TrackingCanvas } from './js/track-canvas.js';
         console.log(TrackingCanvas)
         // Socket.io is exposed as the `io` global.
-        const bridgeURL = 'minervabridge.sferainnovazione.com';
-        //const bridgeURL = 'localhost';
-        var socket = io();
-        console.log(socket);
+        var socket = io('http://minervabridge.sferainnovazione.com');
         // @feathersjs/client is exposed as the `feathers` global.
         var app = feathers();
-        console.log(app);
         var _positions = new Array();
         var _positions_2 = new Array(); //array di posizioni del secondo player
         var playersPositions = {}; //array di array di posizioni di tutti i player
