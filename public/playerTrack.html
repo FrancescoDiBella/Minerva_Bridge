@@ -239,7 +239,9 @@ input:checked + .slider:before {
         import { TrackingCanvas } from './js/track-canvas.js';
         console.log(TrackingCanvas)
         // Socket.io is exposed as the `io` global.
-        var socket = io('http://localhost:3030');
+        const bridgeURL = 'https://bridge.minerva.sferainnovazione.com';
+        //const bridgeURL = 'http://localhost:3000';
+        var socket = io(bridgeURL);
         // @feathersjs/client is exposed as the `feathers` global.
         var app = feathers();
         var _positions = new Array();
