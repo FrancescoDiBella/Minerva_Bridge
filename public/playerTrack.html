@@ -242,9 +242,10 @@ input:checked + .slider:before {
         const bridgeURL = 'https://minervabridge.sferainnovazione.com';
         //const bridgeURL = 'http://localhost:3000';
         var socket = io();
+        console.log(socket);
         // @feathersjs/client is exposed as the `feathers` global.
         var app = feathers();
-        app.configure(feathers.socketio(socket));
+        console.log(app);
         var _positions = new Array();
         var _positions_2 = new Array(); //array di posizioni del secondo player
         var playersPositions = {}; //array di array di posizioni di tutti i player
