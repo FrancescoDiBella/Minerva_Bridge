@@ -54,7 +54,7 @@ app.use("/", express.static(app.get("public")));
 // Set up Plugins and providers
 app.configure(express.rest());
 app.configure(socketio((io) => io.on("connection", (socket) => socket)));
-
+console.log(socketio());
 app.configure(sequelizeToJsonSchemas);
 
 app.configure(sequelize);
