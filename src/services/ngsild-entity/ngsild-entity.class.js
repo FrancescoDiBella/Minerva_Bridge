@@ -24,7 +24,7 @@ exports.NgsildEntity = class NgsildEntity {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Link': tthis.app.get("ngsilsLink")
+        'Link': this.app.get("ngsilsLink")
       }
     }).then(response => {
       return response.json();
