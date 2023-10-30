@@ -422,6 +422,11 @@ input:checked + .slider:before {
           entitiesService.get('minerva:'+idLms+':'+array_users[0]+':'+idApp3D+':player')
           .then((data) => {
             console.log(data);
+            if(data.errorCode == 404){
+              alert("Non ci sono dati da visualizzare");
+              return;
+            }
+
             let sceneId = data.isContainedIn.object;
 
             entitiesService.get(sceneId)
