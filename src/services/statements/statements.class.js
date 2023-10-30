@@ -529,6 +529,12 @@ exports.Statements = class Statements {
 
     let objs = {};
     for (let i = 0; i < identifiers.length; i++) {
+      let id_p;
+      if(identifiers[i] == "defaultplayer"){
+        id_p = "player";
+      }else{
+        id_p = identifiers[i];
+      }
       objs[identifiers[i]] = {
         id:
           "minerva:" +
@@ -538,7 +544,7 @@ exports.Statements = class Statements {
           ":" +
           idApp3D +
           ":" +
-          identifiers[i],
+          id_p,
         type:  "3DObject" ,
         properties: [],
         realtionships: [],
