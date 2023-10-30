@@ -244,6 +244,7 @@ input:checked + .slider:before {
         var socket = io(bridgeURL);
         // @feathersjs/client is exposed as the `feathers` global.
         var app = feathers();
+        app.configure(feathers.socketio(socket));
         var _positions = new Array();
         var _positions_2 = new Array(); //array di posizioni del secondo player
         var playersPositions = {}; //array di array di posizioni di tutti i player
