@@ -123,6 +123,13 @@ exports.Statements = class Statements {
       return res;
     } else if (statementType == "SCORM") {
       //routine per SCORM
+      const ngsi = await this.generateNGSILD(
+        save_data,
+        idUsr,
+        idLms,
+        idApp3D,
+        authCode
+      );
       const scorm = await this.generateSCORMData(save_data, idUsr);
       //console.log(scorm);
       //se è stato generato un oggetto SCORM
