@@ -245,8 +245,7 @@ input:checked + .slider:before {
         var _positions = new Array();
         var _positions_2 = new Array(); //array di posizioni del secondo player
         var playersPositions = {}; //array di array di posizioni di tutti i player
-        //crea una canvas con un background di una immagine di cui conosco il path
-
+        var playersCanvas = {}; //array di array di canvas di tutti i player
         const container = document.getElementById("container-canvas");
         //seleziona il player
         document.getElementById("player").addEventListener("change", function(){
@@ -298,16 +297,14 @@ input:checked + .slider:before {
             }
 
             let pos = data;
+            //estrai la terza stringa dopo il secondo :
+            //ad esempio: minerva:2:12396:ABCD:player2" -> 12396
+            let idUsr = pos.id.split(":")[2];
             pos.position[0] = (pos.position[0] *70 )+ 700
             pos.position[2] = (pos.position[2] *70 )+ 700
-            if(pos.id == "minerva:2:12396:ABCD:player"){
-              _positions.push(pos);
-              //add a row to the pos-table
-              await draw(p1canvas, p1LinesCanvas, _positions, null,  "red", "purple");
-            }else{
-              _positions_2.push(pos);
-              await draw(p2canvas, p2LinesCanvas, _positions_2, null, "blue", "yellow");
-            }
+
+            playersPositions[idUsr].push(pos);
+            await draw(playersCanvas[idUsr].pointsCanvas, playersCanvas[idUsr].linesCanvas, playersPositions[idUsr], null, playersCanvas[idUsr].linesColor, playersCanvas[idUsr].pointsColor);
         });
 
         socket.on("test-ngsild obj-pos", async (data) => {
@@ -450,6 +447,7 @@ input:checked + .slider:before {
                 pCanvas.render(container_player);
                 pLinesCanvas.render(container_player);
 
+
                 container.appendChild(container_player);
                 //passare le canvas e i colori a manipulateDataPositions
                 entitiesService.get('minerva:'+idLms+':'+user+':'+idApp3D+':player', {query:{temporal:true}})
@@ -459,6 +457,7 @@ input:checked + .slider:before {
                   //genera un colore random per i punti e per le linee che siano in contrasto
                   let pointsColor = '#'+Math.floor(Math.random()*16777215).toString(16);
                   let linesColor = '#'+Math.floor(Math.random()*16777215).toString(16);
+                  playersCanvas[user] = {pointsCanvas: pCanvas, linesCanvas: pLinesCanvas, pointsColor, linesColor};
 
                   manipulateDataPositions(user, data, pointsColor, linesColor, pCanvas, pLinesCanvas);
                 })
