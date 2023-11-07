@@ -2,7 +2,10 @@
 const logger = require("./logger");
 const app = require("./app");
 const port = app.get("port");
-const server = app.listen(port);
+const server = app.listen(port);ù
+
+//stampa inn modo deep l'oggetto app.io
+console.dir(app.io, { depth: null });
 
 process.on("unhandledRejection", (reason, p) =>
   logger.error("Unhandled Rejection at: Promise ", p, reason)
