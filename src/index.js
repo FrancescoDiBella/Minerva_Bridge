@@ -2,7 +2,7 @@
 const logger = require("./logger");
 const app = require("./app");
 const port = app.get("port");
-const server = app.listen(port);ù
+const server = app.listen(port);
 
 //stampa inn modo deep l'oggetto app.io
 console.dir(app.io, { depth: null });
