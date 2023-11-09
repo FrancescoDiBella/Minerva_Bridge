@@ -528,26 +528,13 @@ exports.Statements = class Statements {
     }
 
     let objs = {};
-    for (let i = 0; i < identifiers.length; i++) {
-      let id_p;
-      if(identifiers[i] == "defaultplayer"){
-        id_p = "player";
-      }else{
-        id_p = identifiers[i];
-      }
-      objs[identifiers[i]] = {
-        id:
-          "minerva:" +
-          idLms +
-          ":" +
-          idUsr +
-          ":" +
-          idApp3D +
-          ":" +
-          id_p,
-        type:  "3DObject" ,
+    for (const identifier of identifiers) {
+      const id_p = identifier === "defaultplayer" ? "player" : identifier;
+      objs[identifier] = {
+        id: `minerva:${idLms}:${idUsr}:${idApp3D}:${id_p}`,
+        type: "3DObject",
         properties: [],
-        realtionships: [],
+        relationships: [],
         //context: ["https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.6.jsonld"]
       };
     }
