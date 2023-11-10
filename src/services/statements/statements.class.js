@@ -549,15 +549,43 @@ exports.Statements = class Statements {
           objs[identifier].type = _type;
           continue;
         }
+        //if the property name is "gameover" then fetch the value from the broker, push it to the properties array and continue
+        if(parameter == "gameover"){
+            const baseURL = this.app.get("brokerURL");
+            const resp = await axios.get(
+              baseURL + "ngsi-ld/v1/entities/" +  `minerva:${idLms}:${idUsr}:${idApp3D}:${identifier}/attrs=sessions`,
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                  "Link": this.app.get("ngsildLink")
+                },
+              }
+            );
+            //console.log("NGSILD RESP", resp.data);
+            //il value è un array, pusha il valore value di array[i]
+            const _value = resp.data.sessions.value.push({name: value, timestamp: timestamp});
+            console.log("gameover", _value);
 
-        objs[identifier].properties.push({
-          name: parameter,
-          value: {
-            type: "Property",
-            value: value,
-            observedAt: timestamp,
-          },
-        });
+            objs[identifier].properties.push({
+              name: "sessions",
+              value: {
+                type: "Property",
+                value: _value,
+                observedAt: timestamp,
+              },
+            });
+        }else{
+          objs[identifier].properties.push({
+            name: parameter,
+            value: {
+              type: "Property",
+              value: value,
+              observedAt: timestamp,
+            },
+          });
+        }
+
+
       } else {
         objs[identifier].realtionships.push({
           name: parameter,
