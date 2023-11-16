@@ -1,25 +1,28 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto:400,700"
+      rel="stylesheet"
+    />
     <title>Tracking</title>
     <style>
-      body, html {
-          background-color: #b9d0d3;
-          font-family: 'Roboto', sans-serif;
-        }
+      body,
+      html {
+        background-color: #b9d0d3;
+        font-family: "Roboto", sans-serif;
+      }
 
-
-        body {
-          transform: scale(0.55); /* Applica uno zoom out del 75% */
-          transform-origin: 0 0; /* Specifica il punto di origine per la trasformazione */
-          max-width: 2500px;
-          min-width: 1800px;
-          max-height: 1800px;
-          overflow-y: scroll;
-        }
+      body {
+        transform: scale(0.55); /* Applica uno zoom out del 75% */
+        transform-origin: 0 0; /* Specifica il punto di origine per la trasformazione */
+        max-width: 2500px;
+        min-width: 1800px;
+        max-height: 1800px;
+        overflow-y: scroll;
+      }
       canvas {
         rotate: 180deg;
         border: 1px solid red;
@@ -30,19 +33,19 @@
         position: relative;
       }
 
-      #canvas{
+      #canvas {
         position: relative;
       }
 
-      .player-canvas{
+      .player-canvas {
       }
 
-      .player-canvas-block{
+      .player-canvas-block {
         display: block;
         position: relative;
       }
 
-      .sub-container{
+      .sub-container {
         position: relative;
       }
 
@@ -53,7 +56,7 @@
         left: 0;
       }
 
-      .table-cont{
+      .table-cont {
         width: 100%;
         overflow: auto;
       }
@@ -69,132 +72,139 @@
         border-radius: 5px;
       }
 
-.input-group {
-  margin-bottom: 20px;
-}
+      .input-group {
+        margin-bottom: 20px;
+      }
 
-.input-group label {
-  font-size: 16px;
-  display: block;
-  margin-bottom: 5px;
-}
+      .input-group label {
+        font-size: 16px;
+        display: block;
+        margin-bottom: 5px;
+      }
 
-input[type="range"],
-select,
-input[type="time"],
-input[type="date"] {
-  font-size: 16px;
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-  margin-bottom: 10px;
-}
+      input[type="range"],
+      select,
+      input[type="time"],
+      input[type="date"] {
+        font-size: 16px;
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        margin-bottom: 10px;
+      }
 
-button {
-  background-color: #007bff;
-  color: white;
-  font-size: 16px;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
+      button {
+        background-color: #007bff;
+        color: white;
+        font-size: 16px;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
 
-button:hover {
-  background-color: #0056b3;
-}
+      button:hover {
+        background-color: #0056b3;
+      }
 
-.big{
-  font-size: 22px;
-}
+      .big {
+        font-size: 22px;
+      }
 
+      /* CSS per il bottone switch */
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+      }
 
-/* CSS per il bottone switch */
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 34px;
-}
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
 
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: 0.4s;
+        transition: 0.4s;
+        border-radius: 34px;
+      }
 
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  -webkit-transition: .4s;
-  transition: .4s;
-  border-radius: 34px;
-}
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        -webkit-transition: 0.4s;
+        transition: 0.4s;
+        border-radius: 50%;
+      }
 
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 26px;
-  width: 26px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
-  border-radius: 50%;
-}
+      input:checked + .slider {
+        background-color: #007bff;
+      }
 
-input:checked + .slider {
-  background-color: #007bff;
-}
+      input:focus + .slider {
+        box-shadow: 0 0 1px #007bff;
+      }
 
-input:focus + .slider {
-  box-shadow: 0 0 1px #007bff;
-}
+      input:checked + .slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+      }
 
-input:checked + .slider:before {
-  -webkit-transform: translateX(26px);
-  -ms-transform: translateX(26px);
-  transform: translateX(26px);
-}
+      /* Stile del bottone switch quando è "acceso" */
+      .slider.round {
+        border-radius: 34px;
+      }
 
-/* Stile del bottone switch quando è "acceso" */
-.slider.round {
-  border-radius: 34px;
-}
+      .slider.round:before {
+        border-radius: 50%;
+      }
 
-.slider.round:before {
-  border-radius: 50%;
-}
-
-#container-canvas{
-  flex: 1;
-  width: 1400px;
-  height: 1400px;
-}
+      #container-canvas {
+        flex: 1;
+        width: 1400px;
+        height: 1400px;
+      }
     </style>
-</head>
-<body>
-
+  </head>
+  <body>
     <div class="container" id="container">
-      <div id="container-canvas">
-      </div>
+      <div id="container-canvas"></div>
       <div class="content">
         <div class="input-group">
-          <label for="radius" ><b class="big">Raggio:</b></label>
-          <input type="range" id="radius" min="0" max="800" value="200" class="big" onchange="drawFacade()">
+          <label for="radius"><b class="big">Raggio:</b></label>
+          <input
+            type="range"
+            id="radius"
+            min="0"
+            max="800"
+            value="200"
+            class="big"
+            onchange="drawFacade()"
+          />
         </div>
 
         <div class="input-group">
-          <label for="percent" class="big"><b class="big">Percentuale punti nell'area:</b></label>
+          <label for="percent" class="big"
+            ><b class="big">Percentuale punti nell'area:</b></label
+          >
           <span class="big" id="percent"></span>
         </div>
 
@@ -208,9 +218,11 @@ input:checked + .slider:before {
         </div>
 
         <div class="input-group">
-          <label for="toggleFunction" class="big"><b class="big">Visuale comparata:</b></label>
+          <label for="toggleFunction" class="big"
+            ><b class="big">Visuale comparata:</b></label
+          >
           <label class="switch">
-            <input type="checkbox" id="toggleFunction" checked>
+            <input type="checkbox" id="toggleFunction" checked />
             <span class="slider round"></span>
           </label>
         </div>
@@ -218,269 +230,380 @@ input:checked + .slider:before {
         <div>_____________________________________</div>
         <div class="input-group">
           <label for="time" class="big"><b class="big">Tempo:</b></label>
-          <input type="time" id="time" class="big">
+          <input type="time" id="time" class="big" />
         </div>
 
         <div class="input-group">
           <label for="date" class="big"><b class="big">Data:</b></label>
-          <input type="date" id="date" class="big">
+          <input type="date" id="date" class="big" />
+        </div>
+
+        <div class="input-group">
+          <label for="picker" class="big"><b class="big">Sessioni:</b></label>
+          <select id="picker">
+            <option value="option1" class="big">Option 1</option>
+            <option value="option2" class="big">Option 2</option>
+            <option value="option3" class="big">Option 3</option>
+          </select>
         </div>
 
         <button class="big" onclick="drawFacadeWithFilters()">Filtra</button>
       </div>
-
     </div>
 
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/core-js/2.1.4/core.min.js"></script>
-    <script crossorigin="anonymous" src="//unpkg.com/@feathersjs/client@^4.5.0/dist/feathers.js"></script>
-    <script crossorigin="anonymous" src="//unpkg.com/socket.io-client@^2.3.0/dist/socket.io.js"></script>
+    <script
+      type="text/javascript"
+      src="//cdnjs.cloudflare.com/ajax/libs/core-js/2.1.4/core.min.js"
+    ></script>
+    <script
+      crossorigin="anonymous"
+      src="//unpkg.com/@feathersjs/client@^4.5.0/dist/feathers.js"
+    ></script>
+    <script
+      crossorigin="anonymous"
+      src="//unpkg.com/socket.io-client@^2.3.0/dist/socket.io.js"
+    ></script>
 
     <script type="module">
-        import { TrackingCanvas } from './js/track-canvas.js';
-        console.log(TrackingCanvas)
-        // Socket.io is exposed as the `io` global.
-        var socket = io();
-        // @feathersjs/client is exposed as the `feathers` global.
-        var app = feathers();
-        var _positions = new Array();
-        var _positions_2 = new Array(); //array di posizioni del secondo player
-        var playersPositions = {}; //array di array di posizioni di tutti i player
-        var playersCanvas = {}; //array di array di canvas di tutti i player
-        const container = document.getElementById("container-canvas");
-        //seleziona il player
-        document.getElementById("player").addEventListener("change", function(){
-          console.log("changed");
-          let player = document.getElementById("player").value;
-          if(player == "player1"){
-            //nascondi la canvas del secondo player
-            document.getElementById("player2-canvas").setAttribute("hidden", "hidden")
-            document.getElementById("player2-lines-canvas").setAttribute("hidden", "hidden")
-            //rendi visibile la canvas del primo player
-            document.getElementById("player1-canvas").removeAttribute("hidden")
-            document.getElementById("player1-lines-canvas").removeAttribute("hidden")
-            console.log("p1");
+      import { TrackingCanvas } from "./js/track-canvas.js";
+      document.getElementById("picker").value = "option2";
 
-          }else if(player == "player2"){
-            //nascondi la canvas del primo player
-            document.getElementById("player1-canvas").setAttribute("hidden", "hidden")
-            document.getElementById("player1-lines-canvas").setAttribute("hidden", "hidden")
-            //rendi visibile la canvas del secondo player
-            document.getElementById("player2-canvas").removeAttribute("hidden")
-            document.getElementById("player2-lines-canvas").removeAttribute("hidden")
-            console.log("p2");
+      console.log(TrackingCanvas);
+      // Socket.io is exposed as the `io` global.
+      var socket = io();
+      // @feathersjs/client is exposed as the `feathers` global.
+      var app = feathers();
+      var _positions = new Array();
+      var _positions_2 = new Array(); //array di posizioni del secondo player
+      var playersPositions = {}; //array di array di posizioni di tutti i player
+      var playersCanvas = {}; //array di array di canvas di tutti i player
+      const container = document.getElementById("container-canvas");
+      //seleziona il player
+      document.getElementById("player").addEventListener("change", function () {
+        console.log("changed");
+        let player = document.getElementById("player").value;
+        if (player == "player1") {
+          //nascondi la canvas del secondo player
+          document
+            .getElementById("player2-canvas")
+            .setAttribute("hidden", "hidden");
+          document
+            .getElementById("player2-lines-canvas")
+            .setAttribute("hidden", "hidden");
+          //rendi visibile la canvas del primo player
+          document.getElementById("player1-canvas").removeAttribute("hidden");
+          document
+            .getElementById("player1-lines-canvas")
+            .removeAttribute("hidden");
+          console.log("p1");
+        } else if (player == "player2") {
+          //nascondi la canvas del primo player
+          document
+            .getElementById("player1-canvas")
+            .setAttribute("hidden", "hidden");
+          document
+            .getElementById("player1-lines-canvas")
+            .setAttribute("hidden", "hidden");
+          //rendi visibile la canvas del secondo player
+          document.getElementById("player2-canvas").removeAttribute("hidden");
+          document
+            .getElementById("player2-lines-canvas")
+            .removeAttribute("hidden");
+          console.log("p2");
+        } else {
+          //rendi visibile la canvas del primo player
+          document.getElementById("player1-canvas").removeAttribute("hidden");
+          document
+            .getElementById("player1-lines-canvas")
+            .removeAttribute("hidden");
+          //rendi visibile la canvas del secondo player
+          document.getElementById("player2-canvas").removeAttribute("hidden");
+          document
+            .getElementById("player2-lines-canvas")
+            .removeAttribute("hidden");
+          console.log("every1");
+        }
+      });
 
-          }else{
-            //rendi visibile la canvas del primo player
-            document.getElementById("player1-canvas").removeAttribute("hidden")
-            document.getElementById("player1-lines-canvas").removeAttribute("hidden")
-            //rendi visibile la canvas del secondo player
-            document.getElementById("player2-canvas").removeAttribute("hidden")
-            document.getElementById("player2-lines-canvas").removeAttribute("hidden")
-            console.log("every1");
+      var center = { x: 0, y: 0 };
+
+      app.configure(feathers.socketio(socket));
+      const entitiesService = app.service("entity");
+
+      socket.on("connect", () => console.log("Connected to server."));
+
+      socket.on("test-ngsild created", async (data) => {
+        try {
+          if (data.type != undefined) {
+            return;
           }
+        } catch (e) {
+          return;
+        }
+
+        let pos = data;
+        //estrai la terza stringa dopo il secondo :
+        //ad esempio: minerva:2:12396:ABCD:player2" -> 12396
+        let idUsr = pos.id.split(":")[2];
+        pos.position[0] = pos.position[0] * 70 + 700;
+        pos.position[2] = pos.position[2] * 70 + 700;
+
+        playersPositions[idUsr].push(pos);
+        await draw(
+          playersCanvas[idUsr].pointsCanvas,
+          playersCanvas[idUsr].linesCanvas,
+          playersPositions[idUsr],
+          null,
+          playersCanvas[idUsr].linesColor,
+          playersCanvas[idUsr].pointsColor
+        );
+      });
+
+      socket.on("test-ngsild obj-pos", async (data) => {
+        //disegna un cerchio colore verde di raggio 50 usando data.position[0] e data.position[2]
+        console.log("OBJ VERDE", data);
+        //await drawGreenCircle(data.position);
+      });
+
+      function pushPos(pos) {
+        _positions.push(pos);
+      }
+
+      function getLength() {
+        return _positions.length;
+      }
+
+      //canvas.width = 1500;
+      //canvas.height = 1500;
+
+      var background = new Image();
+      background.src = "map.png";
+
+      var idAdmin, idApp3D, idLms;
+      var array_users = [];
+
+      async function drawFacade() {
+        await draw(p1_ctx, _positions, null, "red", "purple");
+        await draw(p2_ctx, _positions_2, null, "blue", "yellow");
+      }
+
+      async function drawFacadeWithFilters() {
+        await draw(p1_ctx, _positions, null, "red", "purple");
+        await draw(p2_ctx, _positions_2, null, "blue", "yellow");
+      }
+
+      function toggleVisual() {
+        let _canvas = document.getElementsByClassName("player-canvas");
+
+        Array.from(_canvas).forEach((canvas) => {
+          canvas.classList.toggle("secondary-canvas");
+          canvas.classList.toggle("player-canvas-block");
+        });
+      }
+
+      async function draw(
+        pointsCanvas,
+        linesCanvas,
+        positions,
+        date_time,
+        rail_color,
+        point_color
+      ) {
+        console.log("draw", positions);
+        const point1 = {
+          x: positions[positions.length - 2].position[0],
+          y: positions[positions.length - 2].position[2],
+        };
+
+        const point2 = {
+          x: positions[positions.length - 1].position[0],
+          y: positions[positions.length - 1].position[2],
+        };
+
+        pointsCanvas.drawPoints([point1, point2], {
+          color: point_color,
+          radius: 10,
+        });
+        linesCanvas.drawLines([point1, point2], {
+          lineColor: rail_color,
+          lineWidth: 4,
+        });
+      }
+
+      async function drawAllPoints(
+        pointsCanvas,
+        linesCanvas,
+        positions,
+        rail_color,
+        point_color
+      ) {
+        let points = [];
+
+        positions.forEach((pos) => {
+          points.push({ x: pos.position[0], y: pos.position[2] });
         });
 
-        var center = {x: 0, y: 0};
+        pointsCanvas.drawPoints(points, { color: point_color, radius: 10 });
+        linesCanvas.drawLines(points, { lineColor: rail_color, lineWidth: 4 });
 
-        app.configure(feathers.socketio(socket));
-        const entitiesService = app.service('entity');
+        //elimina l'array points
+        points = [];
+      }
 
-        socket.on('connect', () => console.log('Connected to server.'));
+      async function manipulateDataPositions(
+        idUsr,
+        data,
+        pointsColor,
+        linesColor,
+        p1canvas,
+        p1LinesCanvas
+      ) {
+        let pos = [];
 
-        socket.on("test-ngsild created", async (data) => {
-            try{
-              if(data.type != undefined) {
-                return;
-              }
-            }catch(e){
-              return;
-            }
+        for (let i = 0; i < data.position.length; i++) {
+          pos.push({ position: [] });
+          pos[i].position[0] = data.position[i].value[0] * 70 + 700;
+          pos[i].position[2] = data.position[i].value[2] * 70 + 700;
+          playersPositions[idUsr].push(pos[i]);
+        }
+        await drawAllPoints(
+          p1canvas,
+          p1LinesCanvas,
+          playersPositions[idUsr],
+          linesColor,
+          pointsColor
+        );
+      }
 
-            let pos = data;
-            //estrai la terza stringa dopo il secondo :
-            //ad esempio: minerva:2:12396:ABCD:player2" -> 12396
-            let idUsr = pos.id.split(":")[2];
-            pos.position[0] = (pos.position[0] *70 )+ 700
-            pos.position[2] = (pos.position[2] *70 )+ 700
+      //quando la pagina è caricata
+      window.onload = async function () {
+        //carica i dati dal local storage
+        let srt = localStorage.getItem("tracking");
+        const tracking_list = JSON.parse(srt);
+        console.log(tracking_list);
+        idAdmin = tracking_list[0].idAdmin;
+        idLms = tracking_list[0].idLms;
+        idApp3D = tracking_list[0].idApp3D;
 
-            playersPositions[idUsr].push(pos);
-            await draw(playersCanvas[idUsr].pointsCanvas, playersCanvas[idUsr].linesCanvas, playersPositions[idUsr], null, playersCanvas[idUsr].linesColor, playersCanvas[idUsr].pointsColor);
+        let compare = document.getElementById("toggleFunction");
+        compare.addEventListener("click", toggleVisual);
+
+        tracking_list.forEach((track) => {
+          array_users.push(track.idUsr);
         });
 
-        socket.on("test-ngsild obj-pos", async (data) => {
-            //disegna un cerchio colore verde di raggio 50 usando data.position[0] e data.position[2]
-            console.log("OBJ VERDE", data);
-            //await drawGreenCircle(data.position);
-        });
+        //crea una nuova subscription per ogni idUsr+idApp3D e salva i dati in un array
+        //Q1: richiamare API bridge o contattare direttamente il broker?
+        //A1.1: Per la fase prototype contattare direttamente il broker
+        //A1.2: Per la fase finale contattare il bridge (molto probabilmente, più sicuro e veloce)
 
-        function pushPos(pos){
-          _positions.push(pos);
-        }
+        //richiesta al broker
+        //const sub_resp = await fetch('https://broker.minerva.sferainnovazione.com/ngsi-ld/v1/entities/urn:ngsi-ld:Scene:002');
+        //ricreare la richiesta fatta sopra ma questa volta al bridge
 
-        function getLength(){
-          return _positions.length;
-        }
-
-        //canvas.width = 1500;
-        //canvas.height = 1500;
-
-
-
-        var background = new Image();
-        background.src = "map.png";
-
-        var idAdmin, idApp3D, idLms;
-        var array_users = [];
-
-        async function drawFacade(){
-          await draw(p1_ctx,_positions, null, "red", "purple");
-          await draw(p2_ctx,_positions_2, null,  "blue", "yellow");
-        }
-
-        async function drawFacadeWithFilters(){
-          await draw(p1_ctx,_positions, null, "red", "purple");
-          await draw(p2_ctx,_positions_2, null,  "blue", "yellow");
-        }
-
-        function toggleVisual(){
-          let _canvas = document.getElementsByClassName("player-canvas");
-
-          Array.from(_canvas).forEach((canvas) => {
-            canvas.classList.toggle("secondary-canvas");
-            canvas.classList.toggle("player-canvas-block");
-          });
-        }
-
-        async function  draw(pointsCanvas, linesCanvas, positions, date_time, rail_color, point_color){
-          console.log("draw", positions);
-          const point1 = {
-            x: positions[positions.length - 2].position[0],
-            y: positions[positions.length - 2].position[2]
-          }
-
-          const point2 = {
-            x: positions[positions.length - 1].position[0],
-            y: positions[positions.length - 1].position[2]
-          }
-
-          pointsCanvas.drawPoints([point1, point2], {color: point_color, radius: 10});
-          linesCanvas.drawLines([point1, point2], {lineColor: rail_color, lineWidth: 4});
-        }
-
-        async function drawAllPoints(pointsCanvas, linesCanvas, positions, rail_color, point_color){
-          let points =[];
-
-          positions.forEach((pos) => {
-            points.push({x: pos.position[0], y: pos.position[2]});
-          });
-
-          pointsCanvas.drawPoints(points, {color: point_color, radius: 10});
-          linesCanvas.drawLines(points, {lineColor: rail_color, lineWidth: 4});
-
-          //elimina l'array points
-          points = [];
-        }
-
-        async function manipulateDataPositions(idUsr, data, pointsColor, linesColor, p1canvas, p1LinesCanvas){
-          let pos = [];
-
-          for(let i = 0; i < data.position.length; i++){
-            pos.push({position: []});
-            pos[i].position[0] = (data.position[i].value[0] *70 )+ 700;
-            pos[i].position[2] = (data.position[i].value[2] *70 )+ 700;
-            playersPositions[idUsr].push(pos[i]);
-          }
-          await drawAllPoints(p1canvas, p1LinesCanvas, playersPositions[idUsr], linesColor, pointsColor);
-        }
-
-        //quando la pagina è caricata
-        window.onload = async function(){
-          //carica i dati dal local storage
-          let srt = localStorage.getItem("tracking");
-          const tracking_list = JSON.parse(srt);
-          console.log(tracking_list);
-          idAdmin = tracking_list[0].idAdmin;
-          idLms = tracking_list[0].idLms;
-          idApp3D = tracking_list[0].idApp3D;
-
-          let compare = document.getElementById("toggleFunction");
-          compare.addEventListener("click", toggleVisual);
-
-          tracking_list.forEach((track) => {
-            array_users.push(track.idUsr);
-          });
-
-          //crea una nuova subscription per ogni idUsr+idApp3D e salva i dati in un array
-          //Q1: richiamare API bridge o contattare direttamente il broker?
-          //A1.1: Per la fase prototype contattare direttamente il broker
-          //A1.2: Per la fase finale contattare il bridge (molto probabilmente, più sicuro e veloce)
-
-          //richiesta al broker
-          //const sub_resp = await fetch('https://broker.minerva.sferainnovazione.com/ngsi-ld/v1/entities/urn:ngsi-ld:Scene:002');
-          //ricreare la richiesta fatta sopra ma questa volta al bridge
-
-          entitiesService.get('minerva:'+idLms+':'+array_users[0]+':'+idApp3D+':player')
+        entitiesService
+          .get(
+            "minerva:" +
+              idLms +
+              ":" +
+              array_users[0] +
+              ":" +
+              idApp3D +
+              ":player"
+          )
           .then((data) => {
             console.log(data);
-            if(data.errorCode == 404){
+            if (data.errorCode == 404) {
               alert("Non ci sono dati da visualizzare");
               return;
             }
 
             let sceneId = data.isContainedIn.object;
 
-            entitiesService.get(sceneId)
-            .then((data)=>{
-              console.log(data);
-              //setta width e height della canvas usando i dati del json moltiplicati per 70
-              center.x = data.length.value/2;
-              center.y = data.height.value/2;
-              let width = (data.length.value * 70);
-              let height = (data.height.value * 70);
-              //fetchare i punti di tutti gli utenti nella userlist e visualizzarli con draw
-              array_users.forEach((user)=>{
-                //creare una nuova coppia di canvas per ogni utente
-                //aggiungere le due canvas al container
-                //crea un div con id "container-canvas-p-1"
-                const container_player = document.createElement("div");
-                container_player.id = "container-canvas-player-"+user;
-                container_player.classList.add("sub-container");
+            entitiesService
+              .get(sceneId)
+              .then((data) => {
+                console.log(data);
+                //setta width e height della canvas usando i dati del json moltiplicati per 70
+                center.x = data.length.value / 2;
+                center.y = data.height.value / 2;
+                let width = data.length.value * 70;
+                let height = data.height.value * 70;
+                //fetchare i punti di tutti gli utenti nella userlist e visualizzarli con draw
+                array_users.forEach((user) => {
+                  //creare una nuova coppia di canvas per ogni utente
+                  //aggiungere le due canvas al container
+                  //crea un div con id "container-canvas-p-1"
+                  const container_player = document.createElement("div");
+                  container_player.id = "container-canvas-player-" + user;
+                  container_player.classList.add("sub-container");
 
-                var pCanvas = new TrackingCanvas(width, height, "player-"+user+"-canvas", {zIndex: 4, classList:["player-canvas"]});
-                var pLinesCanvas = new TrackingCanvas(width, height, "player-"+user+"-lines-canvas", {zIndex: 2, classList:[]});
+                  var pCanvas = new TrackingCanvas(
+                    width,
+                    height,
+                    "player-" + user + "-canvas",
+                    { zIndex: 4, classList: ["player-canvas"] }
+                  );
+                  var pLinesCanvas = new TrackingCanvas(
+                    width,
+                    height,
+                    "player-" + user + "-lines-canvas",
+                    { zIndex: 2, classList: [] }
+                  );
 
-                pCanvas.render(container_player);
-                pLinesCanvas.render(container_player);
+                  pCanvas.render(container_player);
+                  pLinesCanvas.render(container_player);
 
+                  container.appendChild(container_player);
+                  //passare le canvas e i colori a manipulateDataPositions
+                  entitiesService
+                    .get(
+                      "minerva:" +
+                        idLms +
+                        ":" +
+                        user +
+                        ":" +
+                        idApp3D +
+                        ":player",
+                      { query: { temporal: true } }
+                    )
+                    .then((data) => {
+                      console.log(data);
+                      playersPositions[user] = [];
+                      //genera un colore random per i punti e per le linee che siano in contrasto
+                      let pointsColor =
+                        "#" + Math.floor(Math.random() * 16777215).toString(16);
+                      let linesColor =
+                        "#" + Math.floor(Math.random() * 16777215).toString(16);
+                      playersCanvas[user] = {
+                        pointsCanvas: pCanvas,
+                        linesCanvas: pLinesCanvas,
+                        pointsColor,
+                        linesColor,
+                      };
 
-                container.appendChild(container_player);
-                //passare le canvas e i colori a manipulateDataPositions
-                entitiesService.get('minerva:'+idLms+':'+user+':'+idApp3D+':player', {query:{temporal:true}})
-                .then((data) => {
-                  console.log(data);
-                  playersPositions[user] = [];
-                  //genera un colore random per i punti e per le linee che siano in contrasto
-                  let pointsColor = '#'+Math.floor(Math.random()*16777215).toString(16);
-                  let linesColor = '#'+Math.floor(Math.random()*16777215).toString(16);
-                  playersCanvas[user] = {pointsCanvas: pCanvas, linesCanvas: pLinesCanvas, pointsColor, linesColor};
-
-                  manipulateDataPositions(user, data, pointsColor, linesColor, pCanvas, pLinesCanvas);
-                })
-                .catch((error)=>{
-                  console.log(error);
+                      manipulateDataPositions(
+                        user,
+                        data,
+                        pointsColor,
+                        linesColor,
+                        pCanvas,
+                        pLinesCanvas
+                      );
+                    })
+                    .catch((error) => {
+                      console.log(error);
+                    });
                 });
               })
-
-            })
-            .catch((error)=>{
-              console.log(error);
-            });
+              .catch((error) => {
+                console.log(error);
+              });
           })
-          .catch((error)=>{
+          .catch((error) => {
             console.log(error);
           });
-        }
-
+      };
     </script>
-</body>
+  </body>
 </html>
