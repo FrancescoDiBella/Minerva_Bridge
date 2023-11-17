@@ -197,7 +197,6 @@
             max="800"
             value="200"
             class="big"
-            onchange="drawFacade()"
           />
         </div>
 
@@ -235,13 +234,7 @@
           <input type="date" id="date" class="big" />
         </div>
 
-        <div class="input-group">
-          <label for="picker" class="big"><b class="big">Sessioni:</b></label>
-          <select id="picker">
-            <option value="option1" class="big">Option 1</option>
-            <option value="option2" class="big">Option 2</option>
-            <option value="option3" class="big">Option 3</option>
-          </select>
+        <div class="input-group" id="sessions-group">
         </div>
 
         <button class="big" onclick="drawFacadeWithFilters()">Filtra</button>
@@ -263,8 +256,6 @@
 
     <script type="module">
       import { TrackingCanvas } from "./js/track-canvas.js";
-      document.getElementById("picker").value = "option2";
-
       console.log(TrackingCanvas);
       // Socket.io is exposed as the `io` global.
       var socket = io("ws://18.132.252.44:3030");
@@ -278,6 +269,16 @@
       var array_users = [];
 
       const container = document.getElementById("container-canvas");
+      //crea una canvas dentro il canvas-container per disegnare il cerchio verde
+      const greenCircleCanvas = document.createElement("canvas");
+      greenCircleCanvas.id = "green-circle-canvas";
+      greenCircleCanvas.style.zIndex = 9999;
+      greenCircleCanvas.width = 1400;
+      greenCircleCanvas.height = 1400;
+      greenCircleCanvas.classList.add('secondary-canvas');
+      container.appendChild(greenCircleCanvas);
+
+
       //seleziona il player
       document.getElementById("select-player").addEventListener("change", function () {
         console.log("changed");
@@ -354,6 +355,7 @@
         await draw(p1_ctx, _positions, null, "red", "purple");
         await draw(p2_ctx, _positions_2, null, "blue", "yellow");
       }
+
 
       async function drawFacadeWithFilters() {
         await draw(p1_ctx, _positions, null, "red", "purple");
@@ -453,6 +455,36 @@
         idLms = tracking_list[0].idLms;
         idApp3D = tracking_list[0].idApp3D;
 
+        //aggiungi un event listener allo slider
+        let slider = document.getElementById("radius");
+
+        slider.oninput = function () {
+          //draw a green circle, get the radius from the slider and center from the center object
+          let radius = document.getElementById("radius").value;
+          let canvas = document.getElementById("green-circle-canvas");
+          let ctx = canvas.getContext("2d");
+          //clear the canvas
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.beginPath();
+          ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI, false);
+          ctx.lineWidth = 5;
+          ctx.strokeStyle = "#003300";
+          ctx.stroke();
+        };
+
+        slider.onchange = function () {
+          //draw a green circle, get the radius from the slider and center from the center object
+          let radius = document.getElementById("radius").value;
+          let canvas = document.getElementById("green-circle-canvas");
+          let ctx = canvas.getContext("2d");
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.beginPath();
+          ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI, false);
+          ctx.lineWidth = 5;
+          ctx.strokeStyle = "#003300";
+          ctx.stroke();
+        };
+
         let compare = document.getElementById("toggleFunction");
         compare.addEventListener("click", toggleVisual);
 
@@ -488,10 +520,11 @@
               .then((data) => {
                 console.log(data);
                 //setta width e height della canvas usando i dati del json moltiplicati per 70
-                center.x = data.length.value / 2;
-                center.y = data.height.value / 2;
+
                 let width = data.length.value * 70;
                 let height = data.height.value * 70;
+                center.x = width / 2;
+                center.y = height / 2;
                 //fetchare i punti di tutti gli utenti nella userlist e visualizzarli con draw
                 array_users.forEach((user) => {
                   //creare una nuova coppia di canvas per ogni utente
@@ -566,6 +599,39 @@
           .catch((error) => {
             console.log(error);
           });
+
+        //aggiungi un select per ogni player per selezionare la sessione
+        array_users.forEach((user) => {
+          //Aggiungi una label con il nome dell'utente
+          const label = document.createElement("label");
+          label.for = "picker-session-" + user;
+          const span = document.createElement("b");
+          span.innerHTML = "Sessioni Player " + user+":";
+          span.classList.add("big");
+          const select = document.createElement("select");
+          select.id = "picker-session-" + user;
+          select.classList.add("big");
+          document.getElementById("sessions-group").appendChild(label);
+          label.appendChild(span);
+          document.getElementById("sessions-group").appendChild(select);
+
+          //aggiungi le sessioni al select
+          //aggiungi 3 sessioni di prova
+          let option = document.createElement("option");
+          option.value = "1";
+          option.text = "Sessione 1";
+          select.appendChild(option);
+          option = document.createElement("option");
+          option.value = "2";
+          option.text = "Sessione 2";
+          select.appendChild(option);
+          option = document.createElement("option");
+          option.value = "3";
+          option.text = "Sessione 3";
+          select.appendChild(option);
+
+
+        });
 
         //aggiungi al select i nomi degli utenti
         const selectPlayer = document.getElementById("select-player");
