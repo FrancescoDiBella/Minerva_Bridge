@@ -58,7 +58,7 @@ exports.Statements = class Statements {
     const { idApp3D } = payload;
 
     const save_data = data;
-
+    console.log(save_data);
     const getAuthModel = getAuth(this.app);
     const lmsModel = _lmsModel(this.app);
     //const getHook = hook(this.app);
@@ -91,10 +91,11 @@ exports.Statements = class Statements {
     }
 
     var statements = [];
+    console.log("statementType", statementType);
     if (statementType == "XAPI") {
       //routine per XAPI
       for (let i = 0; i < save_data.length; i++) {
-        //routine per statement
+        //routine per statement XAPI
         statements[i] = await this.generateXAPIStatement(
           save_data[i],
           idUsr,
@@ -119,7 +120,7 @@ exports.Statements = class Statements {
         authCode
       );
       const ngsiRes = await this.sendNGSILD(ngsi);
-      //console.log(ngsiRes);
+      console.log("NGSILD RESP", ngsiRes);
       return res;
     } else if (statementType == "SCORM") {
       //routine per SCORM
@@ -135,7 +136,7 @@ exports.Statements = class Statements {
       //se è stato generato un oggetto SCORM
       //invia i dati SCORM
       const ngsiRes = await this.sendNGSILD(ngsi);
-
+      console.log("NGSILD RESP", ngsiRes);
       if (scorm != null) {
         const resp = await this.sendSCORMData(
           scorm,
@@ -538,11 +539,12 @@ exports.Statements = class Statements {
         //context: ["https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.6.jsonld"]
       };
     }
-
+    console.log("ARRAY: ", array);
     for (let i = 0; i < array.length; i++) {
       const { identifier, parameter, object, value, timestamp } = array[i];
       let _type = undefined;
       if (value != undefined) {
+        console.log("value", value);
         //override type if it is specified
         if (parameter == "_type") {
           _type = value;
@@ -590,7 +592,9 @@ exports.Statements = class Statements {
           });
         }
       } else {
-        objs[identifier].realtionships.push({
+        console.log("object", object);
+
+        objs[identifier].relationships.push({
           name: parameter,
           value: {
             type: "Relationship",
@@ -598,6 +602,8 @@ exports.Statements = class Statements {
               "minerva:" + idLms + ":" + idUsr + ":" + idApp3D + ":" + object,
           },
         });
+
+        console.log("minerva:" + idLms + ":" + idUsr + ":" + idApp3D + ":" + object);
       }
     }
 
@@ -609,17 +615,17 @@ exports.Statements = class Statements {
         objs[i].id,
         objs[i].type,
         objs[i].properties,
-        objs[i].realtionships
+        objs[i].relationships
       );
       ngsildObjs[j] = ngsi.generateEntity();
-      //console.log(ngsildObjs[i]);
+      console.log("debug ngsild", ngsildObjs[i]);
     }
     return ngsildObjs;
   }
 
   async sendNGSILD(ngsildObjs) {
     const baseURL = this.app.get("brokerURL");
-    //console.log(ngsildObjs);
+    console.log(ngsildObjs);
     try {
       const resp = await axios.post(
         baseURL + "ngsi-ld/v1/entityOperations/upsert",
@@ -631,10 +637,10 @@ exports.Statements = class Statements {
         }
       );
 
-      //console.log("NGSILD RESP", resp.data);
+      console.log("NGSILD RESP", resp.data);
       return resp;
     } catch (e) {
-      //console.log("ERRORE NGSILD", e);
+      console.log("ERRORE NGSILD", e);
       return { error: e };
     }
   }
