@@ -258,7 +258,7 @@
       import { TrackingCanvas } from "./js/track-canvas.js";
       console.log(TrackingCanvas);
       // Socket.io is exposed as the `io` global.
-      var socket = io("ws://18.132.252.44:3030");
+      var socket = io("wss://wsminervabridge.sferainnovazione.com");
       // @feathersjs/client is exposed as the `feathers` global.
       var app = feathers();
       var _positions = new Array();
@@ -484,6 +484,26 @@
           ctx.strokeStyle = "#003300";
           ctx.stroke();
         };
+
+        //aggiungi event listener al alla canvas, quando clicchi su un punto disegna un cerchio verde  centrato sul punto, deve aggiornare quindi l'oggetto center
+        let canvas = document.getElementById("green-circle-canvas");
+        canvas.addEventListener("click", function (e) {
+          let rect = canvas.getBoundingClientRect();
+          //ruota le coordinate di 180 gradi
+          let x = e.clientX - rect.left;
+          let y = e.clientY - rect.top;
+
+          center.x = x;
+          center.y = y;
+          let radius = document.getElementById("radius").value;
+          let ctx = canvas.getContext("2d");
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.beginPath();
+          ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI, false);
+          ctx.lineWidth = 5;
+          ctx.strokeStyle = "#003300";
+          ctx.stroke();
+        });
 
         let compare = document.getElementById("toggleFunction");
         compare.addEventListener("click", toggleVisual);
