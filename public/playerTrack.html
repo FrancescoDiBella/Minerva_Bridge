@@ -210,10 +210,7 @@
 
         <div class="input-group">
           <label for="player" class="big"><b class="big">Giocatore:</b></label>
-          <select name="player" class="big" id="player">
-            <option value="player1">Player 1</option>
-            <option value="player2">Player 2</option>
-            <option value="everyone">Tutti</option>
+          <select name="player" class="big" id="select-player">
           </select>
         </div>
 
@@ -277,51 +274,31 @@
       var _positions_2 = new Array(); //array di posizioni del secondo player
       var playersPositions = {}; //array di array di posizioni di tutti i player
       var playersCanvas = {}; //array di array di canvas di tutti i player
+      var idAdmin, idApp3D, idLms;
+      var array_users = [];
+
       const container = document.getElementById("container-canvas");
       //seleziona il player
-      document.getElementById("player").addEventListener("change", function () {
+      document.getElementById("select-player").addEventListener("change", function () {
         console.log("changed");
-        let player = document.getElementById("player").value;
-        if (player == "player1") {
-          //nascondi la canvas del secondo player
-          document
-            .getElementById("player2-canvas")
-            .setAttribute("hidden", "hidden");
-          document
-            .getElementById("player2-lines-canvas")
-            .setAttribute("hidden", "hidden");
-          //rendi visibile la canvas del primo player
-          document.getElementById("player1-canvas").removeAttribute("hidden");
-          document
-            .getElementById("player1-lines-canvas")
-            .removeAttribute("hidden");
-          console.log("p1");
-        } else if (player == "player2") {
-          //nascondi la canvas del primo player
-          document
-            .getElementById("player1-canvas")
-            .setAttribute("hidden", "hidden");
-          document
-            .getElementById("player1-lines-canvas")
-            .setAttribute("hidden", "hidden");
-          //rendi visibile la canvas del secondo player
-          document.getElementById("player2-canvas").removeAttribute("hidden");
-          document
-            .getElementById("player2-lines-canvas")
-            .removeAttribute("hidden");
-          console.log("p2");
-        } else {
-          //rendi visibile la canvas del primo player
-          document.getElementById("player1-canvas").removeAttribute("hidden");
-          document
-            .getElementById("player1-lines-canvas")
-            .removeAttribute("hidden");
-          //rendi visibile la canvas del secondo player
-          document.getElementById("player2-canvas").removeAttribute("hidden");
-          document
-            .getElementById("player2-lines-canvas")
-            .removeAttribute("hidden");
-          console.log("every1");
+        let player = document.getElementById("select-player").value;
+
+        if(player == "everyone"){
+          array_users.forEach((user) => {
+            document
+            .getElementById("container-canvas-player-"+user).removeAttribute("hidden");
+          });
+          return;
+        }else{
+          array_users.forEach((user) => {
+            if(user != player){
+              document
+              .getElementById("container-canvas-player-"+user).setAttribute("hidden", "hidden");
+            }else{
+              document
+              .getElementById("container-canvas-player-"+user).removeAttribute("hidden");
+            }
+          });
         }
       });
 
@@ -372,15 +349,6 @@
       function getLength() {
         return _positions.length;
       }
-
-      //canvas.width = 1500;
-      //canvas.height = 1500;
-
-      var background = new Image();
-      background.src = "map.png";
-
-      var idAdmin, idApp3D, idLms;
-      var array_users = [];
 
       async function drawFacade() {
         await draw(p1_ctx, _positions, null, "red", "purple");
@@ -492,11 +460,6 @@
           array_users.push(track.idUsr);
         });
 
-        //crea una nuova subscription per ogni idUsr+idApp3D e salva i dati in un array
-        //Q1: richiamare API bridge o contattare direttamente il broker?
-        //A1.1: Per la fase prototype contattare direttamente il broker
-        //A1.2: Per la fase finale contattare il bridge (molto probabilmente, più sicuro e veloce)
-
         //richiesta al broker
         //const sub_resp = await fetch('https://broker.minerva.sferainnovazione.com/ngsi-ld/v1/entities/urn:ngsi-ld:Scene:002');
         //ricreare la richiesta fatta sopra ma questa volta al bridge
@@ -603,6 +566,21 @@
           .catch((error) => {
             console.log(error);
           });
+
+        //aggiungi al select i nomi degli utenti
+        const selectPlayer = document.getElementById("select-player");
+        array_users.forEach((user) => {
+          let option = document.createElement("option");
+          option.value = user;
+          option.text = "Player " + user;
+          selectPlayer.appendChild(option);
+        });
+        let option = document.createElement("option");
+        option.value = "everyone";
+        option.text = "Tutti";
+        selectPlayer.appendChild(option);
+        //setta come default l'opzione everyone
+        selectPlayer.value = "everyone";
       };
     </script>
   </body>
