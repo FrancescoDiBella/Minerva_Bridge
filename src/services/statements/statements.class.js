@@ -112,30 +112,37 @@ exports.Statements = class Statements {
         key,
         secret
       );
-      const ngsi = await this.generateNGSILD(
+      const ngsiArray = await this.generateNGSILD(
         save_data,
         idUsr,
         idLms,
         idApp3D,
         authCode
       );
-      const ngsiRes = await this.sendNGSILD(ngsi);
+      const ngsi = ngsiArray.ngsildObjs;
+      const mod = ngsiArray.sendModId;
+      console.log("NGSILD", ngsi);
+      console.log("MOD", mod);
+      const ngsiRes = await this.sendNGSILD(ngsi, mod);
       console.log("NGSILD RESP", ngsiRes);
       return res;
     } else if (statementType == "SCORM") {
       //routine per SCORM
-      const ngsi = await this.generateNGSILD(
+      const ngsiArray = await this.generateNGSILD(
         save_data,
         idUsr,
         idLms,
         idApp3D,
         authCode
       );
+      const ngsi = ngsiArray.ngsildObjs;
+      const mod = ngsiArray.sendModId;
+
       const scorm = await this.generateSCORMData(save_data, idUsr);
       //console.log(scorm);
       //se è stato generato un oggetto SCORM
       //invia i dati SCORM
-      const ngsiRes = await this.sendNGSILD(ngsi);
+      const ngsiRes = await this.sendNGSILD(ngsi, mod);
       console.log("NGSILD RESP", ngsiRes);
       if (scorm != null) {
         const resp = await this.sendSCORMData(
@@ -522,6 +529,9 @@ exports.Statements = class Statements {
   async generateNGSILD(array, idUsr, idLms, idApp3D, authCode) {
     //genera NGSILD
     let identifiers = [];
+    let sendModId = [];
+
+    // Aggiungi gli identificatori unici presenti nell'array `array` all'array `identifiers`
     for (let i = 0; i < array.length; i++) {
       if (identifiers.indexOf(array[i].identifier) == -1) {
         identifiers.push(array[i].identifier);
@@ -530,57 +540,109 @@ exports.Statements = class Statements {
 
     let objs = {};
     for (const identifier of identifiers) {
+      //per ogni identificatore crea una coppia chiave valore sull'array sendModId
+      //che contiene l'identificatore e una stringa che indica la modalità di invio
+      //di default "upsert"
+
+      sendModId[identifier] = "upsert";
       const id_p = identifier === "defaultplayer" ? "player" : identifier;
+      //type_ è "Player" se l'identificatore è "defaultplayer", se è "scene" è "3DScene", altrimenti è "3DObject"
+      const type_ =
+        identifier === "defaultplayer"
+          ? "Player"
+          : identifier === "scene"
+          ? "3DScene"
+          : "3DObject";
       objs[identifier] = {
         id: `minerva:${idLms}:${idUsr}:${idApp3D}:${id_p}`,
-        type: "3DObject",
+        type: type_,
         properties: [],
         relationships: [],
         //context: ["https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.6.jsonld"]
       };
     }
-    console.log("ARRAY: ", array);
+
     for (let i = 0; i < array.length; i++) {
       const { identifier, parameter, object, value, timestamp } = array[i];
       let _type = undefined;
       if (value != undefined) {
+
         console.log("value", value);
         //override type if it is specified
         if (parameter == "_type") {
           _type = value;
           objs[identifier].type = _type;
+          //se per identifier è presente un oggetto con la chiave _type
+          //allora la modalita di invio è "upsert"
+          sendModId[identifier] = "upsert";
           continue;
         }
         //if the property name is "gameover" then fetch the value from the broker, push it to the properties array and continue
-        if (parameter == "gameover") {
+        if (parameter == "gameover"){
+          let id = identifier;
           const baseURL = this.app.get("brokerURL");
-          const resp = await axios.get(
-            baseURL +
-              "ngsi-ld/v1/entities/" +
-              `minerva:${idLms}:${idUsr}:${idApp3D}:${identifier}/attrs=sessions`,
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Link: this.app.get("ngsildLink"),
-              },
-            }
-          );
-          //console.log("NGSILD RESP", resp.data);
-          //il value è un array, pusha il valore value di array[i]
-          const _value = resp.data.sessions.value.push({
-            name: value,
-            timestamp: timestamp,
-          });
-          console.log("gameover", _value);
+          if(identifier == "defaultplayer"){
+            id = "player";
+          }
 
-          objs[identifier].properties.push({
-            name: "sessions",
-            value: {
-              type: "Property",
-              value: _value,
-              observedAt: timestamp,
-            },
-          });
+          try{
+            const resp = await axios.get(
+              baseURL +
+                "ngsi-ld/v1/entities/" +
+                `minerva:${idLms}:${idUsr}:${idApp3D}:${id}?attrs=sessions`,
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                  Link: this.app.get("ngsildLink"),
+                },
+              }
+            );
+
+            console.log("NGSILD RESP", resp.data);
+            if(resp.data.sessions == null){
+              let array = [];
+              array.push(value);
+
+              objs[identifier].properties.push({
+                name: "sessions",
+                value: {
+                  type: "Property",
+                  value: array,
+                  observedAt: timestamp,
+                },
+              });
+              continue;
+            }
+
+            //il value è un array, pusha il valore value di array[i]
+            var _value = resp.data.sessions.value;
+            //se value non è un array, allora crealo
+            if(!Array.isArray(_value)){
+              _value = [];
+              _value.push({
+                name: resp.data.sessions.value.name,
+                timestamp: resp.data.sessions.value.timestamp,
+              });
+            }
+
+            _value.push({
+              name: value,
+              timestamp: timestamp,
+            });
+            console.log("gameover", _value);
+
+            objs[identifier].properties.push({
+              name: "sessions",
+              value: {
+                type: "Property",
+                value: _value,
+                observedAt: timestamp,
+              },
+            });
+          }
+          catch(e){
+            console.log("ERRORE NGSILD", e);
+          }
         } else {
           objs[identifier].properties.push({
             name: parameter,
@@ -620,28 +682,70 @@ exports.Statements = class Statements {
       ngsildObjs[j] = ngsi.generateEntity();
       console.log("debug ngsild", ngsildObjs[i]);
     }
-    return ngsildObjs;
+    return {ngsildObjs, sendModId};
   }
 
-  async sendNGSILD(ngsildObjs) {
+  async sendNGSILD(ngsildObjs, mod) {
     const baseURL = this.app.get("brokerURL");
-    console.log(ngsildObjs);
-    try {
-      const resp = await axios.post(
-        baseURL + "ngsi-ld/v1/entityOperations/upsert",
-        ngsildObjs,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+    //raggruppa in due array diversi gli oggetti da inviare con upsert e update
+    let upsertObjs = [];
+    let updateObjs = [];
 
-      console.log("NGSILD RESP", resp.data);
-      return resp;
-    } catch (e) {
-      console.log("ERRORE NGSILD", e);
-      return { error: e };
+    //mod mantiene chiave valore, dove chiave è l'identificatore dell'oggetto
+    //e valore è la modalità di invio
+    //upsert o update. Se è upsert allora pushalo in upsertObjs, altrimenti in updateObjs
+    //ngsildObjs è un array di oggetti da inviare, ognuno dei quali ha un identificatore
+    //che è la chiave di mod
+    //es. mod["defaultplayer"] = "upsert"
+    //ngsildObjs[0].id = "minerva:1:1:1:defaultplayer"
+    //quindi mod[ngsildObjs[0].id.split(":")[4]] = "upsert"
+    for (let i = 0; i < ngsildObjs.length; i++) {
+      const id = ngsildObjs[i].id.split(":")[4];
+      if (mod[id] == "upsert") {
+        upsertObjs.push(ngsildObjs[i]);
+      } else {
+        updateObjs.push(ngsildObjs[i]);
+      }
+    }
+
+    //se ci sono oggetti da inviare con upsert
+    //invia gli oggetti con upsert
+    if (upsertObjs.length > 0) {
+      try {
+        const resp = await axios.post(
+          baseURL + "ngsi-ld/v1/entityOperations/upsert",
+          upsertObjs,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "Link": this.app.get("ngsildLink"),
+            },
+          }
+        );
+      } catch (e) {
+        console.log("ERRORE NGSILD", e);
+      }
+    }
+
+    //se ci sono oggetti da inviare con update
+    //invia gli oggetti con update
+    if (updateObjs.length > 0) {
+      try {
+        const resp = await axios.post(
+          baseURL + "ngsi-ld/v1/entityOperations/update?options=noOverwrite",
+          updateObjs,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "Link": this.app.get("ngsildLink"),
+            },
+          }
+        );
+
+        console.log("NGSILD RESP", resp.data);
+      } catch (e) {
+        console.log("ERRORE NGSILD", e);
+      }
     }
   }
 };
