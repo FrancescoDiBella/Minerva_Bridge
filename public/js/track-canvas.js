@@ -1,9 +1,11 @@
 export class TrackingCanvas {
-  constructor(width, height, id, options) {
+  constructor(width, height, id, options = {}, points = []) {
     const {zIndex, classList} = options;
     this.width = width;
     this.height = height;
     this.id = id;
+    this.points = [];
+    this.filteredPoints = [];
     this.canvas = document.createElement('canvas');
     this.canvas.width = this.width;
     this.canvas.height = this.height;
@@ -32,16 +34,33 @@ export class TrackingCanvas {
     this.canvas.height = this.height;
   }
 
+  //funzione che ritorna l'array di punti dell'oggetto
+  getPoints(){
+    return this.points;
+  }
+
+  //funzione che aggiunge un punto all'array di punti dell'oggetto
+  addPoint(point){
+    this.points.push(point);
+  }
+
+  //funzione che ritorna l'id dell'oggetto
+  getId(){
+    return this.id;
+  }
+
+  //funzione che ritorna la larghezza dell'oggetto
   getWidth(){
     return this.width;
   }
 
+  //funzione che ritorna l'altezza dell'oggetto
   getHeight(){
     return this.height;
   }
 
   //funzione draw che disegna dei punti sulla canvas come pallini di colore variabile passato come stringa alla funzione
-  drawPath(points, options){
+  drawPath(points = this.points, options){
     var {color, lineColor, radius} = options;
     //radius == undefined ? 2 : radius;
 
@@ -67,7 +86,7 @@ export class TrackingCanvas {
   }
   //draw points given an array of points (x, y)
   //options:{color, radius}
-  drawPoints(points, options){
+  drawPoints(points = this.points, options){
     var {color, radius} = options;
     //radius == undefined ? 2 : radius;
 
@@ -92,8 +111,9 @@ export class TrackingCanvas {
     ctx.arc(points[points.length-1].x, points[points.length-1].y, radius, 0, 2 * Math.PI);
     ctx.fill();
   }
+
   //draw lines given an array of points (x, y), one line for each couple of points
-  drawLines(points, options){
+  drawLines(points = this.points, options){
     var {lineColor, lineWidth} = options;
     //radius == undefined ? 2 : radius;
 
@@ -121,6 +141,42 @@ export class TrackingCanvas {
     ctx.strokeStyle = lineColor;
     ctx.lineWidth = lineWidth;
     ctx.stroke();
+  }
+
+  //funzione che tramite delle options filtra i punti dell'oggetto
+  //options prospetta di essere un oggetto con le seguenti chiavi:
+  // - sessionId (stringa): Id della sessione di gioco nel quale sono stati generati i punti
+  // - minPos.x (numero) : valore minimo della coordinata x dei punti da filtrare
+  // - maxPos.x (numero) : valore massimo della coordinata x dei punti da filtrare
+  // - minPos.y (numero) : valore minimo della coordinata y dei punti da filtrare
+  // - maxPos.y (numero) : valore massimo della coordinata y dei punti da filtrare
+  // - startDateTime (Date) : data e ora di inizio del campionamento dei punti
+  // - endDateTime (Date) : data e ora di fine del campionamento dei punti
+  filterPoints(points = this.points, options){
+    var {sessionId, minPos, maxPos, startDateTime, endDateTime} = options;
+    //svuota l'array dei punti filtrati
+    this.filteredPoints = [];
+    this.filteredPoints = points.filter(point => {
+      //se una delle options non è definita, non la considero
+      if(sessionId != undefined && point.sessionId != sessionId){
+        return false;
+      }
+      if(minPos != undefined && (point.x < minPos.x || point.y < minPos.y)){
+        return false;
+      }
+      if(maxPos != undefined && (point.x > maxPos.x || point.y > maxPos.y)){
+        return false;
+      }
+      if(startDateTime != undefined && point.timestamp < startDateTime){
+        return false;
+      }
+      if(endDateTime != undefined && point.timestamp > endDateTime){
+        return false;
+      }
+      return true;
+    });
+
+    return this.filteredPoints;
   }
 }
 
