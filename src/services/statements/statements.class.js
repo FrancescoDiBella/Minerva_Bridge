@@ -544,7 +544,7 @@ exports.Statements = class Statements {
       //che contiene l'identificatore e una stringa che indica la modalità di invio
       //di default "upsert"
 
-      sendModId[identifier] = "upsert";
+      sendModId[identifier] = "update";
       const id_p = identifier === "defaultplayer" ? "player" : identifier;
       //type_ è "Player" se l'identificatore è "defaultplayer", se è "scene" è "3DScene", altrimenti è "3DObject"
       const type_ =
@@ -599,7 +599,7 @@ exports.Statements = class Statements {
             );
 
             console.log("NGSILD RESP", resp.data);
-            if(resp.data.sessions == null){
+            if(resp.data.sessions == null || resp.data.sessions == undefined || resp.data.sessions.value == null || resp.data.sessions.value == undefined){
               let array = [];
               array.push(value);
 
