@@ -6,6 +6,7 @@ const { BadRequest } = require("@feathersjs/errors");
 const lmsModel = require("../../models/_lms.model");
 const { ngsild } = require("../../ngsild.js");
 
+
 exports.Statements = class Statements {
   constructor(options, app) {
     this.options = options || {};
@@ -680,7 +681,7 @@ exports.Statements = class Statements {
         objs[i].relationships
       );
       ngsildObjs[j] = ngsi.generateEntity();
-      console.log("debug ngsild", ngsildObjs[i]);
+
     }
     return {ngsildObjs, sendModId};
   }
@@ -700,7 +701,12 @@ exports.Statements = class Statements {
     //ngsildObjs[0].id = "minerva:1:1:1:defaultplayer"
     //quindi mod[ngsildObjs[0].id.split(":")[4]] = "upsert"
     for (let i = 0; i < ngsildObjs.length; i++) {
-      const id = ngsildObjs[i].id.split(":")[4];
+      var id = ngsildObjs[i].id.split(":")[4];
+      //se id == "player" allora modifica id in "defaultplayer"
+      if (id == "player") {
+        id = "defaultplayer";
+      }
+
       if (mod[id] == "upsert") {
         upsertObjs.push(ngsildObjs[i]);
       } else {
@@ -722,6 +728,7 @@ exports.Statements = class Statements {
             },
           }
         );
+
       } catch (e) {
         console.log("ERRORE NGSILD", e);
       }
@@ -742,7 +749,6 @@ exports.Statements = class Statements {
           }
         );
 
-        console.log("NGSILD RESP", resp.data);
       } catch (e) {
         console.log("ERRORE NGSILD", e);
       }
