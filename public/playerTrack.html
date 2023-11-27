@@ -676,6 +676,63 @@
         //setta come default l'opzione everyone
         selectPlayer.value = "everyone";
       };
+
+      //funziona che fetcha i dati dal broker: /ngsi-ld/v1/entities?type=3DScene&q=hasObjects==minerva:2:12398:ABCD:player
+      //e li restituisce
+      async function getSessions(idUsr, idApp3D, idLms) {
+        const resp = await fetch(
+          "https://broker.minerva.sferainnovazione.com/ngsi-ld/v1/entities?type=3DScene&q=hasObjects==minerva:"+idLms+":"+idUsr+":"+idApp3D+":player"
+        );
+        const data = await resp.json();
+
+        return {data};
+      }
+
+      async function getCurrentSession(idUsr, idApp3D, idLms) {
+        const sessions = await getSessions(idUsr, idApp3D, idLms);
+        console.log(sessions);
+        //prendi la sessione corrente, essa è quella che non contiene il campo end
+        let currentSession = sessions.data.filter((session) => {
+          return session.end == undefined;
+        });
+
+        return currentSession;
+      }
+
+      async function getPropertyCurrentSession(idUsr, idApp3D, idLms, nameProperty) {
+        const currentSession = await getCurrentSession(idUsr, idApp3D, idLms);
+        const start = currentSession[0].start;
+        //se end è undefined allora la sessione è quella corrente
+
+        console.log(currentSession, start);
+        //prendi le posizioni della sessione corrente
+        const resp = await fetch(
+          "/ngsi-ld/v1/temporal/entities/minerva:"+idLms+":"+idUsr+":"+idApp3D+":player?timeproperty=observedAt&timerel=after&timeAt="+start+"&attrs="+nameProperty
+        );
+
+        const data = await resp.json();
+        return {data};
+      }
+
+      async function getPropertiesBySession(idUsr, idApp3D, idLms, nameProperty, session) {
+        const start = session.start;
+        const end = session.end;
+        if(end == undefined){
+          //se end è undefined allora la sessione è quella corrente
+          return getPropertyCurrentSession(idUsr, idApp3D, idLms, nameProperty);
+        }
+
+        console.log(start, end);
+        //prendi i valori di property della sessione passata alla funzione
+        const resp = await fetch(
+          "/ngsi-ld/v1/temporal/entities/minerva:"+idLms+":"+idUsr+":"+idApp3D+":player?timeproperty=observedAt&timerel=between&timeAt="+start+"&endTimeAt="+end+"&attrs="+nameProperty
+        );
+        const data = await resp.json();
+
+        return {data};
+      }
+
+
     </script>
   </body>
 </html>
