@@ -533,28 +533,6 @@
               return;
             }
 
-            //aggiungere query per prendere le sessions e aggiungerle al select
-            entitiesService.get(
-              "minerva:" +
-              idLms +
-              ":" +
-              array_users[0] +
-              ":" +
-              idApp3D +
-              ":player",
-              { query: { temporal: false, attrs: "sessions" } }
-            ).then(data =>{
-              //aggiungi le sessioni al select
-              for (let i = 0; i < data.sessions.value.length; i++) {
-                let option = document.createElement("option");
-                option.value = data.sessions.value[i].name + "-" + data.sessions.value[i].timestamp;
-                option.text = data.sessions.value[i].name;
-                document.getElementById("picker-session-" + array_users[0]).appendChild(option);
-              }
-            }).catch(error =>{
-              console.log(error);
-            })
-
             let sceneId = data.isContainedInObject.object;
 
             entitiesService
@@ -643,7 +621,7 @@
           });
 
         //aggiungi un select per ogni player per selezionare la sessione
-        array_users.forEach((user) => {
+        array_users.forEach(async (user) => {
           //Aggiungi una label con il nome dell'utente
           const label = document.createElement("label");
           label.for = "picker-session-" + user;
@@ -659,6 +637,17 @@
 
           //aggiungi le sessioni al select
           //aggiungi 3 sessioni di prova
+          //per ogni user prendi le sessioni e aggiungile al select
+          //per ogni sessione aggiungi un option al select
+          const sessions = await getSessions(user, idApp3D, idLms);
+          console.log(sessions);
+          for (let i = 0; i < sessions.data.length; i++) {
+            let option = document.createElement("option");
+            option.value = sessions.data[i].sessionId;
+            option.text = "Session " + sessions.data[i].sessionId.value;
+            document.getElementById("picker-session-" + user).appendChild(option);
+          }
+
         });
 
         //aggiungi al select i nomi degli utenti
@@ -731,6 +720,10 @@
 
         return {data};
       }
+
+      //TODO: funzione che permette di animare il percorso di un player
+      //praticamente prende le posizioni di un player e le disegna una alla volta
+      //con un piccolo delay di mezzo secondo e/o regolabile
 
 
     </script>
