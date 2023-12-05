@@ -237,7 +237,7 @@
         <div class="input-group" id="sessions-group">
         </div>
 
-        <button class="big" onclick="drawFacadeWithFilters()">Filtra</button>
+        <button class="big" id="filter-btn">Filtra</button>
       </div>
     </div>
 
@@ -267,6 +267,7 @@
       var playersCanvas = {}; //array di array di canvas di tutti i player
       var idAdmin, idApp3D, idLms;
       var array_users = [];
+      var sessions;
 
       const container = document.getElementById("container-canvas");
       //crea una canvas dentro il canvas-container per disegnare il cerchio verde
@@ -358,8 +359,34 @@
 
 
       async function drawFacadeWithFilters() {
-        await draw(p1_ctx, _positions, null, "red", "purple");
-        await draw(p2_ctx, _positions_2, null, "blue", "yellow");
+        //usa la sessione selezionata per filtrare i dati e disegnare i punti
+        //prendi la sessione selezionata
+        //per ogni player prendi le posizioni della sessione selezionata
+        array_users.forEach(async (user) => {
+          let sessionId = document.getElementById("picker-session-"+user).value;
+          //prendi dall'oggetto sessions la sessione con id sessionId
+          let session = sessions.data.filter((session) => {
+            return session.sessionId.value == sessionId;
+          });
+          console.log(session);
+          let data = await getPropertiesBySession(user, idApp3D, idLms, "position", session);
+          console.log(data);
+          //aggiorna i dati di playersPositions
+          playersPositions[user] = [];
+          for (let i = 0; i < data.data.length; i++) {
+            playersPositions[user].push({ position: [] });
+            playersPositions[user][i].position[0] = data.data[i].position.value[0] * 70 + 700;
+            playersPositions[user][i].position[2] = data.data[i].position.value[2] * 70 + 700;
+          }
+          //disegna i punti
+          await drawAllPoints(
+            playersCanvas[user].pointsCanvas,
+            playersCanvas[user].linesCanvas,
+            playersPositions[user],
+            playersCanvas[user].linesColor,
+            playersCanvas[user].pointsColor
+          );
+        });
       }
 
       function toggleVisual() {
@@ -454,6 +481,9 @@
         idAdmin = tracking_list[0].idAdmin;
         idLms = tracking_list[0].idLms;
         idApp3D = tracking_list[0].idApp3D;
+
+        let filterBtn = document.getElementById("filter-btn");
+        filterBtn.addEventListener("click", drawFacadeWithFilters);
 
         //aggiungi un event listener allo slider
         let slider = document.getElementById("radius");
@@ -639,11 +669,11 @@
           //aggiungi 3 sessioni di prova
           //per ogni user prendi le sessioni e aggiungile al select
           //per ogni sessione aggiungi un option al select
-          const sessions = await getSessions(user, idApp3D, idLms);
+          sessions = await getSessions(user, idApp3D, idLms);
           console.log(sessions);
           for (let i = 0; i < sessions.data.length; i++) {
             let option = document.createElement("option");
-            option.value = sessions.data[i].sessionId;
+            option.value = sessions.data[i].sessionId.value;
             option.text = "Session " + sessions.data[i].sessionId.value;
             document.getElementById("picker-session-" + user).appendChild(option);
           }
@@ -677,6 +707,7 @@
         return {data};
       }
 
+      //Queste funzioni vanno ancora testate
       async function getCurrentSession(idUsr, idApp3D, idLms) {
         const sessions = await getSessions(idUsr, idApp3D, idLms);
         console.log(sessions);
@@ -696,7 +727,7 @@
         console.log(currentSession, start);
         //prendi le posizioni della sessione corrente
         const resp = await fetch(
-          "/ngsi-ld/v1/temporal/entities/minerva:"+idLms+":"+idUsr+":"+idApp3D+":player?timeproperty=observedAt&timerel=after&timeAt="+start+"&attrs="+nameProperty
+          "https://broker.minerva.sferainnovazione.com/ngsi-ld/v1/temporal/entities/minerva:"+idLms+":"+idUsr+":"+idApp3D+":player?timeproperty=observedAt&timerel=after&timeAt="+start+"&attrs="+nameProperty
         );
 
         const data = await resp.json();
@@ -704,21 +735,24 @@
       }
 
       async function getPropertiesBySession(idUsr, idApp3D, idLms, nameProperty, session) {
-        const start = session.start;
-        const end = session.end;
-        if(end == undefined){
+        console.log(session);
+        const start = session[0].start.value;
+        console.log(start);
+        //ricontrollare il codice, non funziona ancora
+        try{
+          const end = session.end.value;
+          console.log(start, end);
+          //prendi i valori di property della sessione passata alla funzione
+          const resp = await fetch(
+            "https://broker.minerva.sferainnovazione.com/ngsi-ld/v1/temporal/entities/minerva:"+idLms+":"+idUsr+":"+idApp3D+":player?timeproperty=observedAt&timerel=between&timeAt="+start+"&endTimeAt="+end+"&attrs="+nameProperty
+          );
+          const data = await resp.json();
+          console.log(data, "TUTTO OK");
+          return {data};
+        }catch(e){
           //se end è undefined allora la sessione è quella corrente
           return getPropertyCurrentSession(idUsr, idApp3D, idLms, nameProperty);
         }
-
-        console.log(start, end);
-        //prendi i valori di property della sessione passata alla funzione
-        const resp = await fetch(
-          "/ngsi-ld/v1/temporal/entities/minerva:"+idLms+":"+idUsr+":"+idApp3D+":player?timeproperty=observedAt&timerel=between&timeAt="+start+"&endTimeAt="+end+"&attrs="+nameProperty
-        );
-        const data = await resp.json();
-
-        return {data};
       }
 
       //TODO: funzione che permette di animare il percorso di un player
