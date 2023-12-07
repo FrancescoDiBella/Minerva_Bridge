@@ -143,6 +143,12 @@ export class TrackingCanvas {
     ctx.stroke();
   }
 
+  //clear the canvas
+  clear(){
+    var ctx = this.canvas.getContext('2d');
+    ctx.clearRect(0, 0, this.width, this.height);
+  }
+
   //funzione che tramite delle options filtra i punti dell'oggetto
   //options prospetta di essere un oggetto con le seguenti chiavi:
   // - sessionId (stringa): Id della sessione di gioco nel quale sono stati generati i punti
