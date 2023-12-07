@@ -267,7 +267,7 @@
       var playersCanvas = {}; //array di array di canvas di tutti i player
       var idAdmin, idApp3D, idLms;
       var array_users = [];
-      var sessions;
+      var sessions = [];
 
       const container = document.getElementById("container-canvas");
       //crea una canvas dentro il canvas-container per disegnare il cerchio verde
@@ -365,26 +365,39 @@
         array_users.forEach(async (user) => {
           let sessionId = document.getElementById("picker-session-"+user).value;
           //prendi dall'oggetto sessions la sessione con id sessionId
-          let session = sessions.data.filter((session) => {
-            return session.sessionId.value == sessionId;
-          });
-          console.log(session);
+          //sessions è un array di oggetti data
+          //ogni oggetto data ha un oggetto sessionId
+          //ogni oggetto sessionId ha un campo value
+          console.log(sessions)
+
+          const session = sessions.reduce((acc, _session) => {
+            const dataItem = _session.data.find(data => data.sessionId.value === sessionId);
+            if (dataItem) {
+              acc.push(dataItem);
+            }
+            return acc;
+          }, [])[0];
+          console.log(user, session);
           let data = await getPropertiesBySession(user, idApp3D, idLms, "position", session);
           console.log(data);
           //aggiorna i dati di playersPositions
-          playersPositions[user] = [];
-          for (let i = 0; i < data.data.length; i++) {
-            playersPositions[user].push({ position: [] });
-            playersPositions[user][i].position[0] = data.data[i].position.value[0] * 70 + 700;
-            playersPositions[user][i].position[2] = data.data[i].position.value[2] * 70 + 700;
+          //richiama la funzione manipulateDataPositions
+          //se data.data (che è un oggetto) non ha campi allora non ci sono dati da visualizzare
+          if (Object.keys(data.data).length === 0) {
+            console.log('L\'oggetto interno è vuoto.');
+            //fai clear della canvas
+            playersCanvas[user].pointsCanvas.clear();
+            playersCanvas[user].linesCanvas.clear();
+
+            return;
           }
-          //disegna i punti
-          await drawAllPoints(
-            playersCanvas[user].pointsCanvas,
-            playersCanvas[user].linesCanvas,
-            playersPositions[user],
+          manipulateDataPositionsV2(
+            user,
+            data,
+            playersCanvas[user].pointsColor,
             playersCanvas[user].linesColor,
-            playersCanvas[user].pointsColor
+            playersCanvas[user].pointsCanvas,
+            playersCanvas[user].linesCanvas
           );
         });
       }
@@ -463,6 +476,35 @@
           pos[i].position[2] = data.position[i].value[2] * 70 + 700;
           playersPositions[idUsr].push(pos[i]);
         }
+        await drawAllPoints(
+          p1canvas,
+          p1LinesCanvas,
+          playersPositions[idUsr],
+          linesColor,
+          pointsColor
+        );
+      }
+
+      async function manipulateDataPositionsV2(
+        idUsr,
+        data,
+        pointsColor,
+        linesColor,
+        p1canvas,
+        p1LinesCanvas
+      ) {
+        let pos = [];
+
+        for (let i = 0; i < data.data.position.length; i++) {
+          pos.push({ position: [] });
+          pos[i].position[0] = data.data.position[i].value[0] * 70 + 700;
+          pos[i].position[2] = data.data.position[i].value[2] * 70 + 700;
+          playersPositions[idUsr].push(pos[i]);
+        }
+        //pulisci la canvas
+        p1canvas.clear();
+        p1LinesCanvas.clear();
+
         await drawAllPoints(
           p1canvas,
           p1LinesCanvas,
@@ -669,12 +711,12 @@
           //aggiungi 3 sessioni di prova
           //per ogni user prendi le sessioni e aggiungile al select
           //per ogni sessione aggiungi un option al select
-          sessions = await getSessions(user, idApp3D, idLms);
-          console.log(sessions);
-          for (let i = 0; i < sessions.data.length; i++) {
+          let tmpSessions = await getSessions(user, idApp3D, idLms);
+          sessions.push(tmpSessions);
+          for (let i = 0; i < tmpSessions.data.length; i++) {
             let option = document.createElement("option");
-            option.value = sessions.data[i].sessionId.value;
-            option.text = "Session " + sessions.data[i].sessionId.value;
+            option.value = tmpSessions.data[i].sessionId.value;
+            option.text = "Session " + tmpSessions.data[i].sessionId.value;
             document.getElementById("picker-session-" + user).appendChild(option);
           }
 
@@ -721,7 +763,7 @@
 
       async function getPropertyCurrentSession(idUsr, idApp3D, idLms, nameProperty) {
         const currentSession = await getCurrentSession(idUsr, idApp3D, idLms);
-        const start = currentSession[0].start;
+        const start = currentSession[0].start.value;
         //se end è undefined allora la sessione è quella corrente
 
         console.log(currentSession, start);
@@ -731,12 +773,13 @@
         );
 
         const data = await resp.json();
+        console.log(data, "TUTTO OK")
         return {data};
       }
 
       async function getPropertiesBySession(idUsr, idApp3D, idLms, nameProperty, session) {
         console.log(session);
-        const start = session[0].start.value;
+        const start = session.start.value;
         console.log(start);
         //ricontrollare il codice, non funziona ancora
         try{
@@ -751,6 +794,7 @@
           return {data};
         }catch(e){
           //se end è undefined allora la sessione è quella corrente
+          console.log(e);
           return getPropertyCurrentSession(idUsr, idApp3D, idLms, nameProperty);
         }
       }
