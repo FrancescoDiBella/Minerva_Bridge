@@ -224,7 +224,8 @@
         </div>
 
         <div>_____________________________________</div>
-        <div class="input-group">
+        <!--
+          <div class="input-group">
           <label for="time" class="big"><b class="big">Tempo:</b></label>
           <input type="time" id="time" class="big" />
         </div>
@@ -233,6 +234,8 @@
           <label for="date" class="big"><b class="big">Data:</b></label>
           <input type="date" id="date" class="big" />
         </div>
+        -->
+
 
         <div class="input-group" id="sessions-group">
         </div>
@@ -494,7 +497,8 @@
         p1LinesCanvas
       ) {
         let pos = [];
-
+        //clear playersPositions[idUsr]
+        playersPositions[idUsr] = [];
         for (let i = 0; i < data.data.position.length; i++) {
           pos.push({ position: [] });
           pos[i].position[0] = data.data.position[i].value[0] * 70 + 700;
@@ -530,6 +534,13 @@
         //aggiungi un event listener allo slider
         let slider = document.getElementById("radius");
 
+        // Funzione per ruotare le coordinate di 180 gradi
+        function rotate180Degrees(x, y) {
+            center.x = x * Math.cos(Math.PI) - y * Math.sin(Math.PI);
+            center.y = x * Math.sin(Math.PI) + y * Math.cos(Math.PI);
+        }
+
+
         slider.oninput = function () {
           //draw a green circle, get the radius from the slider and center from the center object
           let radius = document.getElementById("radius").value;
@@ -562,11 +573,19 @@
         canvas.addEventListener("click", function (e) {
           let rect = canvas.getBoundingClientRect();
           //ruota le coordinate di 180 gradi
-          let x = e.clientX - rect.left;
-          let y = e.clientY - rect.top;
+          //converti da string a int
+          let w = canvas.getAttribute("width");
+          let h = canvas.getAttribute("height");
 
-          center.x = x;
-          center.y = y;
+          //converti w e h in interi da stringhe
+          w = parseInt(w);
+          h = parseInt(h);
+
+          let x = e.clientX - w;
+          let y = e.clientY - h;
+          rotate180Degrees(x, y);
+          console.log(e.clientX, e.clientY, "canvas ->", w, h,"dopo -> ", x, y);
+
           let radius = document.getElementById("radius").value;
           let ctx = canvas.getContext("2d");
           ctx.clearRect(0, 0, canvas.width, canvas.height);
