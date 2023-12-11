@@ -578,7 +578,7 @@ exports.Statements = class Statements {
           sendModId[identifier] = "upsert";
           continue;
         }
-        //if the property name is "gameover" then fetch the value from the broker, push it to the properties array and continue
+        //if the property name is "gameover" then fetch the value from the broker, add a new property to the current session and continue
         if (parameter == "gameover"){
           let id = identifier;
           const baseURL = this.app.get("brokerURL");
@@ -587,59 +587,90 @@ exports.Statements = class Statements {
           }
 
           try{
-            const resp = await axios.get(
-              baseURL +
-                "ngsi-ld/v1/entities/" +
-                `minerva:${idLms}:${idUsr}:${idApp3D}:${id}?attrs=sessions`,
+            const session = await this.getCurrentSession(idUsr, idApp3D, idLms);
+
+            console.log("NGSILD RESP", session);
+            //aggiungi all'entità session la proprietà "end" con valore "value"
+            const resp = await axios.post(
+              baseURL + "ngsi-ld/v1/entityOperations/update?options=noOverwrite",
+              [{
+                "id": session.id,
+                "type": session.type,
+                "end": {
+                    "type": "Property",
+                    "value": timestamp
+                }
+              }],
               {
                 headers: {
                   "Content-Type": "application/json",
-                  Link: this.app.get("ngsildLink"),
+                  "Link": this.app.get("ngsildLink"),
+                },
+              }
+            );
+            console.log("NGSILD session end RESP", resp);
+
+            //crea una nuova entità di tipo 3DScene con le proprietà copiate da session ma senza "end" property e cambiando i timestamp con quello di gameover e con id e sessionId diverso.
+            let randomId = Math.floor(Math.random() * 1000000000);
+
+            let newSession = {
+              "@context": ["https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.6.jsonld"],
+              "id": "minerva:" + idLms + ":" + idUsr + ":" + idApp3D + ":scene_"+randomId,
+              "type": "3DScene"
+            };
+
+            //l'oggetto session è del tipo
+            /*
+            {
+              "id": "minerva:1:1:1:scene_123456789",
+              "type": "3DScene",
+              "hasObjects": {
+                  "type": "Relationship",
+                  "object": "minerva:1:1:1:defaultplayer"
+                  "observedAt": "2023-11-24T16:21:11.56Z"
+              },
+              "start": {
+                  "type": "Property",
+                  "value": "2020-11-12T17:00:00Z"
+                  "observedAt": "2023-11-24T16:21:11.56Z"
+              },
+              "width": {
+                  "type": "Property",
+                  "value": 100
+                  "observedAt": "2023-11-24T16:21:11.56Z"
+              }
+            }
+            */
+           //seguendo la struttura di session, crea un oggetto newSession
+            //con le proprietà di session ma senza "end" property
+            for (const [key, value] of Object.entries(session)) {
+              if(key == "end" || key == "id" || key == "type"){
+                continue;
+              }
+              newSession[key] = value;
+              //modifica il timestamp di start con quello di gameover
+              if(key == "start"){
+                newSession[key].value = timestamp;
+              }
+
+              if(key == "sessionId"){
+                newSession[key].value = toString(randomId);
+              }
+              //modifica gli observedAt con quello di gameover
+              newSession[key].observedAt = timestamp;
+            }
+
+            const ngsi = await axios.post(
+              baseURL + "ngsi-ld/v1/entities",
+              newSession,
+              {
+                headers: {
+                  "Content-Type": "application/ld+json"
                 },
               }
             );
 
-            console.log("NGSILD RESP", resp.data);
-            if(resp.data.sessions == null || resp.data.sessions == undefined || resp.data.sessions.value == null || resp.data.sessions.value == undefined){
-              let array = [];
-              array.push(value);
-
-              objs[identifier].properties.push({
-                name: "sessions",
-                value: {
-                  type: "Property",
-                  value: array,
-                  observedAt: timestamp,
-                },
-              });
-              continue;
-            }
-
-            //il value è un array, pusha il valore value di array[i]
-            var _value = resp.data.sessions.value;
-            //se value non è un array, allora crealo
-            if(!Array.isArray(_value)){
-              _value = [];
-              _value.push({
-                name: resp.data.sessions.value.name,
-                timestamp: resp.data.sessions.value.timestamp,
-              });
-            }
-
-            _value.push({
-              name: value,
-              timestamp: timestamp,
-            });
-            console.log("gameover", _value);
-
-            objs[identifier].properties.push({
-              name: "sessions",
-              value: {
-                type: "Property",
-                value: _value,
-                observedAt: timestamp,
-              },
-            });
+            console.log("NGSILD session end RESP", ngsi);
           }
           catch(e){
             console.log("ERRORE NGSILD", e);
@@ -753,5 +784,26 @@ exports.Statements = class Statements {
         console.log("ERRORE NGSILD", e);
       }
     }
+  }
+
+  async getSessions(idUsr, idApp3D, idLms) {
+    const resp = await fetch(
+      "https://broker.minerva.sferainnovazione.com/ngsi-ld/v1/entities?type=3DScene&q=hasObjects==minerva:"+idLms+":"+idUsr+":"+idApp3D+":player"
+    );
+    const data = await resp.json();
+
+    return {data};
+  }
+
+  //Queste funzioni vanno ancora testate
+  async getCurrentSession(idUsr, idApp3D, idLms) {
+    const sessions = await this.getSessions(idUsr, idApp3D, idLms);
+    console.log("sessions", sessions);
+    //prendi la sessione corrente, essa è quella che non contiene il campo end
+    let currentSession = sessions.data.filter((session) => {
+      return session.end == undefined;
+    });
+
+    return currentSession[0];
   }
 };
