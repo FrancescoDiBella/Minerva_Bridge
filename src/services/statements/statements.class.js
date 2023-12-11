@@ -654,7 +654,7 @@ exports.Statements = class Statements {
               }
 
               if(key == "sessionId"){
-                newSession[key].value = toString(randomId);
+                newSession[key].value = randomId.toString();
               }
               //modifica gli observedAt con quello di gameover
               newSession[key].observedAt = timestamp;
