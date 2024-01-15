@@ -15,11 +15,7 @@ module.exports = function (app) {
       create: {
         summary: "Refresh del token di autenticazione per un utente admin tramite refreshToken generato precedentemente.",
         description:
-"Endpoint che permette di ottenere un token valido per le \
-richieste successive alla registrazione dell'admin quali:\n\n\
-* __POST /admin/:idAdmin/lms/:id/user__\n\n__PS: Se l'admin che richiede \
-il token è il superadmin allora tale token permette di richiamare \
-ad esempio:__\n\n* __GET /admin (lista di tutti gli utenti admin)__\n\n\
+"Endpoint che permette di fare refresh di un token valido per le richieste successive alla registrazione dell’admin\n\n\
 Insieme al token vengono restituiti tempo emissione e tempo per la \
 scadenza, il token è valido per un minuto. La chiamata restituisce il refreshToken (e rispettive iat e exp)\
 che permette di richiedere un’altra coppia (token,refreshToken)\
@@ -32,14 +28,10 @@ Il refreshToken ha scadenza di un giorno (settabile liberamente)",
               schema: {
                 type: "object",
                 properties: {
-                  email: {
-                    type: "string",
+                  refreshToken: {
+                    type: "eymKDjN2932HDNsdf2938mlLmmksmalpo2039u",
                     example: "test@test.com",
-                  },
-                  password: {
-                    type: "string",
-                    example: "test",
-                  },
+                  }
                 },
               },
             },
@@ -47,7 +39,7 @@ Il refreshToken ha scadenza di un giorno (settabile liberamente)",
         },
         responses: {
           201: {
-            description: "Token di autenticazione valido per un minuto.",
+            description: "Token di autenticazione valido per un minuto e refreshToken valido per un giorno.",
             content: {
               "application/json": {
                 schema: {
@@ -91,8 +83,8 @@ Il refreshToken ha scadenza di un giorno (settabile liberamente)",
             },
           },
           400: {
-            description: "Utente admin non registrato o password errata.",
-            summary: "Utente admin non registrato.",
+            description: "RefreshToken non valido o scaduto.",
+            summary: "Il refresh token è scaduto o non è stato salcato correttamente.",
           },
         },
       },
