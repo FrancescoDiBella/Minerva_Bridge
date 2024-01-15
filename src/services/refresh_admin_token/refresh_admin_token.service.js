@@ -29,8 +29,8 @@ Il refreshToken ha scadenza di un giorno (settabile liberamente)",
                 type: "object",
                 properties: {
                   refreshToken: {
-                    type: "eymKDjN2932HDNsdf2938mlLmmksmalpo2039u",
-                    example: "test@test.com",
+                    type: "String",
+                    example: "eymKDjN2932HDNsdf2938mlLmmksmalpo2039u",
                   }
                 },
               },
