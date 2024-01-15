@@ -19,7 +19,10 @@ richieste successive alla registrazione dell'admin quali:\n\n\
 il token è il superadmin allora tale token permette di richiamare \
 ad esempio:__\n\n* __GET /admin (lista di tutti gli utenti admin)__\n\n\
 Insieme al token vengono restituiti tempo emissione e tempo per la \
-scadenza, il token è valido per un minuto.",
+scadenza, il token è valido per un minuto. La chiamata restituisce il refreshToken (e rispettive iat e exp)\
+che permette di richiedere un’altra coppia (token,refreshToken)\
+valida senza inserire nuovamente le credenziali.\
+Il refreshToken ha scadenza di un giorno (settabile liberamente)",
         requestBody: {
           required: true,
           content: {
@@ -59,6 +62,18 @@ scadenza, il token è valido per un minuto.",
                     exp: {
                       type: "integer",
                       example: 1693816419,
+                    },
+                    refreshToken: {
+                      type: "string",
+                      example: "eymSsksdOOA05mmskd...",
+                    },
+                    refresh_iat: {
+                      type: "integer",
+                      example: 1693816119,
+                    },
+                    refresh_exp: {
+                      type: "integer",
+                      example: 1694234419,
                     },
                     idAdmin: {
                       type: "integer",

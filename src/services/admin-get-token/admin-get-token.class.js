@@ -42,6 +42,7 @@ exports.AdminGetToken = class AdminGetToken {
       // Generate the JWT using the user data and a secret key
       const userData = {
         idAdmin: _admin.id,
+        role: _admin.role
       };
 
       const secret_ = this.app.get("authentication").secret;
@@ -50,11 +51,60 @@ exports.AdminGetToken = class AdminGetToken {
       // Generate a new JWT and send it to the client
       const token = jwt.sign(userData, secret_, options);
       const { iat, exp } = jwt.decode(token);
+
+      //generate refresh token
+      const refresh_secret = this.app.get("authentication").refreshSecret;
+      const refresh_options = { expiresIn: "1d"};
+      const refresh_token = jwt.sign(userData, refresh_secret, refresh_options);
+      const refresh_times = {
+          refresh_iat: jwt.decode(refresh_token).iat,
+          refresh_exp: jwt.decode(refresh_token).exp
+        };
+
+
       // Return the JWT to the client
-      return { token, iat, exp, idAdmin: _admin.id, role: _admin.role};
+      return {
+                token, iat, exp,
+                refresh_token,
+                refresh_iat: refresh_times.refresh_iat,
+                refresh_exp: refresh_times.refresh_exp,
+                idAdmin: _admin.id, role: _admin.role
+              };
     } else {
       throw new BadRequest("Password errata, riprovare");
     }
+  }
+
+  async generateTokens(userData){
+    const secret_ = this.app.get("authentication").secret;
+      //set the token expiration time to 1 minute
+      const options = { expiresIn: "1m" };
+      // Generate a new JWT and send it to the client
+      const token = jwt.sign(userData, secret_, options);
+      const { iat, exp } = jwt.decode(token);
+
+      //generate refresh token
+      const refresh_secret = this.app.get("authentication").refreshSecret;
+      const refresh_options = { expiresIn: "1d"};
+      const refresh_token = jwt.sign(userData, refresh_secret, refresh_options);
+      const refresh_times = {
+          refresh_iat: jwt.decode(refresh_token).iat,
+          refresh_exp: jwt.decode(refresh_token).exp
+        };
+
+
+      // Return the JWT to the client
+      return {
+                token, iat, exp,
+                refresh_token,
+                refresh_iat: refresh_times.refresh_iat,
+                refresh_exp: refresh_times.refresh_exp
+              };
+  }
+
+  //funzione per il refresh del token
+  async refresh(data, params) {
+    //la funzione
   }
 
   async update(id, data, params) {
