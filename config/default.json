@@ -9,6 +9,7 @@
   "authentication": {
     "entity": null,
     "secret": "5VXQuaB0xmBiOn6N383InOF2ut8=",
+    "refreshSecret": "78asdamL=Xxlamw3498rfjdfsnAKJSNajsKkPlsajjCCV",
     "authStrategies": [
       "jwt",
       "local"
