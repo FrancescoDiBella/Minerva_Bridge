@@ -64,6 +64,8 @@ module.exports = function (app) {
   getAuthCode.associate = function (models) {
     // Define associations here
     // See https://sequelize.org/master/manual/assocs.html
+    getAuthCode.belongsTo(models.lms, { foreignKey: "idLms" });
+    getAuthCode.belongsTo(models.utenti, { foreignKey: "idUsr" });
   };
 
   return getAuthCode;

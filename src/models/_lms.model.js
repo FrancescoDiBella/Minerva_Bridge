@@ -57,6 +57,7 @@ module.exports = function (app) {
   lms.associate = function (models) {
     // console.log(models);
     lms.hasMany(models.utenti, { foreignKey: "idLms" });
+    lms.hasMany(models.authCodes, { foreignKey: "idLms" });
     lms.belongsTo(models.admins, { foreignKey: "idAdmin" });
   };
 

@@ -42,6 +42,7 @@ module.exports = function (app) {
   utenti.associate = function (models) {
     utenti.belongsTo(models.lms, { foreignKey: "idLms" });
     utenti.hasMany(models.saves, { foreignKey: "id_utenza" });
+    utenti.hasMany(models.authCodes, { foreignKey: "idUsr" });
   };
 
   return utenti;
