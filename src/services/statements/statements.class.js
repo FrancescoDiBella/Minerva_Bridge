@@ -188,18 +188,17 @@ exports.Statements = class Statements {
             "." +
             idApp3D +
             "." +
-            identifier +
             "@minerva.sferainnovazione.com",
-          name: idUsr + "." + idLms + "." + idApp3D + "." + identifier,
+          name: idUsr + "." + idLms + "." + idApp3D,
         },
         verb: {
-          id: "http://minerva.sferainnovazione.com/verb/isContainedIn",
-          display: { "en-US": "isContainedIn" },
+          id: "http://minerva.sferainnovazione.com/verb/"+ identifier,
+          display: { "en-US": identifier },
         },
         object: {
-          id: "http://minerva.sferainnovazione.com/activity/3dApp/" + idApp3D,
+          id: "http://minerva.sferainnovazione.com/activity/3dApp/" + idApp3D + "/" + parameter,
           definition: {
-            name: { "en-US": "E-learning 3D Application." },
+            name: { "en-US": value },
             type: "http://minerva.sferainnovazione.com/activity-type/e-learning",
           },
         },
