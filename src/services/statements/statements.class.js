@@ -368,51 +368,47 @@ exports.Statements = class Statements {
       data: [
         {
           element: "cmi.core.score.raw",
-          value: "10",
+          value: data.score ?? "10",
         },
         {
           element: "adlcp:masteryscore",
-          value: "10",
+          value: data.masteryscore ?? "10",
         },
         {
           element: "cmi.student_data.mastery_score",
-          value: "10",
+          value: data.mastery_score ?? "10",
         },
         {
           element: "cmi.launch_data",
-          value: "launch_data",
+          value: data.launch_data ?? "launch_data",
         },
         {
           element: "cmi.suspend_data",
-          value: JSON.stringify(data),
-        },
-        {
-          element: "cmi.core.lesson_location",
-          value: "lesson_location",
+          value: data.suspend_data ?? JSON.stringify(data),
         },
         {
           element: "cmi.core.lesson_status",
-          value: "incomplete",
+          value: data.progress ?? "incomplete",
         },
         {
           element: "cmi.core.lesson_location",
-          value: "lesson_location",
+          value: data.lesson_location ?? "lesson_location",
         },
         {
           element: "cmi.core.entry",
-          value: "entry",
+          value: data.entry ?? "entry",
         },
         {
           element: "cmi.core.exit",
-          value: "exit",
+          value: data.exit ?? "exit",
         },
         {
           element: "cmi.core.total_time",
-          value: "12:00:12",
+          value: data.time ?? "0",
         },
         {
           element: "cmi.core.session_time",
-          value: "05:00:00",
+          value: data.session_time ?? "0",
         },
         {
           element: "cmi.core.student_id",
