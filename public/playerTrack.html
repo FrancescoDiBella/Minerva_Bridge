@@ -603,6 +603,15 @@
           array_users.push(track.idUsr);
         });
 
+        console.log("ARRAY USERS", array_users);
+        console.log("INFOS",
+              "minerva:" +
+              idLms +
+              ":" +
+              array_users[0] +
+              ":" +
+              idApp3D +
+              ":player")
         //richiesta al broker
         //const sub_resp = await fetch('https://broker.minerva.sferainnovazione.com/ngsi-ld/v1/entities/urn:ngsi-ld:Scene:002');
         //ricreare la richiesta fatta sopra ma questa volta al bridge
@@ -629,7 +638,7 @@
             entitiesService
               .get(sceneId)
               .then((data) => {
-                console.log(data);
+                console.log("SCENE DATA", data);
                 //setta width e height della canvas usando i dati del json moltiplicati per 70
 
                 let width = data.width.value * 70;
