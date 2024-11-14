@@ -36,7 +36,9 @@ This project uses [Feathers](http://feathersjs.com). An open source web framewor
 6. Start a `lrsql` docker instance:
 
     ```
-    docker run --network minerva_network --name lrs -p 8080:8080 -e LRSQL_API_KEY_DEFAULT=my_key -e LRSQL_API_SECRET_DEFAULT=my_secret -e LRSQL_ADMIN_USER_DEFAULT=my_username -e LRSQL_ADMIN_PASS_DEFAULT=my_password -e LRSQL_ALLOW_ALL_ORIGINS=true -e LRSQL_DB_NAME=db/lrsql.sqlite.db -v lrsql-db:/lrsql/db yetanalytics/lrsql:latest
+    docker run -d --network minerva_network --name lrs -p 8080:8080 -e LRSQL_API_KEY_DEFAULT=my_key -e LRSQL_API_SECRET_DEFAULT=my_secret -e LRSQL_ADMIN_USER_DEFAULT=my_username -e LRSQL_ADMIN_PASS_DEFAULT=my_password -e LRSQL_ALLOW_ALL_ORIGINS=true -e LRSQL_DB_NAME=db/lrsql.sqlite.db -v lrsql-db:/lrsql/db yetanalytics/lrsql:latest
     ```
 
 7. To open and browse lrsql LRS go to `http://localhost:8080/admin/index.html`, login with `Username`: my_username and `Password`: my_password
+
+Note: `docker image prune` to delete all dangling images
