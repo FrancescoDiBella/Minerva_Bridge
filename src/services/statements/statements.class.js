@@ -59,7 +59,7 @@ exports.Statements = class Statements {
     const { idApp3D } = payload;
 
     const save_data = data;
-    console.log(save_data);
+    console.log("INPUT DATA", save_data);
     const getAuthModel = getAuth(this.app);
     const lmsModel = _lmsModel(this.app);
     //const getHook = hook(this.app);
@@ -104,6 +104,7 @@ exports.Statements = class Statements {
           idApp3D
         );
       }
+      console.log("XAPI Statements", statements);
       //send XAPI data to LRS
       const res = await this.sendXAPIStatements(
         statements,
@@ -122,10 +123,8 @@ exports.Statements = class Statements {
       );
       const ngsi = ngsiArray.ngsildObjs;
       const mod = ngsiArray.sendModId;
-      console.log("NGSILD", ngsi);
-      console.log("MOD", mod);
+      console.log("NGSILD Entities", ngsi);
       const ngsiRes = await this.sendNGSILD(ngsi, mod);
-      console.log("NGSILD RESP", ngsiRes);
       return res;
     } else if (statementType == "SCORM") {
       //routine per SCORM
@@ -138,13 +137,13 @@ exports.Statements = class Statements {
       );
       const ngsi = ngsiArray.ngsildObjs;
       const mod = ngsiArray.sendModId;
+      console.log("NGSILD Entities", ngsi);
 
       const scorm = await this.generateSCORMData(save_data, idUsr);
-      //console.log(scorm);
+      console.log("SCORM object", scorm);
       //se è stato generato un oggetto SCORM
       //invia i dati SCORM
       const ngsiRes = await this.sendNGSILD(ngsi, mod);
-      console.log("NGSILD RESP", ngsiRes);
       if (scorm != null) {
         const resp = await this.sendSCORMData(
           scorm,
@@ -320,11 +319,11 @@ exports.Statements = class Statements {
     for (let i = 0; i < data.length; i++) {
       const { identifier } = data[i];
       if (identifier == "defaultplayer") {
-        console.log("defaultplayer!");
+        //console.log("defaultplayer!");
         return true;
       }
     }
-    console.log("not defaultplayer!");
+    //console.log("not defaultplayer!");
     return false;
   }
 
@@ -332,7 +331,7 @@ exports.Statements = class Statements {
   //es. score deve essere un numero
   //es. progress deve essere uno dei valori accettati
   isSCORMValueValid(parameter, value) {
-    console.log("SCORM VALUE VALID", parameter, value);
+    //console.log("SCORM VALUE VALID", parameter, value);
     switch (parameter) {
       case "score":
       case "masteryscore":
@@ -563,7 +562,7 @@ exports.Statements = class Statements {
       let _type = undefined;
       if (value != undefined) {
 
-        console.log("value", value);
+        //console.log("value", value);
         //override type if it is specified
         if (parameter == "_type") {
           _type = value;
@@ -584,7 +583,7 @@ exports.Statements = class Statements {
           try{
             const session = await this.getCurrentSession(idUsr, idApp3D, idLms);
 
-            console.log("NGSILD RESP", session);
+            //console.log("NGSILD RESP", session);
             //aggiungi all'entità session la proprietà "end" con valore "value"
             const resp = await axios.post(
               baseURL + "ngsi-ld/v1/entityOperations/update?options=noOverwrite",
@@ -603,7 +602,7 @@ exports.Statements = class Statements {
                 },
               }
             );
-            console.log("NGSILD session end RESP", resp);
+            //console.log("NGSILD session end RESP", resp);
 
             //crea una nuova entità di tipo 3DScene con le proprietà copiate da session ma senza "end" property e cambiando i timestamp con quello di gameover e con id e sessionId diverso.
             let randomId = Math.floor(Math.random() * 1000000000);
@@ -665,10 +664,10 @@ exports.Statements = class Statements {
               }
             );
 
-            console.log("NGSILD session end RESP", ngsi);
+            //console.log("NGSILD session end RESP", ngsi);
           }
           catch(e){
-            console.log("ERRORE NGSILD", e);
+            //console.log("ERRORE NGSILD", e);
           }
         } else {
           objs[identifier].properties.push({
@@ -681,7 +680,7 @@ exports.Statements = class Statements {
           });
         }
       } else {
-        console.log("object", object);
+        //console.log("object", object);
 
         objs[identifier].relationships.push({
           name: parameter,
@@ -692,7 +691,7 @@ exports.Statements = class Statements {
           },
         });
 
-        console.log("minerva:" + idLms + ":" + idUsr + ":" + idApp3D + ":" + object);
+        //console.log("minerva:" + idLms + ":" + idUsr + ":" + idApp3D + ":" + object);
       }
     }
 
@@ -756,7 +755,7 @@ exports.Statements = class Statements {
         );
 
       } catch (e) {
-        console.log("ERRORE NGSILD", e);
+        //console.log("ERRORE NGSILD", e);
       }
     }
 
@@ -776,7 +775,7 @@ exports.Statements = class Statements {
         );
 
       } catch (e) {
-        console.log("ERRORE NGSILD", e);
+        //console.log("ERRORE NGSILD", e);
       }
     }
   }
@@ -793,7 +792,7 @@ exports.Statements = class Statements {
   //Queste funzioni vanno ancora testate
   async getCurrentSession(idUsr, idApp3D, idLms) {
     const sessions = await this.getSessions(idUsr, idApp3D, idLms);
-    console.log("sessions", sessions);
+    //console.log("sessions", sessions);
     //prendi la sessione corrente, essa è quella che non contiene il campo end
     let currentSession = sessions.data.filter((session) => {
       return session.end == undefined;
