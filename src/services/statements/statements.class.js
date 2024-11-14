@@ -5,8 +5,8 @@ const axios = require("axios");
 const { BadRequest } = require("@feathersjs/errors");
 const lmsModel = require("../../models/_lms.model");
 const { ngsild } = require("../../ngsild.js");
-const fs = require("fs").promises;
-const path = require('path');
+//const fs = require("fs").promises;
+//const path = require('path');
 
 
 exports.Statements = class Statements {
@@ -95,7 +95,7 @@ exports.Statements = class Statements {
 
     var statements = [];
     console.log("statementType", statementType);
-    const logDir = path.join(__dirname, '../../../logs');
+    //const logDir = path.join(__dirname, '../../../logs');
     if (statementType == "XAPI") {
       //routine per XAPI
       for (let i = 0; i < save_data.length; i++) {
@@ -108,7 +108,7 @@ exports.Statements = class Statements {
         );
       }
       console.log("XAPI Statements", statements);
-      await fs.appendFile(path.join(logDir, 'xapi_statements.log'), JSON.stringify(statements) + '\n');
+      //await fs.appendFile(path.join(logDir, 'xapi_statements.log'), JSON.stringify(statements) + '\n');
       //send XAPI data to LRS
       const res = await this.sendXAPIStatements(
         statements,
@@ -128,7 +128,7 @@ exports.Statements = class Statements {
       const ngsi = ngsiArray.ngsildObjs;
       const mod = ngsiArray.sendModId;
       console.log("NGSILD Entities", ngsi);
-      await fs.appendFile(path.join(logDir, 'ngsild-entities.log'), JSON.stringify(ngsi) + '\n');
+      //await fs.appendFile(path.join(logDir, 'ngsild-entities.log'), JSON.stringify(ngsi) + '\n');
       const ngsiRes = await this.sendNGSILD(ngsi, mod);
       return res;
     } else if (statementType == "SCORM") {
@@ -143,10 +143,10 @@ exports.Statements = class Statements {
       const ngsi = ngsiArray.ngsildObjs;
       const mod = ngsiArray.sendModId;
       console.log("NGSILD Entities", ngsi);
-      await fs.appendFileSync(path.join(__dirname, 'ngsild-entities.log'), JSON.stringify(ngsi) + '\n');
+      //await fs.appendFileSync(path.join(__dirname, 'ngsild-entities.log'), JSON.stringify(ngsi) + '\n');
       const scorm = await this.generateSCORMData(save_data, idUsr);
       console.log("SCORM object", scorm);
-      await fs.appendFile(path.join(logDir, 'scorm_statements.log'), JSON.stringify(scorm) + '\n');
+      //await fs.appendFile(path.join(logDir, 'scorm_statements.log'), JSON.stringify(scorm) + '\n');
       //se è stato generato un oggetto SCORM
       //invia i dati SCORM
       const ngsiRes = await this.sendNGSILD(ngsi, mod);
