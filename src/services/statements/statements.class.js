@@ -6,6 +6,7 @@ const { BadRequest } = require("@feathersjs/errors");
 const lmsModel = require("../../models/_lms.model");
 const { ngsild } = require("../../ngsild.js");
 const fs = require("fs").promises;
+const path = require('path');
 
 
 exports.Statements = class Statements {
