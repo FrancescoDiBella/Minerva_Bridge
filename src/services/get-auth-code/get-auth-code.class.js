@@ -60,7 +60,7 @@ exports.GetAuthCode = class GetAuthCode extends Service {
           validated: false,
         },
       });
-    }, 10000 * 6);
+    }, 30000 * 6);
   }
 
   generateAuth() {
